@@ -118,9 +118,9 @@ class _SetPageState extends State<SetPage> {
                         ),
                       ),
                       const BetterCardSet(
-                          "Flashcards", Icons.style_rounded, "/SET/FLASHCARDS"),
+                          "Flashcards", Icons.style_rounded, "/HOME/SET/FLASHCARDS"),
                       const BetterCardSet(
-                          "Adaptive", Icons.memory_rounded, "/SET/ADAPTIVE"),
+                          "Adaptive", Icons.memory_rounded, "/HOME/SET/ADAPTIVE"),
                     ]
                 )
             );

@@ -23,7 +23,17 @@ class _FlashcardPageState extends State<FlashcardPage> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
-                appBar: BetterAppBar(snapshot.data.first['title'], null, true),
+                appBar: BetterAppBar(snapshot.data.first['title'], null, Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                      ),
+                    )
+                ),),
                 body: ListView(
                     children: [
                       Padding(
@@ -95,7 +105,17 @@ class _FlashcardPageState extends State<FlashcardPage> {
           }
           else {
             return Scaffold(
-                appBar: const BetterAppBar(Constants.title, null, true),
+                appBar: BetterAppBar(Constants.title, null, Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                      ),
+                    )
+                ),),
                 body: ListView(children: const [
                   Padding(padding: EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,

@@ -85,7 +85,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
                     }
                     if (_formKey.currentState!.validate()) {
                       await (await SharedPreferences.getInstance()).setInt("currentSet", await Database.insertSet(CardSet(await Database.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
-                      
+                      navigator.pop();
                       navigator.popAndPushNamed("/HOME/SET");
                     }
                     value = 0.0;

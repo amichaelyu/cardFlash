@@ -36,77 +36,17 @@ void main() async => runApp(
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashPage.SplashPage(),
-        '/HOME': (context) => const HomePage(),
+        '/HOME': (context) => const HomeNavigator(),
         '/HOME/SET': (context) => const SetPage(),
         '/HOME/SET/FLASHCARDS': (context) => const FlashcardPage(),
         '/HOME/SET/ADAPTIVE': (context) => const AdaptivePage(),
         '/HOME/SET/EDIT': (context) => EditPage(),
-        '/ADD': (context) => const AddPage(),
+        '/ADD': (context) => const AddNavigator(),
         '/ADD/CUSTOM': (context) => const CustomAddPage(),
         '/ADD/QR1': (context) => const QRImportPage1(),
         '/ADD/QR1/QR2': (context) => const QRImportPage2(),
         '/ADD/QUIZLET': (context) => const QuizletImportPage(),
-        '/SETTINGS': (context) => const SettingsPage(),
+        '/SETTINGS': (context) => const SettingsNavigator(),
       },
     )
 );
-
-class HomeNavigator extends StatefulWidget {
-  const HomeNavigator({super.key});
-
-  @override
-  State<HomeNavigator> createState() => _HomeNavigatorState();
-}
-
-class _HomeNavigatorState extends State<HomeNavigator> {
-  int _selectedIndex = 0;
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    const HomePage(),
-    const AddPage(),
-    const SettingsPage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  void setHome() {
-    setState(() {
-      _selectedIndex = 0;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const BetterAppBar(Constants.title, null, null),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_rounded),
-            label: 'Add',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_rounded),
-            label: 'Settings',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        // selectedItemColor: Colors.blue[500],
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: _onItemTapped,
-      ),
-    );
-  }
-}

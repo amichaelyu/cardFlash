@@ -9,7 +9,17 @@ class AdaptivePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const BetterAppBar("AP Chem", null, true),
+        appBar: BetterAppBar("AP Chem", null, Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+              ),
+            )
+        ),),
         body: Column(
             children: const [
               Padding(

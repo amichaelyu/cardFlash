@@ -13,7 +13,7 @@ class QRImportPage2 extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/HOME');
+                Navigator.pushNamed(context, '/ADD/QR1');
               },
               child: const Icon(
                 Icons.arrow_back_ios_new_rounded,

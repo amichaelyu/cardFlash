@@ -4,6 +4,7 @@ import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database.dart';
+import 'navBarPages/homePage.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage.SplashPage({super.key});
