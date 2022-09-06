@@ -4,6 +4,7 @@ import 'package:card_flash/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../widgets.dart';
@@ -19,6 +20,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
   final _formKey = GlobalKey<FormState>();
   double? value = 0.0;
   int cardNum = 1;
+  Set<int> ignoreList = {};
   IconData? _icon = Icons.quiz_rounded;
   Object? title = Object(null);
   Object? desc = Object(null);
@@ -35,6 +37,12 @@ class _CustomAddPageState extends State<CustomAddPage> {
 
     setState(() {
       _icon = (icon != null) ? icon : _icon;
+    });
+  }
+
+  void _removeCard(int val) {
+    setState(() {
+      ignoreList.add(val);
     });
   }
 
@@ -80,11 +88,13 @@ class _CustomAddPageState extends State<CustomAddPage> {
                     final navigator = Navigator.of(context);
                     List<String> termsList = [], defsList = [];
                     for (int i = 0; i < cardNum; i++) {
-                      termsList.add(terms?.object[i] ?? "");
-                      defsList.add(defs?.object[i] ?? "");
+                      if (!ignoreList.contains(i)) {
+                        termsList.add(terms?.object[i] ?? "");
+                        defsList.add(defs?.object[i] ?? "");
+                      }
                     }
                     if (_formKey.currentState!.validate()) {
-                      await (await SharedPreferences.getInstance()).setInt("currentSet", await Database.insertSet(CardSet(await Database.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
+                      await (await SharedPreferences.getInstance()).setInt("currentTitleID", await Database.insertSet(CardSet(await Database.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
                       navigator.pop();
                       navigator.popAndPushNamed("/HOME/SET");
                     }
@@ -142,7 +152,25 @@ class _CustomAddPageState extends State<CustomAddPage> {
                   ),
                 ),
                 const Padding(padding: EdgeInsets.only(bottom: 10)),
-                for (int i = 0; i < cardNum; i++) Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs),),
+                for (int i = 0; i < cardNum; i++)
+                    Slidable(
+                      endActionPane: ActionPane(
+                        extentRatio: 0.25,
+                        motion: const ScrollMotion(),
+                        children: [
+                          SlidableAction(
+                            onPressed: (context) {
+                              _removeCard(i);
+                            },
+                            backgroundColor: const Color(0xFFFE4A49),
+                            foregroundColor: Colors.white,
+                            icon: Icons.delete_rounded,
+                            label: 'Delete',
+                          ),
+                        ],
+                      ),
+                      child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i)),),
+                  ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: GestureDetector(

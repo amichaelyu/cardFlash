@@ -16,10 +16,9 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   _readDB() async {
     await Database.initializeDB();
-    (await SharedPreferences.getInstance()).setInt("currentSet", -1);
+    (await SharedPreferences.getInstance()).setInt("currentTitleID", -1);
 
     // await Future.delayed(const Duration(seconds: 10));
-    // await Database.insertSet(CardSet(0, "AP Chemistry", "Weird Set", Icons.science_rounded, ["acetate", "suitcase/luggage", "What kind of ticket would you like?", "Charles I"], ["C₂H₃O₂⁻", "une valise", "quelle sorte de billet désirez-vous?", "King of England and son of James I. His power struggles with Parliament resulted in the English Civil War (1642-1648) in which he was defeated, tried for treason and beheaded in 1649"]));
 
     setState(() {
       Navigator.push(

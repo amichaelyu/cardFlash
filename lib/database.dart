@@ -17,7 +17,7 @@ class Database {
           'CREATE TABLE titles(titleID INTEGER PRIMARY KEY, timestamp INTEGER, position INTEGER, title TEXT, desc TEXT, iconCP INTEGER, iconFF TEXT, iconFP TEXT)',
         );
         return await db.execute(
-          'CREATE TABLE cards(cardID INTEGER PRIMARY KEY, timestamp INTEGER, position INTEGER, term TEXT, def TEXT, cardTitle INTEGER)', // , FOREIGN KEY(cardTitle) REFERENCES cards(titleID)
+          'CREATE TABLE cards(cardID INTEGER PRIMARY KEY, timestamp INTEGER, position INTEGER, term TEXT, def TEXT, correctInARow INTEGER, cardTitle INTEGER)', // , FOREIGN KEY(cardTitle) REFERENCES cards(titleID)
         );
       },
       version: 1,
@@ -42,8 +42,8 @@ class Database {
       for (int i = 0; i < set.terms.length; i++) {
         time = DateTime.now().millisecondsSinceEpoch;
         await txn.rawInsert(
-            'INSERT INTO cards(timestamp, position, term, def, cardTitle) VALUES(?, ?, ?, ?, ?)',
-            [time, i, set.terms[i], set.defs[i], titleID]
+            'INSERT INTO cards(timestamp, position, term, def, correctInARow, cardTitle) VALUES(?, ?, ?, ?, ?, ?)',
+            [time, i, set.terms[i], set.defs[i], 0, titleID]
         );
       }
     });
@@ -85,13 +85,13 @@ class Database {
     var lastQueryNum;
 
     while (true) {
-      if (prefs.getInt("currentSet") != -1) {
+      if (prefs.getInt("currentTitleID") != -1) {
         if (lastQuery == await db.rawQuery(
-            'SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentSet")]) ||
+            'SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]) ||
             lastQueryNum == Sqflite.firstIntValue(
                 await db.rawQuery('SELECT COUNT(*) FROM cards'))) continue;
         lastQuery =
-        await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentSet")]);
+        await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]);
         if (Sqflite.firstIntValue(
             await db.rawQuery('SELECT COUNT(*) FROM cards')) == 0) {
           lastQueryNum = Sqflite.firstIntValue(
@@ -110,17 +110,39 @@ class Database {
     var lastQueryNum;
 
     while (true) {
-      if (prefs.getInt("currentSet") != -1) {
-        if ((lastQuery == (await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentSet")]) + await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentSet")]))) && (lastQueryNum != (Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentSet")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles where titleID = ?', [prefs.getInt("currentSet")]))!))) {
+      if (prefs.getInt("currentTitleID") != -1) {
+        if ((lastQuery == (await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]) + await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]))) && (lastQueryNum != (Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles where titleID = ?', [prefs.getInt("currentTitleID")]))!))) {
           continue;
         }
-        lastQuery = ((await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentSet")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentSet")])));
-        if ((Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentSet")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentSet")]))!) == 0) {lastQueryNum = (Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentSet")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentSet")]))!);
+        lastQuery = ((await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")])));
+        if ((Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]))!) == 0) {lastQueryNum = (Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]))!);
           yield null;
         }
         yield await lastQuery;
       }
     }
+  }
+
+  static Future<void> updateData(CardSet set) async {
+    final db = await database;
+    final prefs = await SharedPreferences.getInstance();
+
+    // titles: (timestamp, position, title, desc, iconCP, iconFF, iconFP)
+    //[time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage]
+    // cards(timestamp, position, term, def, correctInARow, cardTitle)
+    // [time, i, set.terms[i], set.defs[i], 0, titleID]
+    await db.rawQuery('UPDATE titles SET  WHERE ?', [prefs.getInt('currentTitleID')]);
+  }
+
+  static Future<void> deleteRow() async {
+    final db = await database;
+    final prefs = await SharedPreferences.getInstance();
+
+    // titles: (timestamp, position, title, desc, iconCP, iconFF, iconFP)
+    //[time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage]
+    // cards(timestamp, position, term, def, correctInARow, cardTitle)
+    // [time, i, set.terms[i], set.defs[i], 0, titleID]
+    await db.rawQuery('UPDATE titles SET  WHERE ?', [prefs.getInt('currentTitleID')]);
   }
 
   static Future<void> debugDB() async {

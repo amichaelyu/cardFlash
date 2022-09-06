@@ -10,65 +10,13 @@ class EditPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: BetterAppBar("AP Chem", null, Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-              ),
-            )
-          ),
-        ),
-        body: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(0),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Database.insertSet(data);
-                      },
-                      child: const Text("Submit",
-                        style: TextStyle(fontSize: 25),
-                      ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(0),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Database.debugDB();
-                    },
-                    child: const Text("Read",
-                      style: TextStyle(fontSize: 25),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(0),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Database.clearTables();
-                    },
-                    child: const Text("Clear",
-                      style: TextStyle(fontSize: 25),
-                    ),
-                  ),
-                ),
-              ),
-            ]
-        )
+    return StreamBuilder(
+        stream: Database.getData(),
+    builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+      if (snapshot.data != null) {
+      }
+      return Text('data');
+    }
     );
   }
 }

@@ -59,7 +59,7 @@ class BetterCardHome extends StatelessWidget {
           splashColor: Colors.blue.withAlpha(30),
           onTap: () async {
             final navigator = Navigator.of(context);
-            (await SharedPreferences.getInstance()).setInt("currentSet", titleID);
+            (await SharedPreferences.getInstance()).setInt("currentTitleID", titleID);
             navigator.pushNamed(nav);
           },
           child: SizedBox(
@@ -281,8 +281,9 @@ class BetterTextFormFieldCard extends StatelessWidget {
   final validationText;
   final submission;
   final pos;
+  final controller = TextEditingController();
 
-  const BetterTextFormFieldCard(this.title, this.helper, this.required, this.validationText, this.submission, this.pos, {super.key});
+  BetterTextFormFieldCard(this.title, this.helper, this.required, this.validationText, this.submission, this.pos, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -292,30 +293,30 @@ class BetterTextFormFieldCard extends StatelessWidget {
         onChanged: (val) => submission.object[pos] = val,
         maxLines: null,
         validator: (value) {
-          if (required && (value == null || value.isEmpty)) {
-            return validationText;
-          }
-          return null;
+        if (required && (value == null || value.isEmpty)) {
+        return validationText;
+        }
+        return null;
         },
         decoration: InputDecoration(
-          filled: false,
-          helperText: helper,
-          helperStyle: const TextStyle(fontSize: 12),
-          contentPadding: EdgeInsets.zero,
-          labelText: title,
-          labelStyle: const TextStyle(fontSize: 18),
+        filled: false,
+        helperText: helper,
+        helperStyle: const TextStyle(fontSize: 12),
+        contentPadding: EdgeInsets.zero,
+        labelText: title,
+        labelStyle: const TextStyle(fontSize: 18),
         ),
         cursorColor: MediaQuery
             .of(context)
             .platformBrightness == Brightness.light ? Colors.black : Colors
             .white,
         style: TextStyle(
-          fontSize: 18,
-          color: MediaQuery
-              .of(context)
-              .platformBrightness == Brightness.light ? Colors.black : Colors
-              .white,
-        ),
+        fontSize: 18,
+        color: MediaQuery
+            .of(context)
+            .platformBrightness == Brightness.light ? Colors.black : Colors
+            .white,
+      ),
       ),
     );
   }
@@ -328,23 +329,26 @@ class BetterCardTextForm extends StatelessWidget {
   final position;
   final termStorage;
   final defStorage;
+  final shown;
 
-  BetterCardTextForm(this.term, this.def, this.position, this.termStorage, this.defStorage, {super.key});
+  const BetterCardTextForm(this.term, this.def, this.position, this.termStorage, this.defStorage, this.shown, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Center(
+      widthFactor: shown ? null : 0,
+      heightFactor: shown ? null : 0,
       child: Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: SizedBox(
           // height: 200,
-          width: 370,
+          width: shown ? 370 : 0,
           child: Column(
             children: <Widget>[
               ListTile(
-                title: BetterTextFormFieldCard(term, null, false, null, termStorage, position),
-                subtitle: BetterTextFormFieldCard(def, null, false, null, defStorage, position),
+                title: shown ? BetterTextFormFieldCard(term, null, false, null, termStorage, position) : null,
+                subtitle: shown ? BetterTextFormFieldCard(def, null, false, null, defStorage, position) : null,
               ),
             ],
           ),
