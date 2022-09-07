@@ -236,13 +236,15 @@ class BetterTextFormField extends StatelessWidget {
   final required;
   final validationText;
   final submission;
+  final inital;
 
-  const BetterTextFormField(this.title, this.helper, this.required, this.validationText, this.submission, {super.key});
+  const BetterTextFormField(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
       child: TextFormField(
+        initialValue: inital,
         onChanged: (val) => submission.object = val,
         validator: (value) {
           if (required && (value == null || value.isEmpty)) {
@@ -281,14 +283,15 @@ class BetterTextFormFieldCard extends StatelessWidget {
   final validationText;
   final submission;
   final pos;
-  final controller = TextEditingController();
+  final inital;
 
-  BetterTextFormFieldCard(this.title, this.helper, this.required, this.validationText, this.submission, this.pos, {super.key});
+  const BetterTextFormFieldCard(this.title, this.helper, this.required, this.validationText, this.submission, this.pos, this.inital, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: TextFormField(
+        initialValue: inital,
         autocorrect: false,
         onChanged: (val) => submission.object[pos] = val,
         maxLines: null,
@@ -330,8 +333,10 @@ class BetterCardTextForm extends StatelessWidget {
   final termStorage;
   final defStorage;
   final shown;
+  final initalTerm;
+  final initalDef;
 
-  const BetterCardTextForm(this.term, this.def, this.position, this.termStorage, this.defStorage, this.shown, {super.key});
+  const BetterCardTextForm(this.term, this.def, this.position, this.termStorage, this.defStorage, this.shown, this.initalTerm, this.initalDef, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -347,8 +352,8 @@ class BetterCardTextForm extends StatelessWidget {
           child: Column(
             children: <Widget>[
               ListTile(
-                title: shown ? BetterTextFormFieldCard(term, null, false, null, termStorage, position) : null,
-                subtitle: shown ? BetterTextFormFieldCard(def, null, false, null, defStorage, position) : null,
+                title: shown ? BetterTextFormFieldCard(term, null, false, null, termStorage, position, initalTerm) : null,
+                subtitle: shown ? BetterTextFormFieldCard(def, null, false, null, defStorage, position, initalDef) : null,
               ),
             ],
           ),

@@ -93,9 +93,9 @@ class Database {
         lastQuery =
         await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]);
         if (Sqflite.firstIntValue(
-            await db.rawQuery('SELECT COUNT(*) FROM cards')) == 0) {
+            await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")])) == 0) {
           lastQueryNum = Sqflite.firstIntValue(
-              await db.rawQuery('SELECT COUNT(*) FROM cards'));
+              await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]));
           yield null;
         }
         yield await lastQuery;
@@ -103,7 +103,7 @@ class Database {
     }
   }
 
-  static Stream<dynamic> getData() async* {
+  static Stream<dynamic> getSetStream() async* {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
     var lastQuery;
@@ -123,18 +123,62 @@ class Database {
     }
   }
 
-  static Future<void> updateData(CardSet set) async {
+  static Future<dynamic> getSetFuture() async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
 
-    // titles: (timestamp, position, title, desc, iconCP, iconFF, iconFP)
-    //[time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage]
-    // cards(timestamp, position, term, def, correctInARow, cardTitle)
-    // [time, i, set.terms[i], set.defs[i], 0, titleID]
-    await db.rawQuery('UPDATE titles SET  WHERE ?', [prefs.getInt('currentTitleID')]);
+    if ((Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]))!) == 0) {
+        return null;
+    }
+    return ((await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")])));
   }
 
-  static Future<void> deleteRow() async {
+  static Future<void> updateSet(CardSet set) async {
+    final db = await database;
+    final prefs = await SharedPreferences.getInstance();
+    final oldTermCount = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]));
+    // titles: (timestamp, position, title, desc, iconCP, iconFF, iconFP)
+    //[time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage]
+    // cards(timestamp, position, term, def, correctInARow, cardTitle)
+    // [time, i, set.terms[i], set.defs[i], 0, titleID]
+    int time = DateTime.now().millisecondsSinceEpoch;
+    await db.rawQuery(
+        'UPDATE titles SET timestamp = ?, position = ?, title = ?, desc = ?, iconCP = ?, iconFF = ?, iconFP = ? WHERE titleID = ?',
+        [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, prefs.getInt('currentTitleID')]);
+    for (int i = 0; i < oldTermCount!; i++) {
+      time = DateTime
+          .now()
+          .millisecondsSinceEpoch;
+      await db.rawQuery(
+          'UPDATE cards SET timestamp = ?, term = ?, def = ? WHERE cardTitle = ? AND position = ?',
+          [time, set.terms[i], set.defs[i], prefs.getInt('currentTitleID'), i]);
+    }
+    if (set.terms.length > oldTermCount) {
+      for (int i = oldTermCount; i < set.terms.length; i++) {
+        time = DateTime.now().millisecondsSinceEpoch;
+        await db.rawQuery(
+            'INSERT INTO cards(timestamp, position, term, def, correctInARow, cardTitle) VALUES(?, ?, ?, ?, ?, ?)',
+            [time, i, set.terms[i], set.defs[i], 0, prefs.getInt('currentTitleID')]
+        );
+      }
+    }
+  }
+
+  static Future<void> updateCorrectInARow(int position, int correctInARow) async {
+    final db = await database;
+    final prefs = await SharedPreferences.getInstance();
+
+    await db.rawQuery('UPDATE cards SET correctInARow = ? WHERE cardTitle = ? AND position = ?', [correctInARow, prefs.getInt('currentTitleID'), position]);
+  }
+
+  static Future<dynamic> getCorrectInARow(int position, int correctInARow) async {
+    final db = await database;
+    final prefs = await SharedPreferences.getInstance();
+
+    return await db.rawQuery('SELECT correctInARow FROM cards WHERE cardTitle = ? AND position = ?', [prefs.getInt('currentTitleID'), position]);
+  }
+
+  static Future<void> deleteSet() async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
 
@@ -142,7 +186,8 @@ class Database {
     //[time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage]
     // cards(timestamp, position, term, def, correctInARow, cardTitle)
     // [time, i, set.terms[i], set.defs[i], 0, titleID]
-    await db.rawQuery('UPDATE titles SET  WHERE ?', [prefs.getInt('currentTitleID')]);
+    await db.rawQuery('DELETE FROM titles WHERE titleID = ?', [prefs.getInt('currentTitleID')]);
+    await db.rawQuery('DELETE FROM cards WHERE cardTitle = ?', [prefs.getInt('currentTitleID')]);
   }
 
   static Future<void> debugDB() async {

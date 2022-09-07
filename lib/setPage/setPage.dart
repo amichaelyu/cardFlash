@@ -20,7 +20,7 @@ class _SetPageState extends State<SetPage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: Database.getData(),
+        stream: Database.getSetStream(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(

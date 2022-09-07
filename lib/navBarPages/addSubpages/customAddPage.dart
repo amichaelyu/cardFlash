@@ -95,8 +95,8 @@ class _CustomAddPageState extends State<CustomAddPage> {
                     }
                     if (_formKey.currentState!.validate()) {
                       await (await SharedPreferences.getInstance()).setInt("currentTitleID", await Database.insertSet(CardSet(await Database.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
-                      navigator.pop();
-                      navigator.popAndPushNamed("/HOME/SET");
+                      navigator.popUntil((route) => route.settings.name == "/HOME");
+                      navigator.pushNamed("/HOME/SET");
                     }
                     value = 0.0;
                   },
@@ -120,8 +120,8 @@ class _CustomAddPageState extends State<CustomAddPage> {
             key: _formKey,
             child: ListView(
               children: [
-                BetterTextFormField("Enter a title", null, true, "A title is required", title),
-                BetterTextFormField("Enter a description (Optional)", null, false, null, desc),
+                BetterTextFormField("Enter a title", null, true, "A title is required", title, null),
+                BetterTextFormField("Enter a description (Optional)", null, false, null, desc, null),
                 const Padding(padding: EdgeInsets.only(bottom: 5)),
                 Center(
                   child: Card(
@@ -169,7 +169,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
                           ),
                         ],
                       ),
-                      child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i)),),
+                      child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i), null, null),),
                   ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),

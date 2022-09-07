@@ -46,6 +46,7 @@ class HomeNavigator extends StatelessWidget {
               Navigator.push(
                 context,
                 PageRouteBuilder(
+                  settings: const RouteSettings(name: "/ADD"),
                   pageBuilder: (c, a1, a2) => const AddNavigator(),
                   transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
                   transitionDuration: const Duration(milliseconds: 0),
@@ -57,6 +58,7 @@ class HomeNavigator extends StatelessWidget {
               Navigator.push(
                 context,
                 PageRouteBuilder(
+                  settings: const RouteSettings(name: "/SETTINGS"),
                   pageBuilder: (c, a1, a2) => const SettingsNavigator(),
                   transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
                   transitionDuration: const Duration(milliseconds: 0),
