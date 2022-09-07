@@ -19,7 +19,7 @@ class AdaptivePage extends StatelessWidget {
                 Icons.arrow_back_ios_new_rounded,
               ),
             )
-        ),),
+        ),null),
         body: Column(
             children: const [
               Padding(

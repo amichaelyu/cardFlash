@@ -19,7 +19,7 @@ class QRImportPage2 extends StatelessWidget {
                 Icons.arrow_back_ios_new_rounded,
               ),
             )
-        ),),
+        ),null),
         body: const Text("")
     );
   }

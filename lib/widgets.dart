@@ -6,8 +6,9 @@ class BetterAppBar extends StatelessWidget implements PreferredSizeWidget {
   final title;
   final actions;
   final leading;
+  final bottom;
 
-  const BetterAppBar(this.title, this.actions, this.leading, {super.key});
+  const BetterAppBar(this.title, this.actions, this.leading, this.bottom, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,7 @@ class BetterAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
         actions: actions,
+        bottom: bottom,
     );
   }
 

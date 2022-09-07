@@ -1,8 +1,5 @@
-import 'dart:collection';
-
 import 'package:card_flash/database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,72 +46,50 @@ class _CustomAddPageState extends State<CustomAddPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          leading: Padding(
+        appBar: BetterAppBar("Create a Set", <Widget>[
+          Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
               child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
+                onTap: () async {
+                  value = null;
+                  final navigator = Navigator.of(context);
+                  List<String> termsList = [], defsList = [];
+                  for (int i = 0; i < cardNum; i++) {
+                    if (!ignoreList.contains(i)) {
+                      termsList.add(terms?.object[i] ?? "");
+                      defsList.add(defs?.object[i] ?? "");
+                    }
+                  }
+                  if (_formKey.currentState!.validate()) {
+                    await (await SharedPreferences.getInstance()).setInt("currentTitleID", await Database.insertSet(CardSet(await Database.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
+                    navigator.popUntil((route) => route.settings.name == "/HOME");
+                    navigator.pushNamed("/HOME/SET");
+                  }
+                  value = 0.0;
                 },
-                child: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                child: Icon(
+                  Icons.check_rounded,
+                  color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white,
                 ),
               )
-          ),
-          backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.white : null,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.white : Colors.black,
-            statusBarIconBrightness: MediaQuery.of(context).platformBrightness == Brightness.light ? Brightness.dark : Brightness.light, // android
-            statusBarBrightness: MediaQuery.of(context).platformBrightness == Brightness.light ? Brightness.light : Brightness.dark, // ios
-          ),
-          titleTextStyle: TextStyle(
-            color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black,
-            fontSize: 30,
-          ),
-          iconTheme: IconThemeData(color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black),
-          title: const Text(
-            "Create a Set",
-            style: TextStyle(
-                fontWeight: FontWeight.bold
-            ),
-          ),
-          actions: <Widget>[
-            Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
-                child: GestureDetector(
-                  onTap: () async {
-                    value = null;
-                    final navigator = Navigator.of(context);
-                    List<String> termsList = [], defsList = [];
-                    for (int i = 0; i < cardNum; i++) {
-                      if (!ignoreList.contains(i)) {
-                        termsList.add(terms?.object[i] ?? "");
-                        defsList.add(defs?.object[i] ?? "");
-                      }
-                    }
-                    if (_formKey.currentState!.validate()) {
-                      await (await SharedPreferences.getInstance()).setInt("currentTitleID", await Database.insertSet(CardSet(await Database.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
-                      navigator.popUntil((route) => route.settings.name == "/HOME");
-                      navigator.pushNamed("/HOME/SET");
-                    }
-                    value = 0.0;
-                  },
-                  child: Icon(
-                    Icons.check_rounded,
-                    color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white,
-                  ),
-                )
+          )
+        ], Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+              ),
             )
-          ],
-          bottom: PreferredSize(
-            preferredSize: const Size(double.infinity, 1.0),
-            child: LinearProgressIndicator(
-              value: value,
-              semanticsLabel: "Checks form and then submits it into the database",
-            ),
+        ), PreferredSize(
+          preferredSize: const Size(double.infinity, 1.0),
+          child: LinearProgressIndicator(
+            value: value,
+            semanticsLabel: "Checks form and then submits it into the database",
           ),
-        ),
+        ),),
         body: DismissKeyboard(
           child: Form(
             key: _formKey,

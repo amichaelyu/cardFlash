@@ -15,7 +15,7 @@ class HomeNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const BetterAppBar(Constants.title, null, null),
+      appBar: const BetterAppBar(Constants.title, null, null, null),
       body: const Center(
         child: _HomePage(),
       ),

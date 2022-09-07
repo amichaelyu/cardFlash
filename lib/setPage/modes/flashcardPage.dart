@@ -59,7 +59,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         Icons.arrow_back_ios_new_rounded,
                       ),
                     )
-                ),),
+                ),null),
                 body: ListView(
                     children: [
                       Padding(
@@ -150,7 +150,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         Icons.arrow_back_ios_new_rounded,
                       ),
                     )
-                ),),
+                ),null),
                 body: ListView(children: const [
                   Padding(padding: EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,

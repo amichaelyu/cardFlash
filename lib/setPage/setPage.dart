@@ -32,8 +32,9 @@ class _SetPageState extends State<SetPage> {
                             onTap: () {
                               Navigator.pushNamed(context, "/HOME/SET/EDIT");
                             },
-                            child: const Icon(
+                            child: Icon(
                               Icons.edit_rounded,
+                              color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white,
                             ),
                           )
                       )
@@ -48,7 +49,7 @@ class _SetPageState extends State<SetPage> {
                           Icons.arrow_back_ios_new_rounded,
                         ),
                       )
-                  ),),
+                  ),null),
                 body: ListView(
                     children: [
                       Padding(
@@ -141,7 +142,7 @@ class _SetPageState extends State<SetPage> {
                     ),
                   )
               ),
-              ),
+              null),
               body: ListView(children: const [
               Padding(padding: EdgeInsets.only(top: 20),
                 child: Align(alignment: Alignment.center,

@@ -1,6 +1,5 @@
 import 'package:card_flash/database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,91 +63,97 @@ class _EditPageState extends State<EditPage> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
-                appBar: AppBar(
-                  automaticallyImplyLeading: false,
-                  leading: Padding(
+                appBar: BetterAppBar("Edit",
+                  <Widget>[
+                  Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
                       child: GestureDetector(
                         onTap: () async {
-                          value = null;
-                          final navigator = Navigator.of(context);
-                          List<String> termsList = [], defsList = [];
-                          for (int i = 0; i < cardNum; i++) {
-                            if (!ignoreList.contains(i)) {
-                              termsList.add(terms?.object[i] ?? (snapshot.data.length - 1 <= cardNum ? snapshot.data[i+1]['term'] : ""));
-                              defsList.add(defs?.object[i] ?? (snapshot.data.length - 1 <= cardNum ? snapshot.data[i+1]['def'] : ""));
-                            }
-                          }
-                          if (_formKey.currentState!.validate()) {
-                            await Database.updateSet(CardSet(snapshot.data[0]['position'], ((title?.object == null) ? snapshot.data[0]['title'] : title?.object), ((desc?.object == null) ? snapshot.data[0]['desc'] : desc?.object), _icon!, termsList, defsList));
-                            navigator.pop();
-                          }
-                          value = 0.0;
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Are you sure you want to delete this set?'),
+                              content: const Text('This process is currently irreversible!'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.popUntil(context, (route) => route.settings.name == "/HOME");
+                                    await Future.delayed(const Duration(seconds: 1));
+                                    await Database.deleteSet((await SharedPreferences.getInstance()).getInt('currentTitleID'));
+                                  },
+                                  child: const Text(
+                                    'Confirm',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
                         },
-                        child: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
+                        child: Icon(
+                          Icons.delete_rounded,
+                          color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white,
                         ),
                       )
-                  ),
-                  backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.white : null,
-                  systemOverlayStyle: SystemUiOverlayStyle(
-                    statusBarColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.white : Colors.black,
-                    statusBarIconBrightness: MediaQuery.of(context).platformBrightness == Brightness.light ? Brightness.dark : Brightness.light, // android
-                    statusBarBrightness: MediaQuery.of(context).platformBrightness == Brightness.light ? Brightness.light : Brightness.dark, // ios
-                  ),
-                  titleTextStyle: TextStyle(
-                    color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black,
-                    fontSize: 30,
-                  ),
-                  iconTheme: IconThemeData(color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black),
-                  title: const Text(
-                    "Edit",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  actions: <Widget>[
-                    Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
-                        child: GestureDetector(
-                          onTap: () async {
-                            showDialog<String>(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: const Text('Are you sure you want to delete this set?'),
-                                content: const Text('This process is currently irreversible!'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Cancel'),
+                  )
+                ],
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        var termDefChanged = false;
+                        if (snapshot.data.length - 1 == cardNum) {
+                          for (int i = 0; i < cardNum; i++) {
+                            if (!ignoreList.contains(i)) {
+                              if ((terms?.object[i] != null) && (terms?.object[i] != snapshot.data[i + 1]['term']) || ((defs?.object[i] != null) && (defs?.object[i] != snapshot.data[i + 1]['def']))) {
+                                termDefChanged = true;
+                                break;
+                              }
+                            }
+                          }
+                        }
+                        if (termDefChanged || (snapshot.data.length - 1 != cardNum) || ((title?.object != null) && (title?.object != snapshot.data[0]['title'])) || ((desc?.object != null) && (desc?.object != snapshot.data[0]['desc'])) || ((_icon?.codePoint != snapshot.data[0]['iconCP']) && (_icon?.fontPackage != snapshot.data[0]['iconFP']) && (_icon?.fontFamily != snapshot.data[0]['iconFF']))) {
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Are you sure you want to exit?'),
+                              content: const Text('This set has not been saved yet!'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.popUntil(context, (route) => route.settings.name == "/HOME/SET");
+                                  },
+                                  child: const Text(
+                                    'Exit',
+                                    style: TextStyle(color: Colors.red),
                                   ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.popUntil(context, (route) => route.settings.name == "/HOME");
-                                      await Future.delayed(const Duration(seconds: 1));
-                                      await Database.deleteSet((await SharedPreferences.getInstance()).getInt('currentTitleID'));
-                                    },
-                                    child: const Text(
-                                        'Confirm',
-                                        style: TextStyle(color: Colors.red),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          child: Icon(
-                            Icons.delete_rounded,
-                            color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white,
-                          ),
-                        )
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        else {
+                          Navigator.popUntil(context, (route) => route.settings.name == "/HOME/SET");
+                        }
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                      ),
                     )
-                  ],
-                  bottom: PreferredSize(
-                    preferredSize: const Size(double.infinity, 1.0),
-                    child: LinearProgressIndicator(
-                      value: value,
-                      semanticsLabel: "Checks form and then submits it into the database",
+                ),
+                  PreferredSize(
+                  preferredSize: const Size(double.infinity, 1.0),
+                  child: LinearProgressIndicator(
+                    value: value,
+                    semanticsLabel: "Checks form and then submits it into the database",
                     ),
                   ),
                 ),
@@ -225,7 +230,38 @@ class _EditPageState extends State<EditPage> {
                           ]
                       ),
                     )
-                )
+                ),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () async {
+                    var mess = ScaffoldMessenger.of(context);
+                    value = null;
+                    List<String> termsList = [], defsList = [];
+                    for (int i = 0; i < cardNum; i++) {
+                      if (!ignoreList.contains(i)) {
+                        termsList.add(terms?.object[i] ?? (snapshot.data.length - 1 <= cardNum ? snapshot.data[i+1]['term'] : ""));
+                        defsList.add(defs?.object[i] ?? (snapshot.data.length - 1 <= cardNum ? snapshot.data[i+1]['def'] : ""));
+                      }
+                    }
+                    if (_formKey.currentState!.validate()) {
+                      await Database.updateSet(CardSet(snapshot.data[0]['position'], ((title?.object == null) ? snapshot.data[0]['title'] : title?.object), ((desc?.object == null) ? snapshot.data[0]['desc'] : desc?.object), _icon!, termsList, defsList));
+                      mess.showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.black87,
+                          content: Text(
+                            'Saved!',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          duration: Duration(milliseconds: 1000),
+                        ),
+                      );
+                    }
+                    value = 0.0;
+                  },
+                  backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.green[400] : Colors.green[700],
+                  child: const Icon(Icons.check_rounded),
+                ),
             );
           }
           else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
@@ -244,7 +280,7 @@ class _EditPageState extends State<EditPage> {
                       ),
                     )
                 ),
-                ),
+                null),
                 body: ListView(children: const [
                   Padding(padding: EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
