@@ -126,7 +126,7 @@ class _EditPageState extends State<EditPage> {
                                     onPressed: () async {
                                       Navigator.popUntil(context, (route) => route.settings.name == "/HOME");
                                       await Future.delayed(const Duration(seconds: 1));
-                                      await Database.deleteSet();
+                                      await Database.deleteSet((await SharedPreferences.getInstance()).getInt('currentTitleID'));
                                     },
                                     child: const Text(
                                         'Confirm',

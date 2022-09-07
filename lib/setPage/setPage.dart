@@ -87,7 +87,7 @@ class _SetPageState extends State<SetPage> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
                                           20)),
-                                  child: Column(
+                                  child: ListView(
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(
@@ -96,7 +96,7 @@ class _SetPageState extends State<SetPage> {
                                             snapshot.data[i + 1]['term'],
                                             textAlign: TextAlign.center,
                                             style: const TextStyle(
-                                                fontSize: 25),
+                                                fontSize: 27),
                                           ),
                                         ),
                                         Padding(

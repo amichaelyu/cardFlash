@@ -15,6 +15,20 @@ class FlashcardPage extends StatefulWidget {
 class _FlashcardPageState extends State<FlashcardPage> {
   final width = 350.0;
   int _index = 0;
+  late List<String> text = [];
+
+  _loadTerms() async {
+    var set = await Database.getSetFuture();
+    for (int i = 0; i < set.length - 1; i++) {
+      text.add(set[i+1]['term']);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTerms();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +37,19 @@ class _FlashcardPageState extends State<FlashcardPage> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
-                appBar: BetterAppBar(snapshot.data.first['title'], null, Padding(
+                appBar: BetterAppBar(snapshot.data.first['title'], <Widget>[
+                Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                child: GestureDetector(
+                  onTap: () {
+                  },
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    size: 30,
+                  ),
+                )
+                )]
+                  , Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
                     child: GestureDetector(
                       onTap: () {
@@ -39,7 +65,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                         child: SizedBox(
-                          height: 400, // card height
+                          height: 650, // card height
                           child: PageView.builder(
                             itemCount: snapshot.data.length - 1,
                             controller: PageController(
@@ -59,29 +85,38 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
                                           20)),
-                                  child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(
-                                              15),
-                                          child: Text(
-                                            snapshot.data[i + 1]['term'],
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontSize: 25),
+                                  child: InkWell(
+                                    splashColor: Colors.blue.withAlpha(30),
+                                    onTap: () async {
+                                      setState(() {
+                                        if (text[i] == snapshot.data[i + 1]['term']) {
+                                          text[i] = snapshot.data[i + 1]['def'];
+                                        }
+                                        else {
+                                          text[i] = snapshot.data[i + 1]['term'];
+                                        }
+                                      });
+                                    },
+                                    child: SizedBox(
+                                      width: 380,
+                                      child: Center(
+                                        child: ListView(
+                                          shrinkWrap: true,
+                                          children: [
+                                              Padding(
+                                                padding: const EdgeInsets
+                                                    .all(10),
+                                                child: Text(
+                                                  text[i],
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                      fontSize: 30),
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets
-                                              .fromLTRB(10, 0, 10, 0),
-                                          child: Text(
-                                            snapshot.data[i + 1]['def'],
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontSize: 20),
-                                          ),
-                                        ),
-                                      ]
+                                      ),
+                                    ),
                                   ),
                                 ),
                               );
@@ -91,10 +126,10 @@ class _FlashcardPageState extends State<FlashcardPage> {
                       ),
                       // Row(
                       //   children: const [
-                      //     BetterCard3(
+                      //     BetterCardFlash(
                       //         "Flashcards", "", Icons.style_rounded,
                       //         "/SET/FLASHCARDS"),
-                      //     BetterCard3(
+                      //     BetterCardFlash(
                       //         "Adaptive", "", Icons.memory_rounded,
                       //         "/SET/ADAPTIVE"),
                       //   ],

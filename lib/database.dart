@@ -78,31 +78,6 @@ class Database {
     }
   }
 
-  static Stream<dynamic> getCards() async* {
-    final db = await database;
-    final prefs = await SharedPreferences.getInstance();
-    var lastQuery;
-    var lastQueryNum;
-
-    while (true) {
-      if (prefs.getInt("currentTitleID") != -1) {
-        if (lastQuery == await db.rawQuery(
-            'SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]) ||
-            lastQueryNum == Sqflite.firstIntValue(
-                await db.rawQuery('SELECT COUNT(*) FROM cards'))) continue;
-        lastQuery =
-        await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]);
-        if (Sqflite.firstIntValue(
-            await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")])) == 0) {
-          lastQueryNum = Sqflite.firstIntValue(
-              await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]));
-          yield null;
-        }
-        yield await lastQuery;
-      }
-    }
-  }
-
   static Stream<dynamic> getSetStream() async* {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
@@ -178,7 +153,7 @@ class Database {
     return await db.rawQuery('SELECT correctInARow FROM cards WHERE cardTitle = ? AND position = ?', [prefs.getInt('currentTitleID'), position]);
   }
 
-  static Future<void> deleteSet() async {
+  static Future<void> deleteSet(titleID) async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
 
@@ -186,8 +161,8 @@ class Database {
     //[time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage]
     // cards(timestamp, position, term, def, correctInARow, cardTitle)
     // [time, i, set.terms[i], set.defs[i], 0, titleID]
-    await db.rawQuery('DELETE FROM titles WHERE titleID = ?', [prefs.getInt('currentTitleID')]);
-    await db.rawQuery('DELETE FROM cards WHERE cardTitle = ?', [prefs.getInt('currentTitleID')]);
+    await db.rawQuery('DELETE FROM titles WHERE titleID = ?', [titleID]);
+    await db.rawQuery('DELETE FROM cards WHERE cardTitle = ?', [titleID]);
   }
 
   static Future<void> debugDB() async {

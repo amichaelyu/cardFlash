@@ -4,6 +4,7 @@ import 'package:card_flash/database.dart';
 import 'package:card_flash/navBarPages/settingsPage.dart';
 import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../constants.dart';
 import 'addPage.dart';
@@ -89,7 +90,46 @@ class _HomePage extends StatelessWidget {
               padding: const EdgeInsets.only(top: 5),
               child: ListView(
                 children: [
-                  for (var set in snapshot.data) BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET')
+                  for (var set in snapshot.data)
+                    Slidable(
+                      endActionPane: ActionPane(
+                      extentRatio: 0.25,
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) async {
+                            showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Are you sure you want to delete this set?'),
+                              content: const Text('This process is currently irreversible!'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await Database.deleteSet(set['titleID']);
+                                  },
+                                  child: const Text(
+                                    'Confirm',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ));
+                          },
+                          backgroundColor: const Color(0xFFFE4A49),
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete_rounded,
+                          label: 'Delete',
+                      ),
+                    ],
+                  ),
+                  child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET')
+                )
                 ]
             ),
             );

@@ -69,7 +69,7 @@ class BetterCardHome extends StatelessWidget {
               children: <Widget>[
                 ListTile(
                   leading: Icon(icon),
-                  title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                  title: Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 5), child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20))),
                   subtitle: Text(desc),
                 ),
                 Row(
@@ -211,7 +211,7 @@ class BetterCardAdd extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 ListTile(
-                  leading: Icon(icon),
+                  leading: icon,
                   title: Text(
                     title,
                     style: const TextStyle(
