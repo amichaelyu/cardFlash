@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -125,14 +127,21 @@ class Database {
     await db.rawQuery(
         'UPDATE titles SET timestamp = ?, position = ?, title = ?, desc = ?, iconCP = ?, iconFF = ?, iconFP = ? WHERE titleID = ?',
         [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, prefs.getInt('currentTitleID')]);
-    print(oldTermCount);
-    for (int i = 0; i < oldTermCount!; i++) {
+    int firstCount = min(set.terms.length , oldTermCount!);
+    for (int i = 0; i < firstCount; i++) {
       time = DateTime
           .now()
           .millisecondsSinceEpoch;
       await db.rawQuery(
           'UPDATE cards SET timestamp = ?, term = ?, def = ? WHERE cardTitle = ? AND position = ?',
           [time, set.terms[i], set.defs[i], prefs.getInt('currentTitleID'), i]);
+    }
+    if (set.terms.length < oldTermCount) {
+      for (int i = set.terms.length; i < oldTermCount; i++) {
+        await db.rawQuery(
+            'DELETE FROM cards WHERE cardTitle = ? AND position = ?',
+            [prefs.getInt('currentTitleID'), i]);
+      }
     }
     if (set.terms.length > oldTermCount) {
       for (int i = oldTermCount; i < set.terms.length; i++) {

@@ -18,6 +18,7 @@ class _EditPageState extends State<EditPage> {
   final _formKey = GlobalKey<FormState>();
   double? value = 0.0;
   late int cardNum;
+  int cardMinus = 0;
   Set<int> ignoreList = {};
   late IconData? _icon;
   late Object title;
@@ -55,6 +56,7 @@ class _EditPageState extends State<EditPage> {
   void _removeCard(int val) {
     setState(() {
       ignoreList.add(val);
+      cardMinus--;
     });
   }
 
@@ -108,7 +110,7 @@ class _EditPageState extends State<EditPage> {
                     child: GestureDetector(
                       onTap: () async {
                         var termDefChanged = false;
-                        if (snapshot.data.length - 1 == cardNum) {
+                        if (snapshot.data.length - 1 == cardNum + cardMinus) {
                           for (int i = 0; i < cardNum; i++) {
                             if (!ignoreList.contains(i)) {
                               if ((terms?.object[i] != null) && (terms?.object[i] != snapshot.data[i + 1]['term']) || ((defs?.object[i] != null) && (defs?.object[i] != snapshot.data[i + 1]['def']))) {
@@ -118,7 +120,7 @@ class _EditPageState extends State<EditPage> {
                             }
                           }
                         }
-                        if (termDefChanged || (snapshot.data.length - 1 != cardNum) || ((title.object != null) && (title.object != snapshot.data[0]['title'])) || ((desc.object != null) && (desc.object != snapshot.data[0]['desc'])) || ((_icon?.codePoint != snapshot.data[0]['iconCP']) && (_icon?.fontPackage != snapshot.data[0]['iconFP']) && (_icon?.fontFamily != snapshot.data[0]['iconFF']))) {
+                        if (termDefChanged || (snapshot.data.length - 1 != cardNum + cardMinus) || ((title.object != null) && (title.object != snapshot.data[0]['title'])) || ((desc.object != null) && (desc.object != snapshot.data[0]['desc'])) || ((_icon?.codePoint != snapshot.data[0]['iconCP']) && (_icon?.fontPackage != snapshot.data[0]['iconFP']) && (_icon?.fontFamily != snapshot.data[0]['iconFF']))) {
                           showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
@@ -240,12 +242,13 @@ class _EditPageState extends State<EditPage> {
                     List<String> termsList = [], defsList = [];
                     for (int i = 0; i < cardNum; i++) {
                       if (!ignoreList.contains(i)) {
-                        termsList.add(terms?.object[i] ?? (snapshot.data.length - 1 <= cardNum ? snapshot.data[i+1]['term'] : ""));
-                        defsList.add(defs?.object[i] ?? (snapshot.data.length - 1 <= cardNum ? snapshot.data[i+1]['def'] : ""));
+                        termsList.add(terms?.object[i] ?? (snapshot.data.length - 1 > i ? snapshot.data[i+1]['term'] : ""));
+                        defsList.add(defs?.object[i] ?? (snapshot.data.length - 1 > i ? snapshot.data[i+1]['def'] : ""));
                       }
                     }
                     if (_formKey.currentState!.validate()) {
                       await Database.updateSet(CardSet(snapshot.data[0]['position'], title.object, desc.object, _icon!, termsList, defsList));
+                      await Database.resetAdaptive();
                       mess.showSnackBar(
                         const SnackBar(
                           backgroundColor: Colors.black87,
