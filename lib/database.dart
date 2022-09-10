@@ -154,6 +154,15 @@ class Database {
     }
   }
 
+  static Future<void> updatePosition(int oldPosition, int newPosition) async {
+    final db = await database;
+
+    int time = DateTime.now().millisecondsSinceEpoch;
+    await db.rawQuery(
+        'UPDATE titles SET timestamp = ?, position = ? WHERE position = ?',
+        [time, newPosition, oldPosition]);
+  }
+
   /// positive for correct
   /// negative for incorrect
   static Future<void> updateCorrectIncorrect(int position, int correctIncorrect) async {

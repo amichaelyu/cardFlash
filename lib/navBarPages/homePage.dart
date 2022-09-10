@@ -76,10 +76,14 @@ class HomeNavigator extends StatelessWidget {
   }
 }
 
-class _HomePage extends StatelessWidget {
-
+class _HomePage extends StatefulWidget {
   const _HomePage({super.key});
 
+  @override
+  State<_HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<_HomePage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -88,48 +92,57 @@ class _HomePage extends StatelessWidget {
           if (snapshot.data != null) {
             return Padding(
               padding: const EdgeInsets.only(top: 5),
-              child: ListView(
+              child: ReorderableListView(
+                onReorder: (int oldIndex, int newIndex)  {
+                  setState(() {
+                      Database.updatePosition(oldIndex, newIndex);
+                    }
+                  );
+                },
                 children: [
                   for (var set in snapshot.data)
-                    Slidable(
-                      endActionPane: ActionPane(
-                      extentRatio: 0.25,
-                      motion: const ScrollMotion(),
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) async {
-                            showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                              title: const Text('Are you sure you want to delete this set?'),
-                              content: const Text('This process is currently irreversible!'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                    await Database.deleteSet(set['titleID']);
-                                  },
-                                  child: const Text(
-                                    'Confirm',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
-                            ));
-                          },
-                          backgroundColor: const Color(0xFFFE4A49),
-                          foregroundColor: Colors.white,
-                          icon: Icons.delete_rounded,
-                          label: 'Delete',
+                    ListTile(
+                      key: Key(set['position'].toString()),
+                      title: Slidable(
+                          endActionPane: ActionPane(
+                            extentRatio: 0.25,
+                            motion: const ScrollMotion(),
+                            children: [
+                              SlidableAction(
+                                onPressed: (context) async {
+                                  showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) => AlertDialog(
+                                        title: const Text('Are you sure you want to delete this set?'),
+                                        content: const Text('This process is currently irreversible!'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              Navigator.pop(context);
+                                              await Database.deleteSet(set['titleID']);
+                                            },
+                                            child: const Text(
+                                              'Confirm',
+                                              style: TextStyle(color: Colors.red),
+                                            ),
+                                          ),
+                                        ],
+                                      ));
+                                },
+                                backgroundColor: const Color(0xFFFE4A49),
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete_rounded,
+                                label: 'Delete',
+                              ),
+                            ],
+                          ),
+                          child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET', '/HOME/SET/ADAPTIVE')
                       ),
-                    ],
-                  ),
-                  child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET', '/HOME/SET/ADAPTIVE')
-                )
+                    ),
                 ]
             ),
             );
