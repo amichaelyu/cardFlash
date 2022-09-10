@@ -71,6 +71,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
+  csslib:
+    dependency: transitive
+    description:
+      name: csslib
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.17.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -125,13 +132,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.1"
-  flutter_js:
-    dependency: "direct main"
-    description:
-      name: flutter_js
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.3+2"
   flutter_launcher_icons:
     dependency: "direct main"
     description:
@@ -169,7 +169,28 @@ packages:
       name: font_awesome_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "10.1.0"
+    version: "10.2.1"
+  html:
+    dependency: transitive
+    description:
+      name: html
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.15.0"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.5"
+  http_parser:
+    dependency: transitive
+    description:
+      name: http_parser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.1"
   image:
     dependency: transitive
     description:
@@ -309,7 +330,7 @@ packages:
       name: shared_preferences_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.12"
+    version: "2.0.13"
   shared_preferences_ios:
     dependency: transitive
     description:
@@ -434,6 +455,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
+  web_scraper:
+    dependency: "direct main"
+    description:
+      name: web_scraper
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   win32:
     dependency: transitive
     description:

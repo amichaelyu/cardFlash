@@ -45,7 +45,7 @@ dependencies:
   font_awesome_flutter: ^10.1.0
   line_awesome_flutter: ^2.0.0
   flutter_slidable: ^2.0.0
-  flutter_js: ^0.0.3+2
+  web_scraper: ^0.1.4
 
 dev_dependencies:
   flutter_test:

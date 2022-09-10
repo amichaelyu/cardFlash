@@ -118,7 +118,7 @@ class _EditPageState extends State<EditPage> {
                             }
                           }
                         }
-                        if (termDefChanged || (snapshot.data.length - 1 != cardNum) || ((title?.object != null) && (title?.object != snapshot.data[0]['title'])) || ((desc?.object != null) && (desc?.object != snapshot.data[0]['desc'])) || ((_icon?.codePoint != snapshot.data[0]['iconCP']) && (_icon?.fontPackage != snapshot.data[0]['iconFP']) && (_icon?.fontFamily != snapshot.data[0]['iconFF']))) {
+                        if (termDefChanged || (snapshot.data.length - 1 != cardNum) || ((title.object != null) && (title.object != snapshot.data[0]['title'])) || ((desc.object != null) && (desc.object != snapshot.data[0]['desc'])) || ((_icon?.codePoint != snapshot.data[0]['iconCP']) && (_icon?.fontPackage != snapshot.data[0]['iconFP']) && (_icon?.fontFamily != snapshot.data[0]['iconFF']))) {
                           showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
@@ -245,7 +245,7 @@ class _EditPageState extends State<EditPage> {
                       }
                     }
                     if (_formKey.currentState!.validate()) {
-                      await Database.updateSet(CardSet(snapshot.data[0]['position'], title?.object, desc?.object, _icon!, termsList, defsList));
+                      await Database.updateSet(CardSet(snapshot.data[0]['position'], title.object, desc.object, _icon!, termsList, defsList));
                       mess.showSnackBar(
                         const SnackBar(
                           backgroundColor: Colors.black87,
