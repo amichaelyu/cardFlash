@@ -154,13 +154,34 @@ class Database {
     }
   }
 
-  static Future<void> updatePosition(int oldPosition, int newPosition) async {
+  static Future<void> updatePosition(int oldPosition, int newPosition, int titleID) async {
     final db = await database;
+    final oldTitles = await db.rawQuery('SELECT * FROM titles ORDER BY position');
 
-    int time = DateTime.now().millisecondsSinceEpoch;
-    await db.rawQuery(
-        'UPDATE titles SET timestamp = ?, position = ? WHERE position = ?',
-        [time, newPosition, oldPosition]);
+    if (newPosition < oldPosition) {
+      int time = DateTime.now().millisecondsSinceEpoch;
+      db.rawQuery(
+          'UPDATE titles SET timestamp = ?, position = ? WHERE titleID = ?',
+          [time, newPosition, titleID]);
+      for (int i = newPosition; i < oldPosition; i++) {
+        int time = DateTime.now().millisecondsSinceEpoch;
+        db.rawQuery(
+            'UPDATE titles SET timestamp = ?, position = ? WHERE titleID = ?',
+            [time, i + 1, oldTitles[i]['titleID']]);
+      }
+    }
+    else if (newPosition > oldPosition) {
+      int time = DateTime.now().millisecondsSinceEpoch;
+      db.rawQuery(
+          'UPDATE titles SET timestamp = ?, position = ? WHERE titleID = ?',
+          [time, newPosition, titleID]);
+      for (int i = oldPosition + 1; i < newPosition; i++) {
+        int time = DateTime.now().millisecondsSinceEpoch;
+        db.rawQuery(
+            'UPDATE titles SET timestamp = ?, position = ? WHERE titleID = ?',
+            [time, i - 1, oldTitles[i]['titleID']]);
+      }
+    }
   }
 
   /// positive for correct

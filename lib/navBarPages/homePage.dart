@@ -93,56 +93,95 @@ class _HomePageState extends State<_HomePage> {
             return Padding(
               padding: const EdgeInsets.only(top: 5),
               child: ReorderableListView(
-                onReorder: (int oldIndex, int newIndex)  {
-                  setState(() {
-                      Database.updatePosition(oldIndex, newIndex);
-                    }
-                  );
+                onReorder: (int oldIndex, int newIndex) async {
+                  await Database.updatePosition(oldIndex, newIndex, snapshot.data[oldIndex]['titleID']);
                 },
                 children: [
                   for (var set in snapshot.data)
-                    ListTile(
-                      key: Key(set['position'].toString()),
-                      title: Slidable(
-                          endActionPane: ActionPane(
-                            extentRatio: 0.25,
-                            motion: const ScrollMotion(),
-                            children: [
-                              SlidableAction(
-                                onPressed: (context) async {
-                                  showDialog<String>(
-                                      context: context,
-                                      builder: (BuildContext context) => AlertDialog(
-                                        title: const Text('Are you sure you want to delete this set?'),
-                                        content: const Text('This process is currently irreversible!'),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(context),
-                                            child: const Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              Navigator.pop(context);
-                                              await Database.deleteSet(set['titleID']);
-                                            },
-                                            child: const Text(
-                                              'Confirm',
-                                              style: TextStyle(color: Colors.red),
-                                            ),
-                                          ),
-                                        ],
-                                      ));
-                                },
-                                backgroundColor: const Color(0xFFFE4A49),
-                                foregroundColor: Colors.white,
-                                icon: Icons.delete_rounded,
-                                label: 'Delete',
-                              ),
-                            ],
-                          ),
-                          child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET', '/HOME/SET/ADAPTIVE')
+                    Slidable(
+                      key: Key(set['titleID'].toString()),
+                      endActionPane: ActionPane(
+                      extentRatio: 0.25,
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) async {
+                            showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: const Text('Are you sure you want to delete this set?'),
+                                  content: const Text('This process is currently irreversible!'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                        await Database.deleteSet(set['titleID']);
+                                      },
+                                      child: const Text(
+                                        'Confirm',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                  ],
+                                ));
+                          },
+                        backgroundColor: const Color(0xFFFE4A49),
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete_rounded,
+                        label: 'Delete',
+                        ),
+                        ]
+                        ),
+                      child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET', '/HOME/SET/ADAPTIVE')
                       ),
-                    ),
+
+
+                    // ListTile(
+                    //   key: Key(set['position'].toString()),
+                    //   title: Slidable(
+                    //       endActionPane: ActionPane(
+                    //         extentRatio: 0.25,
+                    //         motion: const ScrollMotion(),
+                    //         children: [
+                    //           SlidableAction(
+                    //             onPressed: (context) async {
+                    //               showDialog<String>(
+                    //                   context: context,
+                    //                   builder: (BuildContext context) => AlertDialog(
+                    //                     title: const Text('Are you sure you want to delete this set?'),
+                    //                     content: const Text('This process is currently irreversible!'),
+                    //                     actions: <Widget>[
+                    //                       TextButton(
+                    //                         onPressed: () => Navigator.pop(context),
+                    //                         child: const Text('Cancel'),
+                    //                       ),
+                    //                       TextButton(
+                    //                         onPressed: () async {
+                    //                           Navigator.pop(context);
+                    //                           await Database.deleteSet(set['titleID']);
+                    //                         },
+                    //                         child: const Text(
+                    //                           'Confirm',
+                    //                           style: TextStyle(color: Colors.red),
+                    //                         ),
+                    //                       ),
+                    //                     ],
+                    //                   ));
+                    //             },
+                    //             backgroundColor: const Color(0xFFFE4A49),
+                    //             foregroundColor: Colors.white,
+                    //             icon: Icons.delete_rounded,
+                    //             label: 'Delete',
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET', '/HOME/SET/ADAPTIVE')
+                    //   ),
+                    // ),
                 ]
             ),
             );
