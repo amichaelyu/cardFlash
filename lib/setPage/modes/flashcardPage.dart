@@ -6,6 +6,8 @@ import '../../database.dart';
 import '../../widgets.dart';
 import '../setPage.dart';
 
+enum Menu { shuffle, termFront, reset }
+
 class FlashcardPage extends StatefulWidget {
   const FlashcardPage({super.key});
 
@@ -15,15 +17,38 @@ class FlashcardPage extends StatefulWidget {
 
 class _FlashcardPageState extends State<FlashcardPage> {
   int _index = 0;
+  var controller = PageController(viewportFraction: 0.825);
+  late bool shuffle;
   late List<String> text = [];
+  var shuffleList = [];
+  late List<String> termDef;
   late int colorLight;
   late int colorDark;
 
+  _loadDB() async {
+    var set = await Database.getSetFuture();
+    shuffle = set[0]['flashcardShuffle'] == 1;
+    termDef = set[0]['flashcardTermDef'] == 0 ? ['term', 'def'] : ['def', 'term'];
+  }
+
   _loadTerms() async {
     var set = await Database.getSetFuture();
-    for (int i = 0; i < set.length - 1; i++) {
-      text.add(set[i+1]['term']);
+    text.clear();
+    if (!shuffle) {
+      for (int i = 0; i < set.length - 1; i++) {
+        text.add(set[i + 1][termDef[0]]);
+      }
     }
+    else {
+      for (int i = 1; i < set.length; i++) {
+        shuffleList.add(i);
+      }
+      shuffleList.shuffle();
+      for (int i = 0; i < set.length - 1; i++) {
+        text.add(set[shuffleList[i]][termDef[0]]);
+      }
+    }
+
   }
 
   _initializeColor() async {
@@ -34,6 +59,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
   @override
   void initState() {
     super.initState();
+    _loadDB();
     _loadTerms();
     _initializeColor();
   }
@@ -46,18 +72,54 @@ class _FlashcardPageState extends State<FlashcardPage> {
           if (snapshot.data != null) {
             return Scaffold(
                 appBar: BetterAppBar("Flashcards", <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: GestureDetector(
-                      onTap: () {
-                      },
-                      // TODO: flashcard icon
-                      child: const Icon(
-                        Icons.more_vert_rounded,
-                        size: 30,
+                  PopupMenuButton<Menu>(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                    icon: const Icon(
+                      Icons.more_vert_rounded,
+                      size: 30,
                       ),
-                    )
-                  )
+                    onSelected: (Menu item) {
+                      setState(() {
+                        switch (item) {
+                          case Menu.shuffle:
+                            shuffle = !shuffle;
+                            _loadTerms();
+                            Database.updateFlashcardShuffle(shuffle);
+                            break;
+                          case Menu.termFront:
+                            var temp = termDef[1];
+                            termDef[1] = termDef[0];
+                            termDef[0] = temp;
+                            _loadTerms();
+                            Database.updateFlashcardTermDef(termDef[0] != 'term');
+                            break;
+                          case Menu.reset:
+                            controller.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
+                            _loadTerms();
+                            break;
+                        }
+                      });
+                    },
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                      PopupMenuItem<Menu>(
+                        value: Menu.shuffle,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('Shuffle '),
+                            shuffle ? const Icon(Icons.check_rounded) : const Text(''),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<Menu>(
+                        value: Menu.termFront,
+                        child: termDef[0] == 'term' ? const Text('Term Front') : const Text('Def Front'),
+                      ),
+                      const PopupMenuItem<Menu>(
+                        value: Menu.reset,
+                        child: Text('Reset'),
+                      ),
+                    ]),
                 ],
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
@@ -78,8 +140,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                           height: 650, // card height
                           child: PageView.builder(
                             itemCount: snapshot.data.length - 1,
-                            controller: PageController(
-                            viewportFraction: 0.825),
+                            controller: controller,
                             onPageChanged: (int index) => setState(() => _index = index),
                             itemBuilder: (_, i) {
                               return Transform.scale(
@@ -99,11 +160,11 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                     splashColor: Colors.blue.withAlpha(30),
                                     onTap: () async {
                                       setState(() {
-                                        if (text[i] == snapshot.data[i + 1]['term']) {
-                                          text[i] = snapshot.data[i + 1]['def'];
+                                        if (text[i] == snapshot.data[i + 1][termDef[0]]) {
+                                          text[i] = snapshot.data[i + 1][termDef[1]];
                                         }
                                         else {
-                                          text[i] = snapshot.data[i + 1]['term'];
+                                          text[i] = snapshot.data[i + 1][termDef[0]];
                                         }
                                       });
                                     },

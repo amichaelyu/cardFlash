@@ -20,7 +20,7 @@ class Database {
       join(await getDatabasesPath(), 'sets.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE titles(titleID INTEGER PRIMARY KEY, timestamp INTEGER, position INTEGER, title TEXT, desc TEXT, iconCP INTEGER, iconFF TEXT, iconFP TEXT, adaptiveTermDef INTEGER, multipleChoiceEnabled INTEGER, writingEnabled INTEGER, multipleChoiceQuestions INTEGER, writingQuestions INTEGER)',
+          'CREATE TABLE titles(titleID INTEGER PRIMARY KEY, timestamp INTEGER, position INTEGER, title TEXT, desc TEXT, iconCP INTEGER, iconFF TEXT, iconFP TEXT, adaptiveTermDef INTEGER, multipleChoiceEnabled INTEGER, writingEnabled INTEGER, multipleChoiceQuestions INTEGER, writingQuestions INTEGER, flashcardShuffle INTEGER, flashcardTermDef INTEGER)',
         );
         return await db.execute(
           'CREATE TABLE cards(cardID INTEGER PRIMARY KEY, timestamp INTEGER, position INTEGER, term TEXT, def TEXT, correctInARowTerm INTEGER, correctInARowDef INTEGER, correctTotal INTEGER, incorrectTotal INTEGER, cardTitle INTEGER)', // , FOREIGN KEY(cardTitle) REFERENCES cards(titleID)
@@ -41,8 +41,8 @@ class Database {
     await db.transaction((txn) async {
       time = DateTime.now().millisecondsSinceEpoch;
       await txn.rawInsert(
-          'INSERT INTO titles(timestamp, position, title, desc, iconCP, iconFF, iconFP, adaptiveTermDef, multipleChoiceEnabled, writingEnabled, multipleChoiceQuestions, writingQuestions) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, 0, 1, 1, 2, 1]
+          'INSERT INTO titles(timestamp, position, title, desc, iconCP, iconFF, iconFP, adaptiveTermDef, multipleChoiceEnabled, writingEnabled, multipleChoiceQuestions, writingQuestions, flashcardShuffle, flashcardTermDef) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, 0, 1, 1, 2, 1, 1, 0]
       );
       dynamic records = await txn.rawQuery('SELECT titleID FROM titles WHERE timestamp = ?', [time]);
       titleID = records.first['titleID'];
@@ -276,6 +276,20 @@ class Database {
     await db.rawQuery('UPDATE titles SET writingEnabled = ? WHERE titleID = ?', [writingEnabled, prefs.getInt('currentTitleID')]);
     await db.rawQuery('UPDATE titles SET multipleChoiceQuestions = ? WHERE titleID = ?', [multipleChoiceQuestions, prefs.getInt('currentTitleID')]);
     await db.rawQuery('UPDATE titles SET writingQuestions = ? WHERE titleID = ?', [writingQuestions, prefs.getInt('currentTitleID')]);
+  }
+
+  static Future<void> updateFlashcardShuffle(bool shuffle) async {
+    final db = await database;
+    final prefs = await SharedPreferences.getInstance();
+
+    await db.rawQuery('UPDATE titles SET flashcardShuffle = ? WHERE titleID = ?', [shuffle ? 1 : 0, prefs.getInt('currentTitleID')]);
+  }
+
+  static Future<void> updateFlashcardTermDef(var termDef) async {
+    final db = await database;
+    final prefs = await SharedPreferences.getInstance();
+
+    await db.rawQuery('UPDATE titles SET flashcardTermDef = ? WHERE titleID = ?', [termDef, prefs.getInt('currentTitleID')]);
   }
 
   static Future<void> deleteSet(titleID) async {
