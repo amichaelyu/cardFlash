@@ -83,8 +83,8 @@ class _AddPage extends StatelessWidget {
       child: ListView(
         children: const [
           BetterCardAdd("Create a Custom Set", "Make your own set from scratch", Icon(Icons.color_lens_rounded), "/ADD/CUSTOM"),
-          // BetterCardAdd("Import a Set from Quizlet", "Your set must be public", Text("Q", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25,),), "/HOME/QUIZLET"),
-          // BetterCard4("Import a Set using QR", "You can only import other cardFlash sets", Icons.qr_code, "/HOME/QR1"),
+          BetterCardAdd("Import a Set from Quizlet", "Your set must be public", Text("Q", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25,),), "/HOME/QUIZLET"),
+          // BetterCardAdd("Import a Set using QR", "You can only import other cardFlash sets", Icons.qr_code, "/HOME/QR1"),
           Padding(
             padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: Align(

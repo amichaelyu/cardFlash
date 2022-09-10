@@ -125,6 +125,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.1"
+  flutter_js:
+    dependency: "direct main"
+    description:
+      name: flutter_js
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3+2"
   flutter_launcher_icons:
     dependency: "direct main"
     description:
