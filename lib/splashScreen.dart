@@ -16,7 +16,10 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   _readDB() async {
     await Database.initializeDB();
-    (await SharedPreferences.getInstance()).setInt("currentTitleID", -1);
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setInt("currentTitleID", -1);
+    prefs.setInt("cardColorLight", Colors.blue.shade200.value);
+    prefs.setInt("cardColorDark", Colors.blue.shade900.value);
 
     // await Future.delayed(const Duration(seconds: 10));
 

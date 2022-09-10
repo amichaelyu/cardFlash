@@ -10,7 +10,7 @@ class QRImportPage2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: BetterAppBar("QR Import", null, Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+            padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
             child: GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, '/ADD/QR1');

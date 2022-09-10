@@ -47,9 +47,10 @@ class BetterCardHome extends StatelessWidget {
   final desc;
   final icon;
   final nav;
+  final navCustom;
   final titleID;
 
-  const BetterCardHome(this.title, this.desc, this.icon, this.titleID, this.nav, {super.key});
+  const BetterCardHome(this.title, this.desc, this.icon, this.titleID, this.nav, this.navCustom, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,6 @@ class BetterCardHome extends StatelessWidget {
           },
           child: SizedBox(
             width: 370,
-
             child: Column(
               children: <Widget>[
                 ListTile(
@@ -77,14 +77,13 @@ class BetterCardHome extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    // TextButton(
-                    // child: const Text('EDIT'),
-                    // onPressed: () {/* ... */},
-                    // ),
-                    // const SizedBox(width: 8),
                     TextButton(
                       child: const Text('STUDY'),
-                      onPressed: () {},
+                      onPressed: () async {
+                        final navigator = Navigator.of(context);
+                        (await SharedPreferences.getInstance()).setInt("currentTitleID", titleID);
+                        navigator.pushNamed(navCustom);
+                      },
                     ),
                     const SizedBox(width: 8),
                   ],
@@ -232,6 +231,35 @@ class BetterCardAdd extends StatelessWidget {
   }
 }
 
+// settings buttons
+class BetterCardSettings extends StatelessWidget {
+  final title;
+  final action;
+  final color;
+
+  const BetterCardSettings(this.title, this.action, this.color, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Card(
+        color: color,
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: InkWell(
+          splashColor: Colors.blue.withAlpha(30),
+          onTap: action,
+          child: SizedBox(
+            width: 300,
+            height: 60,
+            child: Padding(padding: const EdgeInsets.fromLTRB(0, 16, 0, 0), child: Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20))),
+              ),
+            ),
+          ),
+    );
+  }
+}
+
 class BetterTextFormField extends StatelessWidget {
   final title;
   final helper;
@@ -239,14 +267,69 @@ class BetterTextFormField extends StatelessWidget {
   final validationText;
   final submission;
   final inital;
+  final controller;
 
-  const BetterTextFormField(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, {super.key});
+  const BetterTextFormField(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
       child: TextFormField(
+        controller: controller,
+        autocorrect: false,
         initialValue: inital,
+        maxLines: null,
+        onChanged: (val) => submission.object = val,
+        validator: (value) {
+          if (required && (value == null || value.isEmpty)) {
+            return validationText;
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          filled: false,
+          helperText: helper,
+          helperStyle: const TextStyle(fontSize: 12),
+          contentPadding: EdgeInsets.zero,
+          labelText: title,
+          labelStyle: const TextStyle(fontSize: 18),
+        ),
+        cursorColor: MediaQuery
+            .of(context)
+            .platformBrightness == Brightness.light ? Colors.black : Colors
+            .white,
+        style: TextStyle(
+          fontSize: 18,
+          color: MediaQuery
+              .of(context)
+              .platformBrightness == Brightness.light ? Colors.black : Colors
+              .white,
+        ),
+      ),
+    );
+  }
+}
+
+class BetterTextFormFieldNumbersOnly extends StatelessWidget {
+  final title;
+  final helper;
+  final required;
+  final validationText;
+  final submission;
+  final inital;
+  final controller;
+
+  const BetterTextFormFieldNumbersOnly(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, this.controller, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+      child: TextFormField(
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        controller: controller,
+        autocorrect: false,
+        initialValue: inital,
+        maxLines: null,
         onChanged: (val) => submission.object = val,
         validator: (value) {
           if (required && (value == null || value.isEmpty)) {

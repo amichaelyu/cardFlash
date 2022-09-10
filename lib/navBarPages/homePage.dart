@@ -128,7 +128,7 @@ class _HomePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET')
+                  child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET', '/HOME/SET/ADAPTIVE')
                 )
                 ]
             ),

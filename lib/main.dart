@@ -1,3 +1,4 @@
+import 'package:card_flash/setPage/modes/adaptivePageSettings.dart';
 import 'package:card_flash/setPage/setPage.dart';
 import 'package:card_flash/splashScreen.dart';
 import 'package:card_flash/widgets.dart';
@@ -40,6 +41,7 @@ void main() async => runApp(
         '/HOME/SET': (context) => const SetPage(),
         '/HOME/SET/FLASHCARDS': (context) => const FlashcardPage(),
         '/HOME/SET/ADAPTIVE': (context) => const AdaptivePage(),
+        '/HOME/SET/ADAPTIVE/SETTINGS': (context) => const AdaptiveSettingsPage(),
         '/HOME/SET/EDIT': (context) => const EditPage(),
         '/ADD': (context) => const AddNavigator(),
         '/ADD/CUSTOM': (context) => const CustomAddPage(),

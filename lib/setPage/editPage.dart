@@ -20,8 +20,8 @@ class _EditPageState extends State<EditPage> {
   late int cardNum;
   Set<int> ignoreList = {};
   late IconData? _icon;
-  Object? title = Object(null);
-  Object? desc = Object(null);
+  late Object title;
+  late Object desc;
   Object? terms = Object({});
   Object? defs = Object({});
 
@@ -41,6 +41,8 @@ class _EditPageState extends State<EditPage> {
   void _grabSomeData() async {
     var data = await Database.getSetFuture();
     _icon = IconData(data[0]['iconCP'], fontFamily: data[0]['iconFF'], fontPackage: data[0]['iconFP']);
+    title = Object(data[0]['title']);
+    desc = Object(data[0]['desc']);
     cardNum = data.length - 1;
   }
 
@@ -66,7 +68,7 @@ class _EditPageState extends State<EditPage> {
                 appBar: BetterAppBar("Edit",
                   <Widget>[
                   Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                      padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                       child: GestureDetector(
                         onTap: () async {
                           showDialog<String>(
@@ -102,7 +104,7 @@ class _EditPageState extends State<EditPage> {
                   )
                 ],
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                     child: GestureDetector(
                       onTap: () async {
                         var termDefChanged = false;
@@ -162,8 +164,8 @@ class _EditPageState extends State<EditPage> {
                       key: _formKey,
                       child: ListView(
                           children: [
-                            BetterTextFormField("Enter a title", null, true, "A title is required", title, snapshot.data[0]['title']),
-                            BetterTextFormField("Enter a description (Optional)", null, false, null, desc, snapshot.data[0]['desc']),
+                            BetterTextFormField("Enter a title", null, true, "A title is required", title, title.object, null),
+                            BetterTextFormField("Enter a description (Optional)", null, false, null, desc, desc.object, null),
                             const Padding(padding: EdgeInsets.only(bottom: 5)),
                             Center(
                               child: Card(
@@ -214,7 +216,7 @@ class _EditPageState extends State<EditPage> {
                                 child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i), snapshot.data.length - 1 >= cardNum ? snapshot.data[i+1]['term'] : null, snapshot.data.length - 1 >= cardNum ? snapshot.data[i+1]['def'] : null),),
                               ),
                             Padding(
-                              padding: const EdgeInsets.only(top: 20),
+                              padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                               child: GestureDetector(
                                 onTap: () {
                                   setState (() {
@@ -243,7 +245,7 @@ class _EditPageState extends State<EditPage> {
                       }
                     }
                     if (_formKey.currentState!.validate()) {
-                      await Database.updateSet(CardSet(snapshot.data[0]['position'], ((title?.object == null) ? snapshot.data[0]['title'] : title?.object), ((desc?.object == null) ? snapshot.data[0]['desc'] : desc?.object), _icon!, termsList, defsList));
+                      await Database.updateSet(CardSet(snapshot.data[0]['position'], title?.object, desc?.object, _icon!, termsList, defsList));
                       mess.showSnackBar(
                         const SnackBar(
                           backgroundColor: Colors.black87,
@@ -270,7 +272,7 @@ class _EditPageState extends State<EditPage> {
           else {
             return Scaffold(
                 appBar: BetterAppBar(Constants.title, null, Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.pop(context);

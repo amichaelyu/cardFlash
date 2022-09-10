@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
 import '../../database.dart';
@@ -13,9 +14,10 @@ class FlashcardPage extends StatefulWidget {
 }
 
 class _FlashcardPageState extends State<FlashcardPage> {
-  final width = 350.0;
   int _index = 0;
   late List<String> text = [];
+  late int colorLight;
+  late int colorDark;
 
   _loadTerms() async {
     var set = await Database.getSetFuture();
@@ -24,10 +26,16 @@ class _FlashcardPageState extends State<FlashcardPage> {
     }
   }
 
+  _initializeColor() async {
+    colorLight = (await SharedPreferences.getInstance()).getInt("cardColorLight")!;
+    colorDark = (await SharedPreferences.getInstance()).getInt("cardColorDark")!;
+  }
+
   @override
   void initState() {
     super.initState();
     _loadTerms();
+    _initializeColor();
   }
 
   @override
@@ -37,29 +45,31 @@ class _FlashcardPageState extends State<FlashcardPage> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
-                appBar: BetterAppBar(snapshot.data.first['title'], <Widget>[
-                Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                child: GestureDetector(
-                  onTap: () {
-                  },
-                  child: const Icon(
-                    Icons.more_vert_rounded,
-                    size: 30,
-                  ),
-                )
-                )]
-                  , Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                appBar: BetterAppBar("Flashcards", <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
                       },
+                      // TODO: flashcard icon
                       child: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
+                        Icons.more_vert_rounded,
+                        size: 30,
                       ),
                     )
-                ),null),
+                  )
+                ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                    ),
+                  )
+                ), null),
                 body: ListView(
                     children: [
                       Padding(
@@ -69,7 +79,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                           child: PageView.builder(
                             itemCount: snapshot.data.length - 1,
                             controller: PageController(
-                                viewportFraction: 0.8),
+                            viewportFraction: 0.825),
                             onPageChanged: (int index) => setState(() => _index = index),
                             itemBuilder: (_, i) {
                               return Transform.scale(
@@ -80,8 +90,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                       .of(context)
                                       .platformBrightness ==
                                       Brightness.light
-                                      ? color[200]
-                                      : color[900],
+                                      ? Color(colorLight)
+                                      : Color(colorDark),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
                                           20)),
@@ -98,7 +108,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                       });
                                     },
                                     child: SizedBox(
-                                      width: 380,
+                                      // width: width,
                                       child: Center(
                                         child: ListView(
                                           shrinkWrap: true,
@@ -138,10 +148,13 @@ class _FlashcardPageState extends State<FlashcardPage> {
                 )
             );
           }
+          else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
+            return const Text('');
+          }
           else {
             return Scaffold(
                 appBar: BetterAppBar(Constants.title, null, Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                    padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.pop(context);

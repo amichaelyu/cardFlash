@@ -48,7 +48,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
     return Scaffold(
         appBar: BetterAppBar("Create a Set", <Widget>[
           Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
               child: GestureDetector(
                 onTap: () async {
                   value = null;
@@ -74,7 +74,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
               )
           )
         ], Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+            padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
             child: GestureDetector(
               onTap: () {
                 Navigator.pop(context);
@@ -95,8 +95,8 @@ class _CustomAddPageState extends State<CustomAddPage> {
             key: _formKey,
             child: ListView(
               children: [
-                BetterTextFormField("Enter a title", null, true, "A title is required", title, null),
-                BetterTextFormField("Enter a description (Optional)", null, false, null, desc, null),
+                BetterTextFormField("Enter a title", null, true, "A title is required", title, null, null),
+                BetterTextFormField("Enter a description (Optional)", null, false, null, desc, null, null),
                 const Padding(padding: EdgeInsets.only(bottom: 5)),
                 Center(
                   child: Card(
@@ -147,7 +147,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
                       child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i), null, null),),
                   ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child: GestureDetector(
                     onTap: () {
                       setState (() {
