@@ -16,7 +16,7 @@ class HomeNavigator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const BetterAppBar(Constants.title, null, null, null),
-      body: const Center(
+      body: Center(
         child: _HomePage(),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -77,8 +77,6 @@ class HomeNavigator extends StatelessWidget {
 }
 
 class _HomePage extends StatefulWidget {
-  const _HomePage({super.key});
-
   @override
   State<_HomePage> createState() => _HomePageState();
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:card_flash/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
@@ -25,6 +27,8 @@ class _EditPageState extends State<EditPage> {
   late Object desc;
   Object? terms = Object({});
   Object? defs = Object({});
+  var termCont = [];
+  var defCont = [];
 
   _pickIcon() async {
     IconData? icon = await FlutterIconPicker.showIconPicker(context, iconPackModes: [
@@ -45,6 +49,18 @@ class _EditPageState extends State<EditPage> {
     title = Object(data[0]['title']);
     desc = Object(data[0]['desc']);
     cardNum = data.length - 1;
+    _setUpControllers();
+    for (int i = 0; i < cardNum; i++) {
+      termCont[i].text = data[i + 1]['term'];
+      defCont[i].text = data[i + 1]['def'];
+    }
+  }
+
+  _setUpControllers() {
+    for (int i = 0; i < cardNum; i++) {
+      termCont.add(TextEditingController());
+      defCont.add(TextEditingController());
+    }
   }
 
   @override
@@ -183,7 +199,7 @@ class _EditPageState extends State<EditPage> {
                                         ListTile(
                                           leading: Icon(_icon),
                                           title: const Text(
-                                            "Choose an icon",
+                                            "Pick an icon",
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 20,
@@ -198,31 +214,66 @@ class _EditPageState extends State<EditPage> {
                               ),
                             ),
                             const Padding(padding: EdgeInsets.only(bottom: 10)),
-                            for (int i = 0; i < cardNum; i++)
-                              Slidable(
-                                endActionPane: ActionPane(
-                                  extentRatio: 0.25,
-                                  motion: const ScrollMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (context) {
-                                        _removeCard(i);
-                                      },
-                                      backgroundColor: const Color(0xFFFE4A49),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete_rounded,
-                                      label: 'Delete',
+                            ReorderableListView(
+                              onReorder: (int oldIndex, int newIndex) {
+                                newIndex--;
+                                print(oldIndex);
+                                print(newIndex);
+                                var tempTerms = Map.from(terms?.object);
+                                var tempDefs = Map.from(defs?.object);
+                                setState(() {
+                                  terms?.object[newIndex] = tempTerms[oldIndex] ?? snapshot.data[oldIndex + 1]['term'];
+                                  defs?.object[newIndex] = tempDefs[oldIndex] ?? snapshot.data[oldIndex + 1]['def'];
+                                  if (newIndex < oldIndex) {
+                                    for (int i = newIndex; i < oldIndex; i++) {
+                                      terms?.object[i + 1] = tempTerms[i] ?? snapshot.data[i + 1]['term'];
+                                      defs?.object[i + 1] = tempDefs[i] ?? snapshot.data[i + 1]['def'];
+                                    }
+                                  }
+                                  else if (newIndex > oldIndex) {
+                                    for (int i = oldIndex + 1; i <= newIndex; i++) {
+                                      terms?.object[i - 1] = tempTerms[i] ?? snapshot.data[i + 1]['term'];
+                                      defs?.object[i - 1] = tempDefs[i] ?? snapshot.data[i + 1]['def'];
+                                    }
+                                  }
+                                  for (int i = 0; i < terms?.object.length; i++) {
+                                    termCont[i].text = terms?.object[i] ?? snapshot.data[i + 1]['term'];
+                                    defCont[i].text = defs?.object[i] ?? snapshot.data[i + 1]['def'];
+                                  }
+                                });
+                              },
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: [
+                                for (int i = 0; i < cardNum; i++)
+                                  Slidable(
+                                    key: Key(i.toString()),
+                                    endActionPane: ActionPane(
+                                      extentRatio: 0.25,
+                                      motion: const ScrollMotion(),
+                                      children: [
+                                        SlidableAction(
+                                          onPressed: (context) {
+                                            _removeCard(i);
+                                          },
+                                          backgroundColor: const Color(0xFFFE4A49),
+                                          foregroundColor: Colors.white,
+                                          icon: Icons.delete_rounded,
+                                          label: 'Delete',
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i), snapshot.data.length - 1 >= cardNum ? snapshot.data[i+1]['term'] : null, snapshot.data.length - 1 >= cardNum ? snapshot.data[i+1]['def'] : null),),
-                              ),
+                                    child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i), null, null, termCont[i], defCont[i]),),
+                                  ),
+                              ],
+                            ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                               child: GestureDetector(
                                 onTap: () {
                                   setState (() {
                                     cardNum++;
+                                    _setUpControllers();
                                   });
                                 },
                                 child: const Icon(

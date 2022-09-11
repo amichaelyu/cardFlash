@@ -369,13 +369,15 @@ class BetterTextFormFieldCard extends StatelessWidget {
   final submission;
   final pos;
   final inital;
+  final controller;
 
-  const BetterTextFormFieldCard(this.title, this.helper, this.required, this.validationText, this.submission, this.pos, this.inital, {super.key});
+  const BetterTextFormFieldCard(this.title, this.helper, this.required, this.validationText, this.submission, this.pos, this.inital, this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: TextFormField(
+        controller: controller,
         initialValue: inital,
         autocorrect: false,
         onChanged: (val) => submission.object[pos] = val,
@@ -420,8 +422,10 @@ class BetterCardTextForm extends StatelessWidget {
   final shown;
   final initalTerm;
   final initalDef;
+  final controllerTerm;
+  final controllerDef;
 
-  const BetterCardTextForm(this.term, this.def, this.position, this.termStorage, this.defStorage, this.shown, this.initalTerm, this.initalDef, {super.key});
+  const BetterCardTextForm(this.term, this.def, this.position, this.termStorage, this.defStorage, this.shown, this.initalTerm, this.initalDef, this.controllerTerm, this.controllerDef, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -437,8 +441,8 @@ class BetterCardTextForm extends StatelessWidget {
           child: Column(
             children: <Widget>[
               ListTile(
-                title: shown ? BetterTextFormFieldCard(term, null, false, null, termStorage, position, initalTerm) : null,
-                subtitle: shown ? BetterTextFormFieldCard(def, null, false, null, defStorage, position, initalDef) : null,
+                title: shown ? BetterTextFormFieldCard(term, null, false, null, termStorage, position, initalTerm, controllerTerm) : null,
+                subtitle: shown ? BetterTextFormFieldCard(def, null, false, null, defStorage, position, initalDef, controllerDef) : null,
               ),
             ],
           ),

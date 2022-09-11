@@ -12,7 +12,7 @@ class AddNavigator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const BetterAppBar(Constants.title, null, null, null),
-      body: const Center(
+      body: Center(
         child: _AddPage(),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -73,9 +73,6 @@ class AddNavigator extends StatelessWidget {
 }
 
 class _AddPage extends StatelessWidget {
-
-  const _AddPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Padding(

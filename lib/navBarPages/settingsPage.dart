@@ -12,7 +12,7 @@ class SettingsNavigator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const BetterAppBar(Constants.title, null, null, null),
-      body: const Center(
+      body: Center(
         child: _SettingsPage(),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -73,9 +73,6 @@ class SettingsNavigator extends StatelessWidget {
 }
 
 class _SettingsPage extends StatelessWidget {
-
-  const _SettingsPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return ListView(
