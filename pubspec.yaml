@@ -46,6 +46,7 @@ dependencies:
   line_awesome_flutter: ^2.0.0
   flutter_slidable: ^2.0.0
   web_scraper: ^0.1.4
+  url_launcher: ^6.1.5
 
 dev_dependencies:
   flutter_test:

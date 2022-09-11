@@ -1,4 +1,5 @@
 import 'package:card_flash/constants.dart';
+import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database.dart';
@@ -16,9 +17,15 @@ class _SplashPageState extends State<SplashPage> {
     final navigator = Navigator.of(context);
     await Database.initializeDB();
     var prefs = await SharedPreferences.getInstance();
-    prefs.setInt("currentTitleID", -1);
-    prefs.setInt("cardColorLight", Colors.blue.shade200.value);
-    prefs.setInt("cardColorDark", Colors.blue.shade900.value);
+    if (prefs.getInt("currentTitleID") == null) {
+      prefs.setInt("currentTitleID", -1);
+    }
+    if (prefs.getInt("cardColorLight") == null) {
+      prefs.setInt("cardColorLight", Colors.blue.shade200.value);
+    }
+    if (prefs.getInt("cardColorDark") == null) {
+      prefs.setInt("cardColorDark", Colors.blue.shade900.value);
+    }
 
     // await Future.delayed(const Duration(seconds: 10));
 

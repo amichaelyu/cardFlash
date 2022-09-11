@@ -1,8 +1,10 @@
 import 'package:card_flash/setPage/modes/adaptivePageSettings.dart';
 import 'package:card_flash/setPage/setPage.dart';
 import 'package:card_flash/splashScreen.dart';
+import 'package:card_flash/widgets.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
 import 'navBarPages/addSubpages/QRImportPage1.dart';
@@ -16,20 +18,19 @@ import 'setPage/modes/flashcardPage.dart';
 import 'navBarPages/addPage.dart';
 import 'navBarPages/homePage.dart';
 
-void main() async => runApp(
-    MaterialApp(
-      title: Constants.title,
-      theme: FlexThemeData.light(
-        scheme: FlexScheme.brandBlue,
-        fontFamily: "Roboto",
-      ),
-      darkTheme: FlexThemeData.dark(
+void main() async => runApp(MaterialApp(
+        title: Constants.title,
+        theme: FlexThemeData.light(
+          scheme: FlexScheme.brandBlue,
+          fontFamily: "Roboto",
+        ),
+        darkTheme: FlexThemeData.dark(
           scheme: FlexScheme.brandBlue,
           fontFamily: "Roboto",
           // darkIsTrueBlack: true
-      ),
-      themeMode: ThemeMode.system,
-      /* ThemeMode.system to follow system theme,
+        ),
+        themeMode: ThemeMode.system,
+    /* ThemeMode.system to follow system theme,
          ThemeMode.light for light theme,
          ThemeMode.dark for dark theme
       */
@@ -48,6 +49,5 @@ void main() async => runApp(
         '/ADD/QR1/QR2': (context) => const QRImportPage2(),
         '/ADD/QUIZLET': (context) => const QuizletImportPage(),
         '/SETTINGS': (context) => const SettingsNavigator(),
-      },
-    )
-);
+        },
+    ));

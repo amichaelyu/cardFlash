@@ -248,8 +248,8 @@ class BetterCardSettings extends StatelessWidget {
           onTap: action,
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.77,
-            height: 60,
-            child: Padding(padding: const EdgeInsets.fromLTRB(0, 16, 0, 0), child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+            height: MediaQuery.of(context).size.height * 0.071,
+            child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
               ),
             ),
           ),

@@ -59,7 +59,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                     preferredSize: const Size(double.infinity, 1.0),
                     child: LinearProgressIndicator(
                       value: value,
-                      semanticsLabel: "Indicates learn progress",
+                      semanticsLabel: "Indicates loading while communicating with database",
                     ),
                   ),),
                 body: ListView(
@@ -86,7 +86,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                                           break;
                                       }
                                     });
-                                }, isExpanded: true, style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.02),),),
+                                }, isExpanded: true, style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.02, color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white),),),
                         ]),
                       ),
                       Center(
@@ -102,7 +102,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                         child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.77,
                         height: MediaQuery.of(context).size.height * 0.071,
-                        child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.019, 0, 0), child: Text("Multiple Choice ${multipleChoiceEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                        child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Multiple Choice ${multipleChoiceEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                         ),
                         ),
                         ),
@@ -123,7 +123,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.77,
                               height: MediaQuery.of(context).size.height * 0.071,
-                              child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.019, 0, 0), child: Text("Writing ${writingEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                              child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Writing ${writingEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                             ),
                           ),
                         ),
