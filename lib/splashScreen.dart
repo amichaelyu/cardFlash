@@ -1,6 +1,4 @@
 import 'package:card_flash/constants.dart';
-import 'package:card_flash/main.dart';
-import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database.dart';
@@ -44,7 +42,7 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: SplashScreen(),
       ),
@@ -53,7 +51,7 @@ class _SplashPageState extends State<SplashPage> {
 }
 
 class SplashScreen extends StatelessWidget {
-  SplashScreen({super.key});
+  const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +60,7 @@ class SplashScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 70),
+          padding: EdgeInsets.fromLTRB(0, 0, 0, MediaQuery.of(context).size.height * 0.083),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,7 +70,7 @@ class SplashScreen extends StatelessWidget {
                     style: TextStyle(
                       color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 50,
+                      fontSize: MediaQuery.of(context).size.height * 0.059,
                     ),
                   )
             ]

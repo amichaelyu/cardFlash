@@ -124,16 +124,16 @@ class _CustomAddPageState extends State<CustomAddPage> {
                       splashColor: Colors.blue.withAlpha(30),
                       onTap: () {_pickIcon();},
                       child: SizedBox(
-                        width: 370,
+                        width: MediaQuery.of(context).size.width * 0.95,
                         child: Column(
                           children: <Widget>[
                             ListTile(
                               leading: Icon(_icon),
-                              title: const Text(
+                              title: Text(
                                 "Pick an icon",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                  fontSize: MediaQuery.of(context).size.height * 0.024,
                                 ),
                               ),
                               // subtitle: Text(desc),

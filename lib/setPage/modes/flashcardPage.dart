@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants.dart';
 import '../../database.dart';
 import '../../widgets.dart';
-import '../setPage.dart';
 
 enum Menu { shuffle, termFront, reset }
 
@@ -137,7 +136,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                         child: SizedBox(
-                          height: 650, // card height
+                          height: MediaQuery.of(context).size.height * 0.77, // card height
                           child: PageView.builder(
                             itemCount: snapshot.data.length - 1,
                             controller: controller,
@@ -169,7 +168,6 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                       });
                                     },
                                     child: SizedBox(
-                                      // width: width,
                                       child: Center(
                                         child: ListView(
                                           shrinkWrap: true,
@@ -180,8 +178,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                                 child: Text(
                                                   text[i],
                                                   textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                      fontSize: 30),
+                                                  style: TextStyle(
+                                                      fontSize: MediaQuery.of(context).size.height * 0.036),
                                                 ),
                                               )
                                             ],
@@ -225,11 +223,11 @@ class _FlashcardPageState extends State<FlashcardPage> {
                       ),
                     )
                 ),null),
-                body: ListView(children: const [
-                  Padding(padding: EdgeInsets.only(top: 20),
+                body: ListView(children:  [
+                  Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",
-                        style: TextStyle(fontSize: 20,),),),)
+                        style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)
                 ])
             );
           }

@@ -23,7 +23,7 @@ class BetterAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         titleTextStyle: TextStyle(
           color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black,
-          fontSize: 30,
+          fontSize: MediaQuery.of(context).size.height * 0.036,
         ),
         iconTheme: IconThemeData(color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black),
         title: Text(
@@ -66,12 +66,12 @@ class BetterCardHome extends StatelessWidget {
             navigator.pushNamed(nav);
           },
           child: SizedBox(
-            width: 370,
+            width: MediaQuery.of(context).size.width * 0.95,
             child: Column(
               children: <Widget>[
                 ListTile(
                   leading: Icon(icon),
-                  title: Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 5), child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20))),
+                  title: Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 5), child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                   subtitle: Text(desc),
                 ),
                 Row(
@@ -117,17 +117,16 @@ class BetterCardSet extends StatelessWidget {
             Navigator.pushNamed(context, nav);
           },
           child: SizedBox(
-            width: 370,
-
+            width: MediaQuery.of(context).size.width * 0.95,
             child: Column(
               children: <Widget>[
                 ListTile(
                   leading: Icon(icon),
                   title: Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: MediaQuery.of(context).size.height * 0.024,
                       ),
                   ),
                   // subtitle: Text(desc),
@@ -162,7 +161,7 @@ Widget build(BuildContext context) {
           Navigator.pushNamed(context, nav);
         },
         child: SizedBox(
-          width: 370,
+          width: MediaQuery.of(context).size.width * 0.95,
 
           child: Column(
             children: <Widget>[
@@ -170,9 +169,9 @@ Widget build(BuildContext context) {
                 leading: Icon(icon),
                 title: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: MediaQuery.of(context).size.height * 0.024,
                   ),
                 ),
                 // subtitle: Text(desc),
@@ -207,7 +206,7 @@ class BetterCardAdd extends StatelessWidget {
             Navigator.pushNamed(context, nav);
           },
           child: SizedBox(
-            width: 370,
+            width: MediaQuery.of(context).size.width * 0.95,
 
             child: Column(
               children: <Widget>[
@@ -215,9 +214,9 @@ class BetterCardAdd extends StatelessWidget {
                   leading: icon,
                   title: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: MediaQuery.of(context).size.height * 0.024,
                     ),
                   ),
                   subtitle: Text(desc),
@@ -250,9 +249,9 @@ class BetterCardSettings extends StatelessWidget {
           splashColor: Colors.blue.withAlpha(30),
           onTap: action,
           child: SizedBox(
-            width: 300,
+            width: MediaQuery.of(context).size.width * 0.77,
             height: 60,
-            child: Padding(padding: const EdgeInsets.fromLTRB(0, 16, 0, 0), child: Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20))),
+            child: Padding(padding: const EdgeInsets.fromLTRB(0, 16, 0, 0), child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
               ),
             ),
           ),
@@ -289,17 +288,17 @@ class BetterTextFormField extends StatelessWidget {
         decoration: InputDecoration(
           filled: false,
           helperText: helper,
-          helperStyle: const TextStyle(fontSize: 12),
+          helperStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.014),
           contentPadding: EdgeInsets.zero,
           labelText: title,
-          labelStyle: const TextStyle(fontSize: 18),
+          labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.021),
         ),
         cursorColor: MediaQuery
             .of(context)
             .platformBrightness == Brightness.light ? Colors.black : Colors
             .white,
         style: TextStyle(
-          fontSize: 18,
+          fontSize: MediaQuery.of(context).size.height * 0.021,
           color: MediaQuery
               .of(context)
               .platformBrightness == Brightness.light ? Colors.black : Colors
@@ -340,17 +339,17 @@ class BetterTextFormFieldNumbersOnly extends StatelessWidget {
         decoration: InputDecoration(
           filled: false,
           helperText: helper,
-          helperStyle: const TextStyle(fontSize: 12),
+          helperStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.014),
           contentPadding: EdgeInsets.zero,
           labelText: title,
-          labelStyle: const TextStyle(fontSize: 18),
+          labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.021),
         ),
         cursorColor: MediaQuery
             .of(context)
             .platformBrightness == Brightness.light ? Colors.black : Colors
             .white,
         style: TextStyle(
-          fontSize: 18,
+          fontSize: MediaQuery.of(context).size.height * 0.021,
           color: MediaQuery
               .of(context)
               .platformBrightness == Brightness.light ? Colors.black : Colors
@@ -391,17 +390,17 @@ class BetterTextFormFieldCard extends StatelessWidget {
         decoration: InputDecoration(
         filled: false,
         helperText: helper,
-        helperStyle: const TextStyle(fontSize: 12),
+        helperStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.014),
         contentPadding: EdgeInsets.zero,
         labelText: title,
-        labelStyle: const TextStyle(fontSize: 18),
+        labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.021),
         ),
         cursorColor: MediaQuery
             .of(context)
             .platformBrightness == Brightness.light ? Colors.black : Colors
             .white,
         style: TextStyle(
-        fontSize: 18,
+        fontSize: MediaQuery.of(context).size.height * 0.021,
         color: MediaQuery
             .of(context)
             .platformBrightness == Brightness.light ? Colors.black : Colors
@@ -437,7 +436,7 @@ class BetterCardTextForm extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: SizedBox(
           // height: 200,
-          width: shown ? 370 : 0,
+          width: shown ? MediaQuery.of(context).size.width * 0.95 : 0,
           child: Column(
             children: <Widget>[
               ListTile(

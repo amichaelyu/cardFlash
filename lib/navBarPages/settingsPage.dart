@@ -76,13 +76,13 @@ class _SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children: const [
+      children: [
         Padding(
           padding: EdgeInsets.all(10),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text("rat",
-              style: TextStyle(fontSize: 25),
+              style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.03),
             ),
           ),
         ),

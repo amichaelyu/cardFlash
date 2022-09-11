@@ -188,7 +188,7 @@ class _HomePageState extends State<_HomePage> {
             return const Text("");
           }
           else {
-            return ListView(children: const [Padding(padding: EdgeInsets.only(top: 20), child: Align(alignment: Alignment.center, child: Text("No sets", style: TextStyle(fontSize: 20,),),),)]);
+            return ListView(children: [Padding(padding: const EdgeInsets.only(top: 20), child: Align(alignment: Alignment.center, child: Text("No sets", style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)]);
           }
         }
     );

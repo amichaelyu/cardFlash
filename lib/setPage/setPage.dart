@@ -71,8 +71,8 @@ class _SetPageState extends State<SetPage> {
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(snapshot.data.first['desc'],
-                            style: const TextStyle(
-                              fontSize: 20,
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.height * 0.024,
                             ),
                           ),
                         ),
@@ -80,7 +80,7 @@ class _SetPageState extends State<SetPage> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                         child: SizedBox(
-                          height: 400, // card height
+                          height: MediaQuery.of(context).size.height * 0.47, // card height
                           child: PageView.builder(
                             itemCount: snapshot.data.length - 1,
                             controller: PageController(
@@ -108,8 +108,8 @@ class _SetPageState extends State<SetPage> {
                                           child: Text(
                                             snapshot.data[i + 1]['term'],
                                             textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontSize: 27),
+                                            style: TextStyle(
+                                                fontSize: MediaQuery.of(context).size.height * 0.032),
                                           ),
                                         ),
                                         Padding(
@@ -118,8 +118,8 @@ class _SetPageState extends State<SetPage> {
                                           child: Text(
                                             snapshot.data[i + 1]['def'],
                                             textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontSize: 20),
+                                            style: TextStyle(
+                                                fontSize: MediaQuery.of(context).size.height * 0.024),
                                           ),
                                         ),
                                       ]
@@ -155,11 +155,11 @@ class _SetPageState extends State<SetPage> {
                   )
               ),
               null),
-              body: ListView(children: const [
-              Padding(padding: EdgeInsets.only(top: 20),
+              body: ListView(children: [
+              Padding(padding: const EdgeInsets.only(top: 20),
                 child: Align(alignment: Alignment.center,
                   child: Text("Something went wrong :(",
-                    style: TextStyle(fontSize: 20,),),),)
+                    style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)
             ])
             );
           }

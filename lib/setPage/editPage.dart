@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:card_flash/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
@@ -193,16 +191,16 @@ class _EditPageState extends State<EditPage> {
                                   splashColor: Colors.blue.withAlpha(30),
                                   onTap: () {_pickIcon();},
                                   child: SizedBox(
-                                    width: 370,
+                                    width: MediaQuery.of(context).size.width * 0.95,
                                     child: Column(
                                       children: <Widget>[
                                         ListTile(
                                           leading: Icon(_icon),
-                                          title: const Text(
+                                          title: Text(
                                             "Pick an icon",
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 20,
+                                              fontSize: MediaQuery.of(context).size.height * 0.024,
                                             ),
                                           ),
                                           // subtitle: Text(desc),
@@ -217,8 +215,6 @@ class _EditPageState extends State<EditPage> {
                             ReorderableListView(
                               onReorder: (int oldIndex, int newIndex) {
                                 newIndex--;
-                                print(oldIndex);
-                                print(newIndex);
                                 var tempTerms = Map.from(terms?.object);
                                 var tempDefs = Map.from(defs?.object);
                                 setState(() {
@@ -337,11 +333,11 @@ class _EditPageState extends State<EditPage> {
                     )
                 ),
                 null),
-                body: ListView(children: const [
-                  Padding(padding: EdgeInsets.only(top: 20),
+                body: ListView(children: [
+                  Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",
-                        style: TextStyle(fontSize: 20,),),),)
+                        style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)
                 ])
             );
           }

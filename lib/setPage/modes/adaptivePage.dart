@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants.dart';
 import '../../database.dart';
 import '../../widgets.dart';
-import '../setPage.dart';
 
 class AdaptivePage extends StatefulWidget {
   const AdaptivePage({super.key});
@@ -209,8 +207,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
                           child: Text(
                           prompt,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                          fontSize: 30),
+                          style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.height * 0.036),
                           ),
                         ),
                       // multiple choice
@@ -219,8 +217,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: SizedBox(
-                              // height: 100, // card height
-                              width: 380,
+                              width: MediaQuery.of(context).size.width * 0.95,
                               child: Transform.scale(
                                 scale: 0.98,
                                 child: Card(
@@ -292,8 +289,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                         child: Text(
                                           answers.elementAt(i),
                                           textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                              fontSize: 30),
+                                          style: TextStyle(
+                                              fontSize: MediaQuery.of(context).size.height * 0.036),
                                         ),
                                       ),
                                     ),
@@ -324,9 +321,9 @@ class _AdaptivePageState extends State<AdaptivePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Padding(padding: EdgeInsets.only(top: 225),
+                             Padding(padding: const EdgeInsets.only(top: 225),
                               child: Text("You learned everything!",
-                                style: TextStyle(fontSize: 30,),),),
+                                style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.036,),),),
                           Padding(padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
                           child: ElevatedButton(
                               style: ButtonStyle(
@@ -338,8 +335,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                 _generateSet(0);
                                 valueCounter = 0;
                               },
-                              child: const Text("Restart",
-                                style: TextStyle(fontSize: 20,),),)
+                              child: Text("Restart",
+                                style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),)
                           )
                           ]
                         ),
@@ -434,11 +431,11 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       ),
                     )
                 ),null),
-                body: ListView(children: const [
-                  Padding(padding: EdgeInsets.only(top: 20),
+                body: ListView(children: [
+                  Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",
-                        style: TextStyle(fontSize: 20,),),),)
+                        style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)
                 ])
             );
           }
