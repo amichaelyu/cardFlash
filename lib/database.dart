@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:card_flash/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,22 +58,13 @@ class Database {
     return titleID;
   }
 
-  static Stream<dynamic> getTitles() async* {
+  static Future<dynamic> getTitles() async {
     final db = await database;
-    var lastQuery;
-    var lastQueryNum;
 
-    while (true) {
-      if (lastQuery == await db.rawQuery('SELECT * FROM titles ORDER BY position') || lastQueryNum == Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles'))) continue;
-      lastQuery = await db.rawQuery('SELECT * FROM titles ORDER BY position');
       if (Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles')) == 0) {
-        lastQueryNum = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles'));
-        yield null;
+        return null;
       }
-      else {
-        yield await lastQuery;
-      }
-    }
+      return await db.rawQuery('SELECT * FROM titles ORDER BY position');;
   }
 
   static Future<dynamic> getNextPosition() async {
@@ -85,27 +77,7 @@ class Database {
     }
   }
 
-  static Stream<dynamic> getSetStream() async* {
-    final db = await database;
-    final prefs = await SharedPreferences.getInstance();
-    var lastQuery;
-    var lastQueryNum;
-
-    while (true) {
-      if (prefs.getInt("currentTitleID") != -1) {
-        if ((lastQuery == (await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]) + await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]))) && (lastQueryNum != (Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles where titleID = ?', [prefs.getInt("currentTitleID")]))!))) {
-          continue;
-        }
-        lastQuery = ((await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")])));
-        if ((Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]))!) == 0) {lastQueryNum = (Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]))!);
-          yield null;
-        }
-        yield await lastQuery;
-      }
-    }
-  }
-
-  static Future<dynamic> getSetFuture() async {
+  static Future<dynamic> getSet() async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
 
@@ -324,7 +296,6 @@ class Database {
 
   static Future<void> deleteSet(titleID) async {
     final db = await database;
-    final prefs = await SharedPreferences.getInstance();
 
     // titles: (timestamp, position, title, desc, iconCP, iconFF, iconFP)
     //[time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage]

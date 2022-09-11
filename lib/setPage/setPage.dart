@@ -16,6 +16,14 @@ class _SetPageState extends State<SetPage> {
   int _index = 0;
   late int colorLight;
   late int colorDark;
+  var controller = PageController(viewportFraction: 0.8);
+
+  nav() async {
+    await Navigator.pushNamed(context, "/HOME/SET/EDIT");
+    setState(() {
+      controller.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
+    });
+  }
 
   _initializeColor() async {
     colorLight = (await SharedPreferences.getInstance()).getInt("cardColorLight")!;
@@ -31,8 +39,8 @@ class _SetPageState extends State<SetPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: Database.getSetStream(),
+    return FutureBuilder(
+        future: Database.getSet(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -42,7 +50,7 @@ class _SetPageState extends State<SetPage> {
                           padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, "/HOME/SET/EDIT");
+                              nav();
                             },
                             child: Icon(
                               Icons.edit_rounded,
@@ -83,8 +91,7 @@ class _SetPageState extends State<SetPage> {
                           height: MediaQuery.of(context).size.height * 0.47, // card height
                           child: PageView.builder(
                             itemCount: snapshot.data.length - 1,
-                            controller: PageController(
-                              viewportFraction: 0.8),
+                            controller: controller,
                             onPageChanged: (int index) => setState(() => _index = index),
                             itemBuilder: (_, i) {
                               return Transform.scale(

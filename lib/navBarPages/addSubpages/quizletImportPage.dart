@@ -51,13 +51,13 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             value = null;
-            final SharedPreferences prefs = await SharedPreferences.getInstance();
             final navigator = Navigator.of(context);
             var mess = ScaffoldMessenger.of(context);
             final webScraper = WebScraper(null);
             var title, desc;
             var terms = [];
             var defs = [];
+            final SharedPreferences prefs = await SharedPreferences.getInstance();
 
             if (await webScraper.loadFullURL(link.object)) {
               if (webScraper.getElement('div.SetPage-titleWrapper', []).isNotEmpty) {

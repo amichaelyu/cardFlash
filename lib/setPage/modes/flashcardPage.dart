@@ -25,13 +25,13 @@ class _FlashcardPageState extends State<FlashcardPage> {
   late int colorDark;
 
   _loadDB() async {
-    var set = await Database.getSetFuture();
+    var set = await Database.getSet();
     shuffle = set[0]['flashcardShuffle'] == 1;
     termDef = set[0]['flashcardTermDef'] == 0 ? ['term', 'def'] : ['def', 'term'];
   }
 
   _loadTerms() async {
-    var set = await Database.getSetFuture();
+    var set = await Database.getSet();
     text.clear();
     if (!shuffle) {
       for (int i = 0; i < set.length - 1; i++) {
@@ -65,8 +65,8 @@ class _FlashcardPageState extends State<FlashcardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: Database.getSetStream(),
+    return FutureBuilder(
+        future: Database.getSet(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -78,26 +78,24 @@ class _FlashcardPageState extends State<FlashcardPage> {
                       size: 30,
                       ),
                     onSelected: (Menu item) {
-                      setState(() {
-                        switch (item) {
-                          case Menu.shuffle:
-                            shuffle = !shuffle;
-                            _loadTerms();
-                            Database.updateFlashcardShuffle(shuffle);
-                            break;
-                          case Menu.termFront:
-                            var temp = termDef[1];
-                            termDef[1] = termDef[0];
-                            termDef[0] = temp;
-                            _loadTerms();
-                            Database.updateFlashcardTermDef(termDef[0] != 'term');
-                            break;
-                          case Menu.reset:
-                            controller.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
-                            _loadTerms();
-                            break;
-                        }
-                      });
+                      switch (item) {
+                        case Menu.shuffle:
+                          shuffle = !shuffle;
+                          _loadTerms();
+                          Database.updateFlashcardShuffle(shuffle);
+                          break;
+                        case Menu.termFront:
+                          var temp = termDef[1];
+                          termDef[1] = termDef[0];
+                          termDef[0] = temp;
+                          _loadTerms();
+                          Database.updateFlashcardTermDef(termDef[0] != 'term');
+                          break;
+                        case Menu.reset:
+                          controller.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
+                          _loadTerms();
+                          break;
+                      }
                     },
                     itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
                       PopupMenuItem<Menu>(
@@ -157,15 +155,13 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                           20)),
                                   child: InkWell(
                                     splashColor: Colors.blue.withAlpha(30),
-                                    onTap: () async {
-                                      setState(() {
-                                        if (text[i] == snapshot.data[i + 1][termDef[0]]) {
-                                          text[i] = snapshot.data[i + 1][termDef[1]];
-                                        }
-                                        else {
-                                          text[i] = snapshot.data[i + 1][termDef[0]];
-                                        }
-                                      });
+                                    onTap: () {
+                                      if (text[i] == snapshot.data[i + 1][termDef[0]]) {
+                                        text[i] = snapshot.data[i + 1][termDef[1]];
+                                      }
+                                      else {
+                                        text[i] = snapshot.data[i + 1][termDef[0]];
+                                      }
                                     },
                                     child: SizedBox(
                                       child: Center(

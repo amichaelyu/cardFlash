@@ -5,7 +5,7 @@ import 'database.dart';
 import 'navBarPages/homePage.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage.SplashPage({super.key});
+  const SplashPage({super.key});
 
   @override
   State<SplashPage> createState() => _SplashPageState();
@@ -13,6 +13,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   _readDB() async {
+    final navigator = Navigator.of(context);
     await Database.initializeDB();
     var prefs = await SharedPreferences.getInstance();
     prefs.setInt("currentTitleID", -1);
@@ -21,17 +22,14 @@ class _SplashPageState extends State<SplashPage> {
 
     // await Future.delayed(const Duration(seconds: 10));
 
-    setState(() {
-      Navigator.push(
-        context,
+      navigator.push(
         PageRouteBuilder(
           pageBuilder: (c, a1, a2) => const HomeNavigator(),
           settings: const RouteSettings(name: "/HOME"),
           transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
           transitionDuration: const Duration(milliseconds: 500),
-        ),
+        )
       );
-    });
   }
 
   @override

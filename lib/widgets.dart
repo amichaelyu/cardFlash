@@ -60,10 +60,8 @@ class BetterCardHome extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: InkWell(
           splashColor: Colors.blue.withAlpha(30),
-          onTap: () async {
-            final navigator = Navigator.of(context);
-            (await SharedPreferences.getInstance()).setInt("currentTitleID", titleID);
-            navigator.pushNamed(nav);
+          onTap: () {
+            nav;
           },
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.95,

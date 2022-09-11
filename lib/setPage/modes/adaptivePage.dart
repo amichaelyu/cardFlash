@@ -41,7 +41,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
   }
 
   _initialAsync() async {
-    var set = await Database.getSetFuture();
+    var set = await Database.getSet();
     mcNum = set[0]['multipleChoiceQuestions'] * (set[0]['multipleChoiceEnabled'] == 1 ? (set[0]['adaptiveTermDef'] > 0 ? 1 : 2) : 0);
     writingNum = set[0]['writingQuestions'] * (set[0]['writingEnabled'] == 1 ? (set[0]['adaptiveTermDef'] > 0 ? 1 : 2) : 0);
     for (int i = 1; i < set.length; i++) {
@@ -59,7 +59,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
   }
 
   _generateSet(int pos) async {
-    var set = await Database.getSetFuture();
+    var set = await Database.getSet();
     answers.clear();
     colorList.clear();
     if (shuffledList.isNotEmpty) {
@@ -129,7 +129,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
   }
 
   _updateCounter(int valueUpdate) async {
-    var set = await Database.getSetFuture();
+    var set = await Database.getSet();
     if (counter < (shuffledList.length - 2)) {
       counter++;
     }
@@ -159,8 +159,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: Database.getSetStream(),
+    return FutureBuilder(
+        future: Database.getSet(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -170,8 +170,15 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, "/HOME/SET/ADAPTIVE/SETTINGS");
-                          // Navigator.popAndPushNamed(context, "/HOME/SET/ADAPTIVE/SETTINGS");
+                          nav() async {
+                            await Navigator.pushNamed(context, "/HOME/SET/ADAPTIVE/SETTINGS");
+                            _initializeCardColor();
+                            _initialAsync();
+                            _generateSet(0);
+                          }
+                          setState(() {
+                            nav();
+                          });
                         },
                         child: const Icon(
                           Icons.settings_rounded,
@@ -237,7 +244,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                       if (showAnswer != true) {
                                         maintainMC = true;
                                         if (colorList[i] != Colors.green) {
-                                          var db = await Database.getSetFuture();
+                                          var db = await Database.getSet();
                                           valueSetter = -1 * db[shuffledList[counter]][answers.last == 1 ? 'correctInARowDef' : 'correctInARowTerm'];
                                           colorList[i] = Colors.red;
                                           Database.updateCorrectIncorrect(shuffledList[counter]-1, -1);
@@ -350,7 +357,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       maintainMC = false;
                       if (writingVal.object != answer) {
                         writingController.clear();
-                        var set = await Database.getSetFuture();
+                        var set = await Database.getSet();
                         var incorrect = set[shuffledList[counter]-1]['incorrectTotal'];
                         var correctInARow = answers.last == 1 ? set[shuffledList[counter]]['correctInARowDef'] : set[shuffledList[counter]]['correctInARowTerm'];
                         valueSetter = -1 * correctInARow;

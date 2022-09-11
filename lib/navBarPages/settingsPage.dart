@@ -78,7 +78,7 @@ class _SettingsPage extends StatelessWidget {
     return ListView(
       children: [
         Padding(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text("rat",

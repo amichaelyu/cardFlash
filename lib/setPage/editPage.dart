@@ -42,7 +42,7 @@ class _EditPageState extends State<EditPage> {
   }
 
   void _grabSomeData() async {
-    var data = await Database.getSetFuture();
+    var data = await Database.getSet();
     _icon = IconData(data[0]['iconCP'], fontFamily: data[0]['iconFF'], fontPackage: data[0]['iconFP']);
     title = Object(data[0]['title']);
     desc = Object(data[0]['desc']);
@@ -70,14 +70,13 @@ class _EditPageState extends State<EditPage> {
   void _removeCard(int val) {
     setState(() {
       ignoreList.add(val);
-      cardMinus--;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: Database.getSetStream(),
+    return FutureBuilder(
+        future: Database.getSet(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -100,7 +99,7 @@ class _EditPageState extends State<EditPage> {
                                 TextButton(
                                   onPressed: () async {
                                     Navigator.popUntil(context, (route) => route.settings.name == "/HOME");
-                                    await Future.delayed(const Duration(seconds: 1));
+                                    await Future.delayed(const Duration(milliseconds: 50));
                                     await Database.deleteSet((await SharedPreferences.getInstance()).getInt('currentTitleID'));
                                   },
                                   child: const Text(
@@ -212,56 +211,54 @@ class _EditPageState extends State<EditPage> {
                               ),
                             ),
                             const Padding(padding: EdgeInsets.only(bottom: 10)),
-                            ReorderableListView(
+                            ReorderableListView.builder(
                               onReorder: (int oldIndex, int newIndex) {
-                                newIndex--;
+                                newIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
                                 var tempTerms = Map.from(terms?.object);
                                 var tempDefs = Map.from(defs?.object);
-                                setState(() {
-                                  terms?.object[newIndex] = tempTerms[oldIndex] ?? snapshot.data[oldIndex + 1]['term'];
-                                  defs?.object[newIndex] = tempDefs[oldIndex] ?? snapshot.data[oldIndex + 1]['def'];
-                                  if (newIndex < oldIndex) {
-                                    for (int i = newIndex; i < oldIndex; i++) {
-                                      terms?.object[i + 1] = tempTerms[i] ?? snapshot.data[i + 1]['term'];
-                                      defs?.object[i + 1] = tempDefs[i] ?? snapshot.data[i + 1]['def'];
-                                    }
+                                terms?.object[newIndex] = tempTerms[oldIndex] ?? snapshot.data[oldIndex + 1]['term'];
+                                defs?.object[newIndex] = tempDefs[oldIndex] ?? snapshot.data[oldIndex + 1]['def'];
+                                if (newIndex < oldIndex) {
+                                  for (int i = newIndex; i < oldIndex; i++) {
+                                    terms?.object[i + 1] = tempTerms[i] ?? snapshot.data[i + 1]['term'];
+                                    defs?.object[i + 1] = tempDefs[i] ?? snapshot.data[i + 1]['def'];
                                   }
-                                  else if (newIndex > oldIndex) {
-                                    for (int i = oldIndex + 1; i <= newIndex; i++) {
-                                      terms?.object[i - 1] = tempTerms[i] ?? snapshot.data[i + 1]['term'];
-                                      defs?.object[i - 1] = tempDefs[i] ?? snapshot.data[i + 1]['def'];
-                                    }
+                                }
+                                else if (newIndex > oldIndex) {
+                                  for (int i = oldIndex + 1; i <= newIndex; i++) {
+                                    terms?.object[i - 1] = tempTerms[i] ?? snapshot.data[i + 1]['term'];
+                                    defs?.object[i - 1] = tempDefs[i] ?? snapshot.data[i + 1]['def'];
                                   }
-                                  for (int i = 0; i < terms?.object.length; i++) {
-                                    termCont[i].text = terms?.object[i] ?? snapshot.data[i + 1]['term'];
-                                    defCont[i].text = defs?.object[i] ?? snapshot.data[i + 1]['def'];
-                                  }
-                                });
+                                }
+                                for (int i = 0; i < terms?.object.length; i++) {
+                                  termCont[i].text = terms?.object[i] ?? snapshot.data[i + 1]['term'];
+                                  defCont[i].text = defs?.object[i] ?? snapshot.data[i + 1]['def'];
+                                }
                               },
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              children: [
-                                for (int i = 0; i < cardNum; i++)
-                                  Slidable(
-                                    key: Key(i.toString()),
-                                    endActionPane: ActionPane(
-                                      extentRatio: 0.25,
-                                      motion: const ScrollMotion(),
-                                      children: [
-                                        SlidableAction(
-                                          onPressed: (context) {
-                                            _removeCard(i);
-                                          },
-                                          backgroundColor: const Color(0xFFFE4A49),
-                                          foregroundColor: Colors.white,
-                                          icon: Icons.delete_rounded,
-                                          label: 'Delete',
-                                        ),
-                                      ],
-                                    ),
-                                    child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i), null, null, termCont[i], defCont[i]),),
+                              itemBuilder: (BuildContext context, int i) {
+                                return Slidable(
+                                  key: Key(i.toString()),
+                                  endActionPane: ActionPane(
+                                    extentRatio: 0.25,
+                                    motion: const ScrollMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (context) {
+                                          _removeCard(i);
+                                        },
+                                        backgroundColor: const Color(0xFFFE4A49),
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.delete_rounded,
+                                        label: 'Delete',
+                                      ),
+                                    ],
                                   ),
-                              ],
+                                  child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i), null, null, termCont[i], defCont[i]),),
+                                );
+                              },
+                              itemCount: cardNum,
                             ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
@@ -308,6 +305,7 @@ class _EditPageState extends State<EditPage> {
                           duration: Duration(milliseconds: 1000),
                         ),
                       );
+                      setState(() {});
                     }
                     value = 0.0;
                   },

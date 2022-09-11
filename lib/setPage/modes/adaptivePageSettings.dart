@@ -21,7 +21,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
   late var writingQuestions;
 
   _readDB() async {
-    var db = await Database.getSetFuture();
+    var db = await Database.getSet();
     dropdownPosition = db[0]['adaptiveTermDef'];
     multipleChoiceEnabled = db[0]['multipleChoiceEnabled'] == 1;
     writingEnabled = db[0]['writingEnabled'] == 1;
@@ -37,8 +37,8 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: Database.getSetStream(),
+    return FutureBuilder(
+        future: Database.getSet(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -49,13 +49,6 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                             final navigator = Navigator.of(context);
                             await Database.updateAdaptiveSettings(dropdownPosition, multipleChoiceEnabled ? 1 : 0, writingEnabled ? 1 : 0, int.parse(multipleChoiceQuestions.object), int.parse(writingQuestions.object));
                             navigator.pop();
-                            navigator.pushReplacement(
-                              PageRouteBuilder(
-                                pageBuilder: (context, animation1, animation2) => const AdaptivePage(),
-                                settings: const RouteSettings(name: "/HOME/SET/ADAPTIVE"),
-                              ),
-                            );
-                            // navigator.pop();
                           },
                           child: const Icon(
                             Icons.arrow_back_ios_new_rounded,

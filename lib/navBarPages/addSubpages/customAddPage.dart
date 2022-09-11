@@ -80,7 +80,8 @@ class _CustomAddPageState extends State<CustomAddPage> {
                   }
                   if (_formKey.currentState!.validate()) {
                     await (await SharedPreferences.getInstance()).setInt("currentTitleID", await Database.insertSet(CardSet(await Database.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
-                    navigator.popUntil((route) => route.settings.name == "/HOME");
+                    navigator.popUntil((route) => route.settings.name == "/");
+                    navigator.pushNamed("/HOME");
                     navigator.pushNamed("/HOME/SET");
                   }
                   value = 0.0;
@@ -145,56 +146,54 @@ class _CustomAddPageState extends State<CustomAddPage> {
                   ),
                 ),
                 const Padding(padding: EdgeInsets.only(bottom: 10)),
-                ReorderableListView(
+                ReorderableListView.builder(
                   onReorder: (int oldIndex, int newIndex) {
                     newIndex = min(newIndex, cardNum - 1);
                     var tempTerms = Map.from(terms?.object);
                     var tempDefs = Map.from(defs?.object);
-                    setState(() {
-                      terms?.object[newIndex] = tempTerms[oldIndex];
-                      defs?.object[newIndex] = tempDefs[oldIndex];
-                      if (newIndex < oldIndex) {
-                        for (int i = newIndex; i < oldIndex; i++) {
-                          terms?.object[i + 1] = tempTerms[i];
-                          defs?.object[i + 1] = tempDefs[i];
-                        }
+                    terms?.object[newIndex] = tempTerms[oldIndex];
+                    defs?.object[newIndex] = tempDefs[oldIndex];
+                    if (newIndex < oldIndex) {
+                      for (int i = newIndex; i < oldIndex; i++) {
+                        terms?.object[i + 1] = tempTerms[i];
+                        defs?.object[i + 1] = tempDefs[i];
                       }
-                      else if (newIndex > oldIndex) {
-                        for (int i = oldIndex + 1; i <= newIndex; i++) {
-                          terms?.object[i - 1] = tempTerms[i];
-                          defs?.object[i - 1] = tempDefs[i];
-                        }
+                    }
+                    else if (newIndex > oldIndex) {
+                      for (int i = oldIndex + 1; i <= newIndex; i++) {
+                        terms?.object[i - 1] = tempTerms[i];
+                        defs?.object[i - 1] = tempDefs[i];
                       }
-                      for (int i = 0; i < terms?.object.length; i++) {
-                        termCont[i].text = terms?.object[i];
-                        defCont[i].text = defs?.object[i];
-                      }
-                    });
+                    }
+                    for (int i = 0; i < terms?.object.length; i++) {
+                      termCont[i].text = terms?.object[i];
+                      defCont[i].text = defs?.object[i];
+                    }
                   },
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    for (int i = 0; i < cardNum; i++)
-                        Slidable(
-                          key: Key(i.toString()),
-                          endActionPane: ActionPane(
-                            extentRatio: 0.25,
-                            motion: const ScrollMotion(),
-                            children: [
-                              SlidableAction(
-                                onPressed: (context) {
-                                  _removeCard(i);
-                                },
-                                backgroundColor: const Color(0xFFFE4A49),
-                                foregroundColor: Colors.white,
-                                icon: Icons.delete_rounded,
-                                label: 'Delete',
-                              ),
-                            ],
+                  itemBuilder: (BuildContext context, int i) {
+                    return Slidable(
+                      key: Key(i.toString()),
+                      endActionPane: ActionPane(
+                        extentRatio: 0.25,
+                        motion: const ScrollMotion(),
+                        children: [
+                          SlidableAction(
+                            onPressed: (context) {
+                              _removeCard(i);
+                            },
+                            backgroundColor: const Color(0xFFFE4A49),
+                            foregroundColor: Colors.white,
+                            icon: Icons.delete_rounded,
+                            label: 'Delete',
                           ),
-                          child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i), null, null, termCont[i], defCont[i]),),
+                        ],
                       ),
-                  ],
+                      child: Padding(padding: const EdgeInsets.only(bottom: 5), child: BetterCardTextForm("Enter a term", "Enter a definition", i, terms, defs, !ignoreList.contains(i), null, null, termCont[i], defCont[i]),),
+                    );
+                  },
+                  itemCount: cardNum,
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),

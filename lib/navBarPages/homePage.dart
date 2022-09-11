@@ -1,10 +1,9 @@
-import 'dart:ui';
-
 import 'package:card_flash/database.dart';
 import 'package:card_flash/navBarPages/settingsPage.dart';
 import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
 import 'addPage.dart';
@@ -82,106 +81,118 @@ class _HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<_HomePage> {
+
+  deleteSet(var snapshot, var index) async {
+    Navigator.pop(context);
+    await Database.deleteSet(snapshot.data[index]['titleID']);
+  }
+
+  nav(var titleID) async {
+    final navigator = Navigator.of(context);
+    (await SharedPreferences.getInstance()).setInt("currentTitleID", titleID);
+    await navigator.pushNamed("/HOME/SET");
+    await Future.delayed(const Duration(milliseconds: 50));
+    setState(() {
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: Database.getTitles(),
+    return FutureBuilder(
+        future: Database.getTitles(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Padding(
               padding: const EdgeInsets.only(top: 5),
-              child: ReorderableListView(
+              child: ReorderableListView.builder(
                 onReorder: (int oldIndex, int newIndex) async {
                   await Database.updatePosition(oldIndex, newIndex, snapshot.data[oldIndex]['titleID']);
                 },
-                children: [
-                  for (var set in snapshot.data)
-                    Slidable(
-                      key: Key(set['titleID'].toString()),
+                  
+                itemBuilder: (BuildContext context, int index) {
+                  return Slidable(
+                      key: Key(snapshot.data[index]['titleID'].toString()),
                       endActionPane: ActionPane(
-                      extentRatio: 0.25,
-                      motion: const ScrollMotion(),
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) async {
-                            showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                  title: const Text('Are you sure you want to delete this set?'),
-                                  content: const Text('This process is currently irreversible!'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        Navigator.pop(context);
-                                        await Database.deleteSet(set['titleID']);
-                                      },
-                                      child: const Text(
-                                        'Confirm',
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    ),
-                                  ],
-                                ));
-                          },
-                        backgroundColor: const Color(0xFFFE4A49),
-                        foregroundColor: Colors.white,
-                        icon: Icons.delete_rounded,
-                        label: 'Delete',
-                        ),
-                        ]
-                        ),
-                      child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET', '/HOME/SET/ADAPTIVE')
+                          extentRatio: 0.25,
+                          motion: const ScrollMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) async {
+                                showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) => AlertDialog(
+                                      title: const Text('Are you sure you want to delete this set?'),
+                                      content: const Text('This process is currently irreversible!'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              deleteSet(snapshot, index);
+                                            });
+                                          },
+                                          child: const Text(
+                                            'Confirm',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ],
+                                    ));
+                              },
+                              backgroundColor: const Color(0xFFFE4A49),
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete_rounded,
+                              label: 'Delete',
+                            ),
+                          ]
                       ),
-
-
-                    // ListTile(
-                    //   key: Key(set['position'].toString()),
-                    //   title: Slidable(
-                    //       endActionPane: ActionPane(
-                    //         extentRatio: 0.25,
-                    //         motion: const ScrollMotion(),
-                    //         children: [
-                    //           SlidableAction(
-                    //             onPressed: (context) async {
-                    //               showDialog<String>(
-                    //                   context: context,
-                    //                   builder: (BuildContext context) => AlertDialog(
-                    //                     title: const Text('Are you sure you want to delete this set?'),
-                    //                     content: const Text('This process is currently irreversible!'),
-                    //                     actions: <Widget>[
-                    //                       TextButton(
-                    //                         onPressed: () => Navigator.pop(context),
-                    //                         child: const Text('Cancel'),
-                    //                       ),
-                    //                       TextButton(
-                    //                         onPressed: () async {
-                    //                           Navigator.pop(context);
-                    //                           await Database.deleteSet(set['titleID']);
-                    //                         },
-                    //                         child: const Text(
-                    //                           'Confirm',
-                    //                           style: TextStyle(color: Colors.red),
-                    //                         ),
-                    //                       ),
-                    //                     ],
-                    //                   ));
-                    //             },
-                    //             backgroundColor: const Color(0xFFFE4A49),
-                    //             foregroundColor: Colors.white,
-                    //             icon: Icons.delete_rounded,
-                    //             label: 'Delete',
-                    //           ),
-                    //         ],
-                    //       ),
-                    //       child: BetterCardHome(set['title'], set['desc'], IconData(set['iconCP'], fontFamily: set['iconFF'], fontPackage: set['iconFP']), set['titleID'], '/HOME/SET', '/HOME/SET/ADAPTIVE')
-                    //   ),
-                    // ),
-                ]
-            ),
+                      child: Center(
+                        child: Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          child: InkWell(
+                            splashColor: Colors.blue.withAlpha(30),
+                            onTap: () {
+                              // setState(() {
+                                nav(snapshot.data[index]['titleID']);
+                              // });
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.95,
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(IconData(snapshot.data[index]['iconCP'], fontFamily: snapshot.data[index]['iconFF'], fontPackage: snapshot.data[index]['iconFP'])),
+                                    title: Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 5), child: Text(snapshot.data[index]['title'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                                    subtitle: Text(snapshot.data[index]['desc']),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      TextButton(
+                                        child: const Text('STUDY'),
+                                        onPressed: () async {
+                                          final navigator = Navigator.of(context);
+                                          (await SharedPreferences.getInstance()).setInt("currentTitleID", snapshot.data[index]['titleID']);
+                                          navigator.pushNamed('/HOME/SET/ADAPTIVE');
+                                        },
+                                      ),
+                                      const SizedBox(width: 8),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    );
+                  },
+                  itemCount: snapshot.data.length,
+              ),
             );
           }
           else if ((snapshot.connectionState == ConnectionState.none) || (snapshot.connectionState == ConnectionState.waiting)) {
