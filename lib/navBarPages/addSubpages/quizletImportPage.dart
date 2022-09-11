@@ -87,7 +87,8 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                 await prefs.setInt("currentTitleID", await Database.insertSet(
                     CardSet(await Database.getNextPosition(), title, desc,
                         Icons.quiz_rounded, terms, defs)));
-                navigator.popUntil((route) => route.settings.name == "/HOME");
+                navigator.popUntil((route) => route.settings.name == "/");
+                navigator.pushNamed('/HOME');
                 navigator.pushNamed('/HOME/SET');
                 navigator.pushNamed('/HOME/SET/EDIT');
               }
