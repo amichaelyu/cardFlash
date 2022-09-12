@@ -47,3 +47,4 @@ app.*.map.json
 !assets/icon
 
 /assets/icon/cardFlashProject.psd
+upload-keystore.jks
