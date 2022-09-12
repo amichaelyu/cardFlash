@@ -44,6 +44,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
     var set = await Database.getSet();
     mcNum = set[0]['multipleChoiceQuestions'] * (set[0]['multipleChoiceEnabled'] == 1 ? (set[0]['adaptiveTermDef'] > 0 ? 1 : 2) : 0);
     writingNum = set[0]['writingQuestions'] * (set[0]['writingEnabled'] == 1 ? (set[0]['adaptiveTermDef'] > 0 ? 1 : 2) : 0);
+    shuffledList.clear();
+    valueCounter = 0;
     for (int i = 1; i < set.length; i++) {
       valueCounter += set[i]['correctInARowTerm'];
       valueCounter += set[i]['correctInARowDef'];
@@ -60,6 +62,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
 
   _generateSet(int pos) async {
     var set = await Database.getSet();
+    int number;
+    Set<int> nums = {};
     answers.clear();
     colorList.clear();
     if (shuffledList.isNotEmpty) {
@@ -71,10 +75,12 @@ class _AdaptivePageState extends State<AdaptivePage> {
             answer = set[shuffledList[pos]]['term'];
             answers.add(answer);
             while (answers.length != min<num>(4, (set.length - 1))) {
-              var word = set[(Random().nextInt(set.length - 1)) + 1]['term'];
-              if (!answers.contains(word)) {
+              number = (Random().nextInt(set.length - 1)) + 1;
+              var word = set[number]['term'];
+              if (!answers.contains(word) || nums.length == (set.length - 1)) {
                 answers.add(word);
               }
+              nums.add(number);
             }
             answers.shuffle();
             answers.add(1);
@@ -84,10 +90,12 @@ class _AdaptivePageState extends State<AdaptivePage> {
             answer = set[shuffledList[pos]]['def'];
             answers.add(answer);
             while (answers.length != min<num>(4, (set.length - 1))) {
-              var word = set[(Random().nextInt(set.length - 1)) + 1]['def'];
-              if (!answers.contains(word)) {
+              number = (Random().nextInt(set.length - 1)) + 1;
+              var word = set[number]['def'];
+              if (!answers.contains(word) || nums.length == (set.length - 1)) {
                 answers.add(word);
               }
+              nums.add(number);
             }
             answers.shuffle();
             answers.add(2);
@@ -98,10 +106,12 @@ class _AdaptivePageState extends State<AdaptivePage> {
           answer = set[shuffledList[pos]]['term'];
           answers.add(answer);
           while (answers.length != min<num>(4, (set.length - 1))) {
-            var word = set[(Random().nextInt(set.length - 1)) + 1]['term'];
-            if (!answers.contains(word)) {
+            number = (Random().nextInt(set.length - 1)) + 1;
+            var word = set[number]['term'];
+            if (!answers.contains(word) || nums.length == (set.length - 1)) {
               answers.add(word);
             }
+            nums.add(number);
           }
           answers.shuffle();
           answers.add(1);
@@ -111,10 +121,12 @@ class _AdaptivePageState extends State<AdaptivePage> {
           answer = set[shuffledList[pos]]['def'];
           answers.add(answer);
           while (answers.length != min<num>(4, (set.length - 1))) {
-            var word = set[(Random().nextInt(set.length - 1)) + 1]['def'];
-            if (!answers.contains(word)) {
+            number = (Random().nextInt(set.length - 1)) + 1;
+            var word = set[number]['def'];
+            if (!answers.contains(word) || nums.length == (set.length - 1)) {
               answers.add(word);
             }
+            nums.add(number);
           }
           answers.shuffle();
           answers.add(2);
@@ -196,7 +208,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                   PreferredSize(
                     preferredSize: const Size(double.infinity, 1.0),
                     child: LinearProgressIndicator(
-                      value: value.isNaN ? 0 : value,
+                      value: value.isNaN || value.isInfinite ? 0 : value,
                       semanticsLabel: "Indicates learn progress",
                     ),
                   ),),

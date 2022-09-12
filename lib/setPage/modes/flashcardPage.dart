@@ -33,15 +33,16 @@ class _FlashcardPageState extends State<FlashcardPage> {
   _loadTerms() async {
     var set = await Database.getSet();
     text.clear();
+    shuffleList.clear();
+    for (int i = 1; i < set.length; i++) {
+      shuffleList.add(i);
+    }
     if (!shuffle) {
-      for (int i = 0; i < set.length - 1; i++) {
-        text.add(set[i + 1][termDef[0]]);
+      for (int i = 1; i < set.length; i++) {
+        text.add(set[i][termDef[0]]);
       }
     }
     else {
-      for (int i = 1; i < set.length; i++) {
-        shuffleList.add(i);
-      }
       shuffleList.shuffle();
       for (int i = 0; i < set.length - 1; i++) {
         text.add(set[shuffleList[i]][termDef[0]]);
@@ -61,6 +62,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
     _loadDB();
     _loadTerms();
     _initializeColor();
+    setState(() {});
   }
 
   @override
@@ -82,20 +84,21 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         case Menu.shuffle:
                           shuffle = !shuffle;
                           _loadTerms();
-                          Database.updateFlashcardShuffle(shuffle);
+                          Database.updateFlashcardShuffle(shuffle ? 1 : 0);
                           break;
                         case Menu.termFront:
                           var temp = termDef[1];
                           termDef[1] = termDef[0];
                           termDef[0] = temp;
                           _loadTerms();
-                          Database.updateFlashcardTermDef(termDef[0] != 'term');
+                          Database.updateFlashcardTermDef(termDef[0] == 'term' ? 0 : 1);
                           break;
                         case Menu.reset:
                           controller.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
                           _loadTerms();
                           break;
                       }
+                      setState(() {});
                     },
                     itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
                       PopupMenuItem<Menu>(
@@ -156,12 +159,13 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                   child: InkWell(
                                     splashColor: Colors.blue.withAlpha(30),
                                     onTap: () {
-                                      if (text[i] == snapshot.data[i + 1][termDef[0]]) {
-                                        text[i] = snapshot.data[i + 1][termDef[1]];
+                                      if (text[i] == snapshot.data[shuffleList[i]][termDef[0]]) {
+                                        text[i] = snapshot.data[shuffleList[i]][termDef[1]];
                                       }
                                       else {
-                                        text[i] = snapshot.data[i + 1][termDef[0]];
+                                        text[i] = snapshot.data[shuffleList[i]][termDef[0]];
                                       }
+                                      setState(() {});
                                     },
                                     child: SizedBox(
                                       child: Center(

@@ -280,14 +280,14 @@ class Database {
     await db.rawQuery('UPDATE titles SET writingQuestions = ? WHERE titleID = ?', [writingQuestions, prefs.getInt('currentTitleID')]);
   }
 
-  static Future<void> updateFlashcardShuffle(bool shuffle) async {
+  static Future<void> updateFlashcardShuffle(int shuffle) async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
 
-    await db.rawQuery('UPDATE titles SET flashcardShuffle = ? WHERE titleID = ?', [shuffle ? 1 : 0, prefs.getInt('currentTitleID')]);
+    await db.rawQuery('UPDATE titles SET flashcardShuffle = ? WHERE titleID = ?', [shuffle, prefs.getInt('currentTitleID')]);
   }
 
-  static Future<void> updateFlashcardTermDef(var termDef) async {
+  static Future<void> updateFlashcardTermDef(int termDef) async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
 
