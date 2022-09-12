@@ -48,7 +48,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
   }
 
   _setUpControllers() {
-    for (int i = 0; i < cardNum; i++) {
+    for (int i = termCont.length; i < cardNum; i++) {
       termCont.add(TextEditingController());
       defCont.add(TextEditingController());
     }
@@ -166,8 +166,8 @@ class _CustomAddPageState extends State<CustomAddPage> {
                       }
                     }
                     for (int i = 0; i < terms?.object.length; i++) {
-                      termCont[i].text = terms?.object[i];
-                      defCont[i].text = defs?.object[i];
+                      termCont[i].text = terms?.object[i] ?? '';
+                      defCont[i].text = defs?.object[i] ?? '';
                     }
                   },
                   shrinkWrap: true,
