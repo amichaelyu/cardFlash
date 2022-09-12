@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.michaelyu.flash_memory">
+    package="com.michaelyu.cardFlash">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="flash_memory"
+        android:label="cardFlash"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

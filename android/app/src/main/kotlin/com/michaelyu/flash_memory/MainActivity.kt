@@ -1,4 +1,4 @@
-package com.michaelyu.flash_memory
+package com.michaelyu.cardFlash
 
 import io.flutter.embedding.android.FlutterActivity
 
