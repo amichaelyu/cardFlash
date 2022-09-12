@@ -169,16 +169,12 @@ class _AdaptivePageState extends State<AdaptivePage> {
                   Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: GestureDetector(
-                        onTap: () {
-                          nav() async {
-                            await Navigator.pushNamed(context, "/HOME/SET/ADAPTIVE/SETTINGS");
-                            _initializeCardColor();
-                            _initialAsync();
-                            _generateSet(0);
-                          }
-                          setState(() {
-                            nav();
-                          });
+                        onTap: () async {
+                          await Navigator.pushNamed(context, "/HOME/SET/ADAPTIVE/SETTINGS");
+                          _initializeCardColor();
+                          _initialAsync();
+                          _generateSet(0);
+                          setState(() {});
                         },
                         child: const Icon(
                           Icons.settings_rounded,
@@ -287,6 +283,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                         mess.hideCurrentSnackBar();
                                         _updateCounter(valueSetter);
                                       }
+                                      setState(() {});
                                     },
                                     splashColor: Colors.blue.withAlpha(30),
                                     child: Center(

@@ -98,6 +98,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                         splashColor: Colors.blue.withAlpha(30),
                         onTap: () {
                           multipleChoiceEnabled = !multipleChoiceEnabled;
+                          setState(() {});
                         },
                         child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.77,
@@ -119,6 +120,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                             splashColor: Colors.blue.withAlpha(30),
                             onTap: () {
                               writingEnabled = !writingEnabled;
+                              setState(() {});
                             },
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.77,
