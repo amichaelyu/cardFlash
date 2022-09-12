@@ -1,5 +1,4 @@
 import 'package:card_flash/constants.dart';
-import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database.dart';
@@ -33,8 +32,7 @@ class _SplashPageState extends State<SplashPage> {
         PageRouteBuilder(
           pageBuilder: (c, a1, a2) => const HomeNavigator(),
           settings: const RouteSettings(name: "/HOME"),
-          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-          transitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: Duration.zero,
         )
       );
   }
@@ -60,28 +58,6 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, MediaQuery.of(context).size.height * 0.083),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                    Constants.title,
-                    style: TextStyle(
-                      color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.height * 0.059,
-                    ),
-                  )
-            ]
-          )
-        )
-      ]
-    );
+    return const Text('');
   }
 }

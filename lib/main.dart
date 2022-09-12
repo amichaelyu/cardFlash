@@ -1,10 +1,8 @@
 import 'package:card_flash/setPage/modes/adaptivePageSettings.dart';
 import 'package:card_flash/setPage/setPage.dart';
 import 'package:card_flash/splashScreen.dart';
-import 'package:card_flash/widgets.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
 import 'navBarPages/addSubpages/QRImportPage1.dart';
