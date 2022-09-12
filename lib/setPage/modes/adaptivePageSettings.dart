@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../constants.dart';
 import '../../database.dart';
 import '../../widgets.dart';
-import 'adaptivePage.dart';
 
 class AdaptiveSettingsPage extends StatefulWidget {
   const AdaptiveSettingsPage({super.key});

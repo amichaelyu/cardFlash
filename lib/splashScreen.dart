@@ -1,4 +1,3 @@
-import 'package:card_flash/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database.dart';

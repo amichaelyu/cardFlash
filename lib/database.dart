@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:card_flash/widgets.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,7 +63,7 @@ class Database {
       if (Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles')) == 0) {
         return null;
       }
-      return await db.rawQuery('SELECT * FROM titles ORDER BY position');;
+      return await db.rawQuery('SELECT * FROM titles ORDER BY position');
   }
 
   static Future<dynamic> getNextPosition() async {
