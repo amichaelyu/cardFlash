@@ -111,13 +111,13 @@ class _SettingsPage extends StatelessWidget {
                 throw 'Could not launch $_bugReport';
               }
             }, MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.grey.shade400 : Colors.grey.shade800),
-        BetterCardSettings("Request a feature",
+        BetterCardSettings("Request a Feature",
                 () async {
               if (!await launchUrl(_featureRequest)) {
                 throw 'Could not launch $_featureRequest';
               }
             }, MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.grey.shade400 : Colors.grey.shade800),
-        BetterCardSettings("Become a beta tester",
+        BetterCardSettings("Become a Beta Tester",
                 () async {
               if (!await launchUrl(_betaTester)) {
                 throw 'Could not launch $_betaTester';
