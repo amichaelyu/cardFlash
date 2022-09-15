@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -138,6 +139,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
     for (var i in answers) {
       colorList.add((i == answer ? Colors.green : null));
     }
+    setState(() {});
   }
 
   _updateCounter(int valueUpdate) async {
@@ -212,19 +214,30 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       semanticsLabel: "Indicates learn progress",
                     ),
                   ),),
-                body: ListView(
+                body: Center(child: Column(
                     children: [
                       //  prompt
                       if (shuffledList.isNotEmpty)
-                        Padding(
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.95,
+                          height: MediaQuery.of(context).size.height * 0.28,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
                                 padding: const EdgeInsets
-                                .fromLTRB(10, 20, 10, 20),
-                          child: Text(
-                          prompt,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height * 0.036),
-                          ),
+                                .fromLTRB(10, 0, 10, 0),
+                                child: AutoSizeText(
+                                  prompt,
+                                  maxLines: 8,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.height * 0.04),
+                                ),
+                              ),
+                            ]
+                            ),
                         ),
                       // multiple choice
                       if (shuffledList.isNotEmpty && ((snapshot.data[shuffledList[counter]]['correctInARowTerm'] + snapshot.data[shuffledList[counter]]['correctInARowDef']) < mcNum || maintainMC) && !maintainW)
@@ -233,6 +246,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.95,
+                              height: MediaQuery.of(context).size.height * 0.13,
                               child: Transform.scale(
                                 scale: 0.98,
                                 child: Card(
@@ -301,12 +315,15 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                     child: Center(
                                       child: Padding(
                                         padding: const EdgeInsets
-                                            .fromLTRB(10, 25, 10, 25),
-                                        child: Text(
+                                            .fromLTRB(15, 5, 15, 5),
+                                        child: AutoSizeText(
                                           answers.elementAt(i),
+                                          maxLines: 10,
+                                          minFontSize: 10,
+                                          semanticsLabel: answers.elementAt(i),
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              fontSize: MediaQuery.of(context).size.height * 0.036),
+                                              fontSize: MediaQuery.of(context).size.height * 0.028),
                                         ),
                                       ),
                                     ),
@@ -350,6 +367,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                 _initialAsync();
                                 _generateSet(0);
                                 valueCounter = 0;
+                                setState(() {
+                                });
                               },
                               child: Text("Restart",
                                 style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),)
@@ -358,6 +377,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         ),
                     ]
                   ),
+                ),
                 floatingActionButton: (shuffledList.isNotEmpty && (((snapshot.data[shuffledList[counter]]['correctInARowTerm'] + snapshot.data[shuffledList[counter]]['correctInARowDef']) >= mcNum && (snapshot.data[shuffledList[counter]]['correctInARowTerm'] + snapshot.data[shuffledList[counter]]['correctInARowDef']) < writingNum + mcNum) || maintainW) && !maintainMC) ? FloatingActionButton(
                   onPressed: () async {
                     var mess = ScaffoldMessenger.of(context);
@@ -385,6 +405,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                 writingController.clear();
                                 mess.hideCurrentSnackBar();
                                 _updateCounter(1);
+                                setState(() {
+                                });
                               },
                             ),
                             backgroundColor: Colors.black87,
@@ -425,6 +447,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       mess.hideCurrentSnackBar();
                       _updateCounter(valueSetter);
                     }
+                    setState(() {});
                   },
                   backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.green[400] : Colors.green[700],
                   child: const Icon(Icons.check_rounded),

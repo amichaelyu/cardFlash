@@ -23,7 +23,7 @@ class BetterAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         titleTextStyle: TextStyle(
           color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black,
-          fontSize: MediaQuery.of(context).size.height * 0.036,
+          fontSize: MediaQuery.of(context).size.height * 0.038,
         ),
         iconTheme: IconThemeData(color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black),
         title: Text(
@@ -124,7 +124,7 @@ class BetterCardSet extends StatelessWidget {
                       title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: MediaQuery.of(context).size.height * 0.024,
+                        fontSize: MediaQuery.of(context).size.height * 0.026,
                       ),
                   ),
                   // subtitle: Text(desc),

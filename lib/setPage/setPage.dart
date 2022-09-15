@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:card_flash/constants.dart';
 import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +81,7 @@ class _SetPageState extends State<SetPage> {
                           alignment: Alignment.center,
                           child: Text(snapshot.data.first['desc'],
                             style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.height * 0.024,
+                              fontSize: MediaQuery.of(context).size.height * 0.028,
                             ),
                           ),
                         ),
@@ -107,26 +108,28 @@ class _SetPageState extends State<SetPage> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
                                           20)),
-                                  child: ListView(
+                                  child: Column(
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(
                                               15),
-                                          child: Text(
+                                          child: AutoSizeText(
                                             snapshot.data[i + 1]['term'],
+                                            maxLines: 7,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                fontSize: MediaQuery.of(context).size.height * 0.032),
+                                                fontSize: MediaQuery.of(context).size.height * 0.034),
                                           ),
                                         ),
                                         Padding(
                                           padding: const EdgeInsets
                                               .fromLTRB(10, 0, 10, 0),
-                                          child: Text(
+                                          child: AutoSizeText(
                                             snapshot.data[i + 1]['def'],
+                                            maxLines: 13,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                fontSize: MediaQuery.of(context).size.height * 0.024),
+                                                fontSize: MediaQuery.of(context).size.height * 0.026),
                                           ),
                                         ),
                                       ]
