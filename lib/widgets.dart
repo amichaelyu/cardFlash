@@ -23,14 +23,12 @@ class BetterAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         titleTextStyle: TextStyle(
           color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black,
-          fontSize: MediaQuery.of(context).size.height * 0.038,
+          fontSize: MediaQuery.of(context).size.height * 0.036,
+          fontWeight: FontWeight.bold
         ),
         iconTheme: IconThemeData(color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black),
         title: Text(
           title,
-          style: const TextStyle(
-              fontWeight: FontWeight.bold
-          ),
         ),
         actions: actions,
         bottom: bottom,

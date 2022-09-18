@@ -210,6 +210,9 @@ class _SettingsPageState extends State<_SettingsPage> {
                               onPressed: () async {
                                 Navigator.pop(context);
                                 await Database.clearTables();
+                                await (await SharedPreferences.getInstance()).setBool('adaptivePrompt', true);
+                                adaptivePrompt = true;
+                                setState(() {});
                               },
                               child: const Text(
                                 'Confirm',

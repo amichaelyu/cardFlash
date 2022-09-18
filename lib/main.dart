@@ -23,6 +23,7 @@ void main() {
       .then((_) {
     runApp(
         MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: Constants.title,
           theme: FlexThemeData.light(
             scheme: FlexScheme.brandBlue,

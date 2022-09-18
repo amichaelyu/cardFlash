@@ -44,11 +44,11 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
           if (snapshot.data != null) {
             return Scaffold(
                 appBar: BetterAppBar("Adaptive Settings", null, Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                         child: GestureDetector(
                           onTap: () async {
                             final navigator = Navigator.of(context);
-                            await Database.updateAdaptiveSettings(dropdownPosition, multipleChoiceEnabled ? 1 : 0, writingEnabled ? 1 : 0, int.parse(multipleChoiceQuestions.object), int.parse(writingQuestions.object), repeatQuestions);
+                            await Database.updateAdaptiveSettings(dropdownPosition, multipleChoiceEnabled ? 1 : 0, writingEnabled ? 1 : 0, int.parse(multipleChoiceQuestions.object), int.parse(writingQuestions.object), int.parse(repeatQuestions.object));
                             navigator.pop();
                           },
                           child: const Icon(
@@ -71,7 +71,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                               children: [
                                 const Text("What to study?", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                                 Padding(
-                                    padding: const EdgeInsets.fromLTRB(20, 10, 10, 20),
+                                    padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
                                     child: DropdownButton(value: ["Terms & Definitions", "Terms", "Definitions"][dropdownPosition], items: ["Terms & Definitions", "Terms", "Definitions"].map<DropdownMenuItem<String>>((String value) {return DropdownMenuItem<String>(value: value,child: Text(value),);}).toList(), onChanged: (value) { setState(() {
                                       switch (value) {
                                         case "Terms & Definitions":
@@ -91,23 +91,23 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                         ]),
                       ),
                       Center(
-                      child: Card(
-                        color: multipleChoiceEnabled ? Colors.green : Colors.red,
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                        child: InkWell(
-                        splashColor: Colors.blue.withAlpha(30),
-                        onTap: () {
-                          multipleChoiceEnabled = !multipleChoiceEnabled;
-                          setState(() {});
-                        },
-                        child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.77,
-                        height: MediaQuery.of(context).size.height * 0.071,
-                        child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Multiple Choice ${multipleChoiceEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
-                        ),
-                        ),
-                        ),
+                        child: Card(
+                          color: multipleChoiceEnabled ? Colors.green : Colors.red,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          child: InkWell(
+                          splashColor: Colors.blue.withAlpha(30),
+                          onTap: () {
+                            multipleChoiceEnabled = !multipleChoiceEnabled;
+                            setState(() {});
+                          },
+                          child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.77,
+                          height: MediaQuery.of(context).size.height * 0.071,
+                          child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Multiple Choice ${multipleChoiceEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                          ),
+                          ),
+                          ),
                       ),
                       const Padding(
                         padding: EdgeInsets.only(top: 10),
@@ -132,7 +132,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                         ),
                       ),
                       const Padding(
-                        padding: EdgeInsets.only(top: 15),
+                        padding: EdgeInsets.only(top: 20),
                       ),
                       BetterTextFormFieldNumbersOnly("Number of multiple choice questions", null, null, null, multipleChoiceQuestions, multipleChoiceQuestions.object, null),
                       const Padding(
@@ -170,6 +170,9 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                           ],
                           ),
                         );}, null),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 20),
+                      ),
                     ]
                 )
             );
