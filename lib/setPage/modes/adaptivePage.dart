@@ -48,7 +48,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
     writingNum = set[0]['writingQuestions'] * (set[0]['writingEnabled'] == 1 ? (set[0]['adaptiveTermDef'] > 0 ? 1 : 2) : 0);
     shuffledList.clear();
     valueCounter = 0;
-    repeatNum = 7;
+    repeatNum = set[0]['adaptiveRepeat'];
     for (int i = 1; i < set.length; i++) {
       valueCounter += set[i]['correctInARowTerm'];
       valueCounter += set[i]['correctInARowDef'];

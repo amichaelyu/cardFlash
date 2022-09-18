@@ -18,6 +18,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
   late var writingEnabled;
   late var multipleChoiceQuestions;
   late var writingQuestions;
+  late var repeatQuestions;
 
   _readDB() async {
     var db = await Database.getSet();
@@ -26,6 +27,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
     writingEnabled = db[0]['writingEnabled'] == 1;
     multipleChoiceQuestions = Object(db[0]['multipleChoiceQuestions'].toString());
     writingQuestions = Object(db[0]['writingQuestions'].toString());
+    repeatQuestions = Object(db[0]['adaptiveRepeat'].toString());
   }
 
   @override
@@ -46,7 +48,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                         child: GestureDetector(
                           onTap: () async {
                             final navigator = Navigator.of(context);
-                            await Database.updateAdaptiveSettings(dropdownPosition, multipleChoiceEnabled ? 1 : 0, writingEnabled ? 1 : 0, int.parse(multipleChoiceQuestions.object), int.parse(writingQuestions.object));
+                            await Database.updateAdaptiveSettings(dropdownPosition, multipleChoiceEnabled ? 1 : 0, writingEnabled ? 1 : 0, int.parse(multipleChoiceQuestions.object), int.parse(writingQuestions.object), repeatQuestions);
                             navigator.pop();
                           },
                           child: const Icon(
@@ -137,6 +139,10 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                         padding: EdgeInsets.only(top: 10),
                       ),
                       BetterTextFormFieldNumbersOnly("Number of writing questions", null, null, null, writingQuestions, writingQuestions.object, null),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 10),
+                      ),
+                      BetterTextFormFieldNumbersOnly("Number of questions per group", "Each question will stay in the group until you master it", null, null, repeatQuestions, repeatQuestions.object, null),
                       const Padding(
                         padding: EdgeInsets.only(top: 20),
                       ),

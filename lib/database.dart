@@ -20,13 +20,21 @@ class Database {
       join(await getDatabasesPath(), 'sets.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE titles(titleID INTEGER PRIMARY KEY, timestamp INTEGER, position INTEGER, title TEXT, desc TEXT, iconCP INTEGER, iconFF TEXT, iconFP TEXT, adaptiveTermDef INTEGER, multipleChoiceEnabled INTEGER, writingEnabled INTEGER, multipleChoiceQuestions INTEGER, writingQuestions INTEGER, flashcardShuffle INTEGER, flashcardTermDef INTEGER)',
+          'CREATE TABLE titles(titleID INTEGER PRIMARY KEY, timestamp INTEGER, position INTEGER, title TEXT, desc TEXT, iconCP INTEGER, iconFF TEXT, iconFP TEXT, adaptiveTermDef INTEGER, multipleChoiceEnabled INTEGER, writingEnabled INTEGER, multipleChoiceQuestions INTEGER, writingQuestions INTEGER, adaptiveRepeat INTEGER, flashcardShuffle INTEGER, flashcardTermDef INTEGER)',
         );
         return await db.execute(
           'CREATE TABLE cards(cardID INTEGER PRIMARY KEY, timestamp INTEGER, position INTEGER, term TEXT, def TEXT, correctInARowTerm INTEGER, correctInARowDef INTEGER, correctTotal INTEGER, incorrectTotal INTEGER, cardTitle INTEGER)', // , FOREIGN KEY(cardTitle) REFERENCES cards(titleID)
         );
       },
-      version: 1,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion == 1) {
+          await db.execute(
+              'ALTER TABLE titles ADD adaptiveRepeat INTEGER'
+          );
+          await db.execute('UPDATE titles SET adaptiveRepeat = ?', [7]);
+        }
+      },
+      version: 2,
     );
 
     // (await database).rawQuery('ALTER TABLE cards ADD smartFlashcard INTEGER');
@@ -41,8 +49,8 @@ class Database {
     await db.transaction((txn) async {
       time = DateTime.now().millisecondsSinceEpoch;
       await txn.rawInsert(
-          'INSERT INTO titles(timestamp, position, title, desc, iconCP, iconFF, iconFP, adaptiveTermDef, multipleChoiceEnabled, writingEnabled, multipleChoiceQuestions, writingQuestions, flashcardShuffle, flashcardTermDef) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, 0, 1, 1, 2, 1, 1, 0]
+          'INSERT INTO titles(timestamp, position, title, desc, iconCP, iconFF, iconFP, adaptiveTermDef, multipleChoiceEnabled, writingEnabled, multipleChoiceQuestions, writingQuestions, flashcardShuffle, flashcardTermDef, adaptiveRepeat) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, 0, 1, 1, 2, 1, 1, 0, 7]
       );
       dynamic records = await txn.rawQuery('SELECT titleID FROM titles WHERE timestamp = ?', [time]);
       titleID = records.first['titleID'];
@@ -268,7 +276,7 @@ class Database {
     await db.rawQuery('UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ?', [0, prefs.getInt('currentTitleID')]);
   }
 
-  static Future<void> updateAdaptiveSettings(int adaptiveTermDef, int multipleChoiceEnabled, int writingEnabled, int multipleChoiceQuestions, int writingQuestions) async {
+  static Future<void> updateAdaptiveSettings(int adaptiveTermDef, int multipleChoiceEnabled, int writingEnabled, int multipleChoiceQuestions, int writingQuestions, int repeatQuestions) async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
 
@@ -277,6 +285,7 @@ class Database {
     await db.rawQuery('UPDATE titles SET writingEnabled = ? WHERE titleID = ?', [writingEnabled, prefs.getInt('currentTitleID')]);
     await db.rawQuery('UPDATE titles SET multipleChoiceQuestions = ? WHERE titleID = ?', [multipleChoiceQuestions, prefs.getInt('currentTitleID')]);
     await db.rawQuery('UPDATE titles SET writingQuestions = ? WHERE titleID = ?', [writingQuestions, prefs.getInt('currentTitleID')]);
+    await db.rawQuery('UPDATE titles SET adaptiveRepeat = ? WHERE titleID = ?', [repeatQuestions, prefs.getInt('currentTitleID')]);
   }
 
   static Future<void> updateFlashcardShuffle(int shuffle) async {
