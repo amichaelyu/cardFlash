@@ -90,8 +90,8 @@ class _SettingsPageState extends State<_SettingsPage> {
 // class _SettingsPageState extends State<_SettingsPage> {
   final Uri _developer = Uri.parse('https://github.com/itsmichaelyu');
   final Uri _privacyPolicy = Uri.parse('https://github.com/itsmichaelyu/cardFlashBugs/blob/master/PRIVACY.md');
-  final Uri _bugReport = Uri.parse('https://github.com/itsmichaelyu/cardFlashBugs/issues/new?assignees=itsmichaelyu&labels=bug&template=bug_report.md&title=');
-  final Uri _featureRequest = Uri.parse('https://github.com/itsmichaelyu/cardFlashBugs/issues/new?assignees=itsmichaelyu&labels=feature&template=feature_request.md&title=');
+  final Uri _bugReport = Uri.parse('https://itsmichaelyu.github.io/cardFlashBug/');
+  final Uri _featureRequest = Uri.parse('https://itsmichaelyu.github.io/cardFlashFeature/');
   final Uri _betaTester = Uri.parse('https://itsmichaelyu.github.io/cardFlashBeta');
   late bool adaptivePrompt = true;
 
