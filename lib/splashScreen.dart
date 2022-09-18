@@ -16,13 +16,16 @@ class _SplashPageState extends State<SplashPage> {
     await Database.initializeDB();
     var prefs = await SharedPreferences.getInstance();
     if (prefs.getInt("currentTitleID") == null) {
-      prefs.setInt("currentTitleID", -1);
+      await prefs.setInt("currentTitleID", -1);
     }
     if (prefs.getInt("cardColorLight") == null) {
-      prefs.setInt("cardColorLight", Colors.blue.shade200.value);
+      await prefs.setInt("cardColorLight", Colors.blue.shade200.value);
     }
     if (prefs.getInt("cardColorDark") == null) {
-      prefs.setInt("cardColorDark", Colors.blue.shade900.value);
+      await prefs.setInt("cardColorDark", Colors.blue.shade900.value);
+    }
+    if (prefs.getBool("adaptivePrompt") == null) {
+      prefs.setBool("adaptivePrompt", true);
     }
 
     // await Future.delayed(const Duration(seconds: 10));

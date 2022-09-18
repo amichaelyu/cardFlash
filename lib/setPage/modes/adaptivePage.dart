@@ -19,7 +19,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
   var value = 0.0;
   var valueCounter = 0.0;
   late int totalVal;
-  var shuffledList = [];
+  var shuffledList = []; // contains the positions of the inital list
   late int colorLight;
   late int colorDark;
   int counter = 0;
@@ -31,9 +31,10 @@ class _AdaptivePageState extends State<AdaptivePage> {
   var writingVal = Object(null);
   late num mcNum;
   late num writingNum;
-  late var maintainMC;
-  late var maintainW;
-  late var valueSetter;
+  late bool maintainMC;
+  late bool maintainW;
+  late num valueSetter;
+  late int repeatNum;
   final writingController = TextEditingController();
 
   _initializeCardColor() async {
@@ -47,6 +48,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
     writingNum = set[0]['writingQuestions'] * (set[0]['writingEnabled'] == 1 ? (set[0]['adaptiveTermDef'] > 0 ? 1 : 2) : 0);
     shuffledList.clear();
     valueCounter = 0;
+    repeatNum = 7;
     for (int i = 1; i < set.length; i++) {
       valueCounter += set[i]['correctInARowTerm'];
       valueCounter += set[i]['correctInARowDef'];
@@ -55,6 +57,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
       }
     }
     shuffledList.shuffle();
+    shuffledList.removeRange(min(repeatNum, shuffledList.length), shuffledList.length);
     totalVal = (set.length - 1) * (mcNum + writingNum);
     value = valueCounter / totalVal;
     maintainMC = false;
@@ -144,9 +147,30 @@ class _AdaptivePageState extends State<AdaptivePage> {
 
   _updateCounter(int valueUpdate) async {
     var set = await Database.getSet();
-    if (counter < (shuffledList.length - 2)) {
+    if (counter == (shuffledList.length - 1)) {
+      for (int i = 0; i < shuffledList.length; i++) {
+        if ((set[shuffledList[i]]['correctInARowTerm'] + set[shuffledList[i]]['correctInARowDef']) >= mcNum) {
+          shuffledList.removeAt(i);
+          i--;
+        }
+      }
+      var randomList = [];
+      for (int i = 1; i < set.length; i++) {
+        if ((set[i]['correctInARowTerm'] + set[i]['correctInARowDef']) < (mcNum + writingNum)) {
+          randomList.add(i);
+        }
+      }
+      randomList.shuffle();
+      for (int i = shuffledList.length; i < min(repeatNum, shuffledList.length + randomList.length); i++) {
+        shuffledList.add(randomList[i]);
+      }
+      shuffledList.shuffle();
+      counter = 0;
+    }
+    else if (counter < (shuffledList.length - 1)) {
       counter++;
     }
+    /*
     else {
       counter = 0;
       shuffledList.clear();
@@ -156,7 +180,9 @@ class _AdaptivePageState extends State<AdaptivePage> {
         }
       }
       shuffledList.shuffle();
+      shuffledList.removeRange(min(repeatNum - 1, shuffledList.length), shuffledList.length);
     }
+     */
     _generateSet(counter);
     writingVal = Object(null);
     valueCounter += valueUpdate;
@@ -271,7 +297,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                           colorList[i] = Colors.red;
                                           Database.updateCorrectIncorrect(shuffledList[counter]-1, -1);
                                           Database.resetCorrectInARow(shuffledList[counter]-1, answers.last);
-                                          mess.showSnackBar(
+                                          (await SharedPreferences.getInstance()).getBool('adaptivePrompt')! ? mess.showSnackBar(
                                             const SnackBar(
                                               backgroundColor: Colors.black87,
                                               content: Text(
@@ -282,13 +308,13 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                               ),
                                               duration: Duration(milliseconds: 5000),
                                             ),
-                                          );
+                                          ) : null;
                                         }
                                         else {
                                           valueSetter = 1;
                                           Database.increaseCorrectInARow(shuffledList[counter] - 1, answers.last);
                                           Database.updateCorrectIncorrect(shuffledList[counter] - 1, 1);
-                                          mess.showSnackBar(
+                                          (await SharedPreferences.getInstance()).getBool('adaptivePrompt')! ? mess.showSnackBar(
                                             const SnackBar(
                                               backgroundColor: Colors.black87,
                                               content: Text(
@@ -299,7 +325,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                               ),
                                               duration: Duration(milliseconds: 3000),
                                             ),
-                                          );
+                                          ) : null;
                                         }
                                         showAnswer = true;
                                       }
@@ -307,7 +333,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                         maintainMC = false;
                                         showAnswer = false;
                                         mess.hideCurrentSnackBar();
-                                        _updateCounter(valueSetter);
+                                        _updateCounter(valueSetter.toInt());
                                       }
                                       setState(() {});
                                     },
@@ -424,7 +450,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         valueSetter = 1;
                         Database.increaseCorrectInARow(shuffledList[counter] - 1, answers.last);
                         Database.updateCorrectIncorrect(shuffledList[counter]-1, 1);
-                        mess.showSnackBar(
+                        (await SharedPreferences.getInstance()).getBool('adaptivePrompt')! ? mess.showSnackBar(
                           const SnackBar(
                             backgroundColor: Colors.black87,
                             content: Text(
@@ -435,17 +461,16 @@ class _AdaptivePageState extends State<AdaptivePage> {
                             ),
                             duration: Duration(milliseconds: 3000),
                           ),
-                        );
+                        ) : null;
                       }
                       showAnswer = true;
                     }
                     else if (writingVal.object == answer) {
                       maintainW = false;
                       showAnswer = false;
-                      // if (writing)
                       writingController.clear();
                       mess.hideCurrentSnackBar();
-                      _updateCounter(valueSetter);
+                      _updateCounter(valueSetter.toInt());
                     }
                     setState(() {});
                   },
