@@ -149,7 +149,6 @@ class _SettingsPageState extends State<_SettingsPage> {
                     padding: EdgeInsets.only(top: 10),
                   ),
                   const BetterCardSettings("Version: ${Constants.version}", null, null),
-                  const BetterCardSettings("Branch: ${Constants.beta ? "Beta" : "Release"}", null, null),
                   BetterCardSettings("Developer: Michael Yu",
                           () async {
                         if (!await launchUrl(_developer)) {
