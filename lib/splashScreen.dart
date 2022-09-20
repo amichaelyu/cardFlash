@@ -27,7 +27,7 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getBool("adaptivePrompt") == null) {
       prefs.setBool("adaptivePrompt", true);
     }
-    if (prefs.getBool("adaptivePrompt") == null) {
+    if (prefs.getBool("adaptiveInstant") == null) {
       prefs.setBool("adaptiveInstant", true);
     }
 
