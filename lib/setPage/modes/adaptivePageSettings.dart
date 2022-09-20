@@ -46,10 +46,8 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                 appBar: BetterAppBar("Adaptive Settings", null, Padding(
                         padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                         child: GestureDetector(
-                          onTap: () async {
-                            final navigator = Navigator.of(context);
-                            await Database.updateAdaptiveSettings(dropdownPosition, multipleChoiceEnabled ? 1 : 0, writingEnabled ? 1 : 0, int.parse(multipleChoiceQuestions.object), int.parse(writingQuestions.object), int.parse(repeatQuestions.object));
-                            navigator.pop();
+                          onTap: () {
+                            Navigator.of(context).pop();
                           },
                           child: const Icon(
                             Icons.arrow_back_ios_new_rounded,
@@ -72,7 +70,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                                 const Text("What to study?", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                                 Padding(
                                     padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-                                    child: DropdownButton(value: ["Terms & Definitions", "Terms", "Definitions"][dropdownPosition], items: ["Terms & Definitions", "Terms", "Definitions"].map<DropdownMenuItem<String>>((String value) {return DropdownMenuItem<String>(value: value,child: Text(value),);}).toList(), onChanged: (value) { setState(() {
+                                    child: DropdownButton(value: ["Terms & Definitions", "Terms", "Definitions"][dropdownPosition], items: ["Terms & Definitions", "Terms", "Definitions"].map<DropdownMenuItem<String>>((String value) {return DropdownMenuItem<String>(value: value,child: Text(value),);}).toList(), onChanged: (value) async {setState(() {
                                       switch (value) {
                                         case "Terms & Definitions":
                                           dropdownPosition = 0;
@@ -86,7 +84,9 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                                         default:
                                           break;
                                       }
-                                    });
+                                    }
+                                    );
+                                    await Database.updateAdaptiveSettings(1, dropdownPosition);
                                 }, isExpanded: true, style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.02, color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white),),),
                         ]),
                       ),
@@ -97,9 +97,10 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           child: InkWell(
                           splashColor: Colors.blue.withAlpha(30),
-                          onTap: () {
+                          onTap: () async {
                             multipleChoiceEnabled = !multipleChoiceEnabled;
                             setState(() {});
+                            await Database.updateAdaptiveSettings(2, multipleChoiceEnabled ? 1 : 0);
                           },
                           child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.77,
@@ -119,9 +120,10 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           child: InkWell(
                             splashColor: Colors.blue.withAlpha(30),
-                            onTap: () {
+                            onTap: () async {
                               writingEnabled = !writingEnabled;
                               setState(() {});
+                              await Database.updateAdaptiveSettings(3, writingEnabled ? 1 : 0);
                             },
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.77,
@@ -134,15 +136,15 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                       const Padding(
                         padding: EdgeInsets.only(top: 20),
                       ),
-                      BetterTextFormFieldNumbersOnly("Number of multiple choice questions", null, null, null, multipleChoiceQuestions, multipleChoiceQuestions.object, null),
+                      BetterTextFormFieldNumbersOnly("Number of multiple choice questions", null, null, null, multipleChoiceQuestions, multipleChoiceQuestions.object, null, 4),
                       const Padding(
                         padding: EdgeInsets.only(top: 10),
                       ),
-                      BetterTextFormFieldNumbersOnly("Number of writing questions", null, null, null, writingQuestions, writingQuestions.object, null),
+                      BetterTextFormFieldNumbersOnly("Number of writing questions", null, null, null, writingQuestions, writingQuestions.object, null, 5),
                       const Padding(
                         padding: EdgeInsets.only(top: 10),
                       ),
-                      BetterTextFormFieldNumbersOnly("Number of questions per group", "Each question will stay in the group until you master it", null, null, repeatQuestions, repeatQuestions.object, null),
+                      BetterTextFormFieldNumbersOnly("Number of questions per group", "Each question will stay in the group until you master it", null, null, repeatQuestions, repeatQuestions.object, null, 6),
                       const Padding(
                         padding: EdgeInsets.only(top: 20),
                       ),

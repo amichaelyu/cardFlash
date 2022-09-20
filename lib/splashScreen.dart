@@ -27,6 +27,9 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getBool("adaptivePrompt") == null) {
       prefs.setBool("adaptivePrompt", true);
     }
+    if (prefs.getBool("adaptivePrompt") == null) {
+      prefs.setBool("adaptiveInstant", true);
+    }
 
     // await Future.delayed(const Duration(seconds: 10));
 

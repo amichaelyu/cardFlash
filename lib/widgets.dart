@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'database.dart';
+
 class BetterAppBar extends StatelessWidget implements PreferredSizeWidget {
   final title;
   final actions;
@@ -272,6 +274,7 @@ class BetterTextFormField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         autocorrect: false,
+        enableSuggestions: false,
         initialValue: inital,
         maxLines: null,
         onChanged: (val) => submission.object = val,
@@ -284,7 +287,7 @@ class BetterTextFormField extends StatelessWidget {
         decoration: InputDecoration(
           filled: false,
           helperText: helper,
-          helperStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.014),
+          helperStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.03),
           contentPadding: EdgeInsets.zero,
           labelText: title,
           labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.021),
@@ -313,8 +316,9 @@ class BetterTextFormFieldNumbersOnly extends StatelessWidget {
   final submission;
   final inital;
   final controller;
+  final onChanged;
 
-  const BetterTextFormFieldNumbersOnly(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, this.controller, {super.key});
+  const BetterTextFormFieldNumbersOnly(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, this.controller, this.onChanged, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -323,9 +327,13 @@ class BetterTextFormFieldNumbersOnly extends StatelessWidget {
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         controller: controller,
         autocorrect: false,
+        enableSuggestions: false,
         initialValue: inital,
         maxLines: null,
-        onChanged: (val) => submission.object = val,
+        onChanged: (val) async {
+          submission.object = val;
+          await Database.updateAdaptiveSettings(onChanged, int.parse(val));
+        },
         validator: (value) {
           if (required && (value == null || value.isEmpty)) {
             return validationText;
@@ -375,6 +383,7 @@ class BetterTextFormFieldCard extends StatelessWidget {
         controller: controller,
         initialValue: inital,
         autocorrect: false,
+        enableSuggestions: false,
         onChanged: (val) => submission.object[pos] = val,
         maxLines: null,
         validator: (value) {

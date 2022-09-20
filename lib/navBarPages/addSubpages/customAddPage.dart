@@ -196,7 +196,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
                   itemCount: cardNum,
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 50),
                   child: GestureDetector(
                     onTap: () {
                       setState (() {

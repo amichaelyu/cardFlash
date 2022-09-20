@@ -50,7 +50,7 @@ class Database {
       time = DateTime.now().millisecondsSinceEpoch;
       await txn.rawInsert(
           'INSERT INTO titles(timestamp, position, title, desc, iconCP, iconFF, iconFP, adaptiveTermDef, multipleChoiceEnabled, writingEnabled, multipleChoiceQuestions, writingQuestions, flashcardShuffle, flashcardTermDef, adaptiveRepeat) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, 0, 1, 1, 2, 1, 1, 0, 7]
+          [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, 0, 1, 1, 1, 1, 1, 0, 7]
       );
       dynamic records = await txn.rawQuery('SELECT titleID FROM titles WHERE timestamp = ?', [time]);
       titleID = records.first['titleID'];
@@ -276,16 +276,31 @@ class Database {
     await db.rawQuery('UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ?', [0, prefs.getInt('currentTitleID')]);
   }
 
-  static Future<void> updateAdaptiveSettings(int adaptiveTermDef, int multipleChoiceEnabled, int writingEnabled, int multipleChoiceQuestions, int writingQuestions, int repeatQuestions) async {
+  static Future<void> updateAdaptiveSettings(int selection, int data) async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
 
-    await db.rawQuery('UPDATE titles SET adaptiveTermDef = ? WHERE titleID = ?', [adaptiveTermDef, prefs.getInt('currentTitleID')]);
-    await db.rawQuery('UPDATE titles SET multipleChoiceEnabled = ? WHERE titleID = ?', [multipleChoiceEnabled, prefs.getInt('currentTitleID')]);
-    await db.rawQuery('UPDATE titles SET writingEnabled = ? WHERE titleID = ?', [writingEnabled, prefs.getInt('currentTitleID')]);
-    await db.rawQuery('UPDATE titles SET multipleChoiceQuestions = ? WHERE titleID = ?', [multipleChoiceQuestions, prefs.getInt('currentTitleID')]);
-    await db.rawQuery('UPDATE titles SET writingQuestions = ? WHERE titleID = ?', [writingQuestions, prefs.getInt('currentTitleID')]);
-    await db.rawQuery('UPDATE titles SET adaptiveRepeat = ? WHERE titleID = ?', [repeatQuestions, prefs.getInt('currentTitleID')]);
+    switch (selection) {
+      case 1:
+        await db.rawQuery('UPDATE titles SET adaptiveTermDef = ? WHERE titleID = ?', [data, prefs.getInt('currentTitleID')]);
+        break;
+      case 2:
+        await db.rawQuery('UPDATE titles SET multipleChoiceEnabled = ? WHERE titleID = ?', [data, prefs.getInt('currentTitleID')]);
+        break;
+      case 3:
+        await db.rawQuery('UPDATE titles SET writingEnabled = ? WHERE titleID = ?', [data, prefs.getInt('currentTitleID')]);
+        break;
+      case 4:
+        await db.rawQuery('UPDATE titles SET multipleChoiceQuestions = ? WHERE titleID = ?', [data, prefs.getInt('currentTitleID')]);
+        break;
+      case 5:
+        await db.rawQuery('UPDATE titles SET writingQuestions = ? WHERE titleID = ?', [data, prefs.getInt('currentTitleID')]);
+        break;
+      case 6:
+        await db.rawQuery('UPDATE titles SET adaptiveRepeat = ? WHERE titleID = ?', [data, prefs.getInt('currentTitleID')]);
+        break;
+
+    }
   }
 
   static Future<void> updateFlashcardShuffle(int shuffle) async {

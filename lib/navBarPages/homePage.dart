@@ -107,8 +107,8 @@ class _HomePageState extends State<_HomePage> {
               child: ReorderableListView.builder(
                 onReorder: (int oldIndex, int newIndex) async {
                   await Database.updatePosition(oldIndex, newIndex, snapshot.data[oldIndex]['titleID']);
+                  setState(() {});
                 },
-                  
                 itemBuilder: (BuildContext context, int index) {
                   return Slidable(
                       key: Key(snapshot.data[index]['titleID'].toString()),
