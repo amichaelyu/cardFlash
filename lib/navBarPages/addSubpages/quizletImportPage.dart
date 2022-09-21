@@ -60,6 +60,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
             var defs = [];
             final SharedPreferences prefs = await SharedPreferences.getInstance();
             try {
+              mess.hideCurrentSnackBar();
               if (await webScraper.loadFullURL(link.object)) {
                 if (webScraper.getElement('div.SetPage-titleWrapper', []).isNotEmpty) {
                   title = webScraper.getElement(
@@ -94,6 +95,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                   navigator.pushNamed('/HOME/SET/EDIT');
                 }
                 else {
+                  mess.hideCurrentSnackBar();
                   mess.showSnackBar(
                     const SnackBar(
                       backgroundColor: Colors.black87,
