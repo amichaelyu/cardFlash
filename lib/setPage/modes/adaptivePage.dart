@@ -45,6 +45,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
 
   _initialAsync() async {
     var set = await Database.getSet();
+    writingController.clear();
     mcNum = set[0]['multipleChoiceQuestions'] * (set[0]['multipleChoiceEnabled'] == 1 ? (set[0]['adaptiveTermDef'] > 0 ? 1 : 2) : 0);
     writingNum = set[0]['writingQuestions'] * (set[0]['writingEnabled'] == 1 ? (set[0]['adaptiveTermDef'] > 0 ? 1 : 2) : 0);
     shuffledList.clear();
