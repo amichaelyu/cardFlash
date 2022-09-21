@@ -24,9 +24,6 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getInt("cardColorDark") == null) {
       await prefs.setInt("cardColorDark", Colors.blue.shade900.value);
     }
-    if (prefs.getBool("adaptivePrompt") == null) {
-      prefs.setBool("adaptivePrompt", true);
-    }
     if (prefs.getBool("adaptiveInstant") == null) {
       prefs.setBool("adaptiveInstant", true);
     }

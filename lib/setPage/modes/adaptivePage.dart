@@ -35,6 +35,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
   late bool maintainW;
   late num valueSetter;
   late int repeatNum;
+  int nullCounter = 0;
   final writingController = TextEditingController();
 
   _initializeCardColor() async {
@@ -286,7 +287,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                             colorList[i] = Colors.red;
                                             Database.updateCorrectIncorrect(shuffledList[counter]-1, -1);
                                             Database.resetCorrectInARow(shuffledList[counter]-1, answers.last);
-                                            (await SharedPreferences.getInstance()).getBool('adaptivePrompt')! ? mess.showSnackBar(
+                                            mess.showSnackBar(
                                               const SnackBar(
                                                 backgroundColor: Colors.black87,
                                                 content: Text(
@@ -297,13 +298,13 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                                 ),
                                                 duration: Duration(milliseconds: 10000),
                                               ),
-                                            ) : null;
+                                            );
                                           }
                                           else {
                                             valueSetter = 1;
                                             Database.increaseCorrectInARow(shuffledList[counter] - 1, answers.last);
                                             Database.updateCorrectIncorrect(shuffledList[counter] - 1, 1);
-                                            (await SharedPreferences.getInstance()).getBool('adaptivePrompt')! ? mess.showSnackBar(
+                                            mess.showSnackBar(
                                               const SnackBar(
                                                 backgroundColor: Colors.black87,
                                                 content: Text(
@@ -314,7 +315,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                                 ),
                                                 duration: Duration(milliseconds: 3000),
                                               ),
-                                            ) : null;
+                                            );
                                           }
                                           showAnswer = true;
                                           if ((await SharedPreferences.getInstance()).getBool("adaptiveInstant")! && valueSetter > 0) {
@@ -359,13 +360,14 @@ class _AdaptivePageState extends State<AdaptivePage> {
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: DismissKeyboard(
                               child: BetterTextFormField(
-                                "Write the answer",
-                                showAnswer ? answer : null,
+                                showAnswer ? answer : "Write the answer",
+                                null,
                                 false,
                                 null,
                                 writingVal,
                                 null,
-                                writingController
+                                writingController,
+                                big: showAnswer
                               ),
                             ),
                           ),
@@ -402,10 +404,26 @@ class _AdaptivePageState extends State<AdaptivePage> {
                 floatingActionButton: (shuffledList.isNotEmpty && (((snapshot.data[shuffledList[counter]]['correctInARowTerm'] + snapshot.data[shuffledList[counter]]['correctInARowDef']) >= mcNum && (snapshot.data[shuffledList[counter]]['correctInARowTerm'] + snapshot.data[shuffledList[counter]]['correctInARowDef']) < writingNum + mcNum) || maintainW) && !maintainMC) ? FloatingActionButton(
                   onPressed: () async {
                     var mess = ScaffoldMessenger.of(context);
-                    if (showAnswer != true) {
+                    if (writingVal.object == null && nullCounter == 0) {
+                      nullCounter++;
+                      mess.showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.black87,
+                          content: Text(
+                            'Don\'t Know? Click the button again to see the answer!',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          duration: Duration(milliseconds: 5000),
+                        ),
+                      );
+                    }
+                    else if (showAnswer != true) {
+                      mess.hideCurrentSnackBar();
                       maintainW = true;
                       maintainMC = false;
-                      if (writingVal.object != answer) {
+                      if (nullCounter != 0 || writingVal.object.toLowerCase() != answer.toLowerCase()) {
                         writingController.clear();
                         var set = await Database.getSet();
                         int incorrect = set[shuffledList[counter]-1]['incorrectTotal'];
@@ -431,7 +449,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                             ),
                             backgroundColor: Colors.black87,
                             content: const Text(
-                              'Incorrect! Type the correct answer to move on!',
+                              'Incorrect! Click the button again to move on!',
                               style: TextStyle(
                                 color: Colors.white,
                               ),
@@ -444,7 +462,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         valueSetter = 1;
                         Database.increaseCorrectInARow(shuffledList[counter] - 1, answers.last);
                         Database.updateCorrectIncorrect(shuffledList[counter]-1, 1);
-                        (await SharedPreferences.getInstance()).getBool('adaptivePrompt')! ? mess.showSnackBar(
+                        mess.showSnackBar(
                           const SnackBar(
                             backgroundColor: Colors.black87,
                             content: Text(
@@ -455,10 +473,11 @@ class _AdaptivePageState extends State<AdaptivePage> {
                             ),
                             duration: Duration(milliseconds: 3000),
                           ),
-                        ) : null;
+                        );
                       }
                       showAnswer = true;
-                      if ((await SharedPreferences.getInstance()).getBool("adaptiveInstant")! && writingVal.object == answer) {
+                      if (nullCounter == 0 && (await SharedPreferences.getInstance()).getBool("adaptiveInstant")! && writingVal.object.toLowerCase() == answer.toLowerCase()) {
+                        nullCounter = 0;
                         maintainW = false;
                         showAnswer = false;
                         writingController.clear();
@@ -466,7 +485,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         _updateCounter(valueSetter.toInt());
                       }
                     }
-                    else if (writingVal.object == answer) {
+                    else {
+                      nullCounter = 0;
                       maintainW = false;
                       showAnswer = false;
                       writingController.clear();

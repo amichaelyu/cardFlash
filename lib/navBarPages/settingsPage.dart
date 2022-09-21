@@ -76,7 +76,7 @@ class SettingsNavigator extends StatelessWidget {
 }
 
 class _SettingsPage extends StatefulWidget {
-  const _SettingsPage({super.key});
+  const _SettingsPage();
 
   @override
   State<_SettingsPage> createState() => _SettingsPageState();
@@ -93,12 +93,10 @@ class _SettingsPageState extends State<_SettingsPage> {
   final Uri _bugReport = Uri.parse('https://itsmichaelyu.github.io/cardFlashBug/');
   final Uri _featureRequest = Uri.parse('https://itsmichaelyu.github.io/cardFlashFeature/');
   final Uri _betaTester = Uri.parse('https://itsmichaelyu.github.io/cardFlashBeta');
-  late bool adaptivePrompt = true;
   late bool adaptiveInstant = true;
 
   _readPrefs() async {
     var prefs = await SharedPreferences.getInstance();
-    adaptivePrompt = prefs.getBool("adaptivePrompt")!;
     adaptiveInstant = prefs.getBool("adaptiveInstant")!;
   }
 
@@ -125,29 +123,6 @@ class _SettingsPageState extends State<_SettingsPage> {
                   ),
                   Center(
                     child: Card(
-                      color: adaptivePrompt ? Colors.green : Colors.red,
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                      child: InkWell(
-                        splashColor: Colors.blue.withAlpha(30),
-                        onTap: () async {
-                          adaptivePrompt = !adaptivePrompt;
-                          await (await SharedPreferences.getInstance()).setBool("adaptivePrompt", adaptivePrompt);
-                          setState(() {});
-                        },
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.77,
-                          height: MediaQuery.of(context).size.height * 0.071,
-                          child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Adaptive Prompts ${adaptivePrompt ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10),
-                  ),
-                  Center(
-                    child: Card(
                       color: adaptiveInstant ? Colors.green : Colors.red,
                       elevation: 4,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -161,7 +136,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.77,
                           height: MediaQuery.of(context).size.height * 0.071,
-                          child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Adaptive Instant Mode ${adaptiveInstant ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                          child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Adaptive Instant ${adaptiveInstant ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                         ),
                       ),
                     ),
@@ -235,10 +210,8 @@ class _SettingsPageState extends State<_SettingsPage> {
                               onPressed: () async {
                                 Navigator.pop(context);
                                 await Database.clearTables();
-                                await (await SharedPreferences.getInstance()).setBool('adaptivePrompt', true);
-                                adaptivePrompt = true;
-                                await (await SharedPreferences.getInstance()).setBool('adaptiveInstant', true);
                                 adaptiveInstant = true;
+                                await (await SharedPreferences.getInstance()).setBool('adaptiveInstant', adaptiveInstant);
                                 setState(() {});
                               },
                               child: const Text(

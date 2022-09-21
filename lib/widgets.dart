@@ -265,8 +265,9 @@ class BetterTextFormField extends StatelessWidget {
   final submission;
   final inital;
   final controller;
+  final big;
 
-  const BetterTextFormField(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, this.controller, {super.key});
+  const BetterTextFormField(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, this.controller, {super.key, this.big});
 
   @override
   Widget build(BuildContext context) {
@@ -287,10 +288,10 @@ class BetterTextFormField extends StatelessWidget {
         decoration: InputDecoration(
           filled: false,
           helperText: helper,
-          helperStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.03),
-          contentPadding: EdgeInsets.zero,
+          helperStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.014),
+          contentPadding: big != null && big ? const EdgeInsets.only(bottom: 10) : EdgeInsets.zero,
           labelText: title,
-          labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.021),
+          labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * (big != null && big ? 0.04 : 0.021)),
         ),
         cursorColor: MediaQuery
             .of(context)

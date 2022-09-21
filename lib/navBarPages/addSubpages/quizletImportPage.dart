@@ -51,6 +51,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             value = null;
+            setState(() {});
             final navigator = Navigator.of(context);
             var mess = ScaffoldMessenger.of(context);
             final webScraper = WebScraper(null);
@@ -58,46 +59,61 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
             var terms = [];
             var defs = [];
             final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-            if (await webScraper.loadFullURL(link.object)) {
-              if (webScraper.getElement('div.SetPage-titleWrapper', []).isNotEmpty) {
-                title = webScraper.getElement(
-                    'div.SetPage-titleWrapper', [])[0]['title'];
-                if (webScraper
-                    .getElement('div.SetPageHeader-description', [])
-                    .isNotEmpty) {
-                  desc = webScraper.getElement(
-                      'div.SetPageHeader-description', [])[0]['title'];
-                }
-                else {
-                  desc = '';
-                }
-                for (int i = 0; i < webScraper
-                    .getElement('span.TermText', [])
-                    .length; i++) {
-                  if (i % 2 == 0) {
-                    terms.add(
-                        webScraper.getElement('span.TermText', [])[i]['title']);
+            try {
+              if (await webScraper.loadFullURL(link.object)) {
+                if (webScraper.getElement('div.SetPage-titleWrapper', []).isNotEmpty) {
+                  title = webScraper.getElement(
+                      'div.SetPage-titleWrapper', [])[0]['title'];
+                  if (webScraper
+                      .getElement('div.SetPageHeader-description', [])
+                      .isNotEmpty) {
+                    desc = webScraper.getElement(
+                        'div.SetPageHeader-description', [])[0]['title'];
                   }
                   else {
-                    defs.add(
-                        webScraper.getElement('span.TermText', [])[i]['title']);
+                    desc = '';
                   }
+                  for (int i = 0; i < webScraper
+                      .getElement('span.TermText', [])
+                      .length; i++) {
+                    if (i % 2 == 0) {
+                      terms.add(
+                          webScraper.getElement('span.TermText', [])[i]['title']);
+                    }
+                    else {
+                      defs.add(
+                          webScraper.getElement('span.TermText', [])[i]['title']);
+                    }
+                  }
+                  await prefs.setInt("currentTitleID", await Database.insertSet(
+                      CardSet(await Database.getNextPosition(), title, desc,
+                          Icons.quiz_rounded, terms, defs)));
+                  navigator.popUntil((route) => route.settings.name == "/");
+                  navigator.pushNamed('/HOME');
+                  navigator.pushNamed('/HOME/SET');
+                  navigator.pushNamed('/HOME/SET/EDIT');
                 }
-                await prefs.setInt("currentTitleID", await Database.insertSet(
-                    CardSet(await Database.getNextPosition(), title, desc,
-                        Icons.quiz_rounded, terms, defs)));
-                navigator.popUntil((route) => route.settings.name == "/");
-                navigator.pushNamed('/HOME');
-                navigator.pushNamed('/HOME/SET');
-                navigator.pushNamed('/HOME/SET/EDIT');
+                else {
+                  mess.showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.black87,
+                      content: Text(
+                        'Something went wrong!\nThe set might be private, try making a copy.',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      duration: Duration(milliseconds: 5000),
+                    ),
+                  );
+                }
               }
               else {
                 mess.showSnackBar(
                   const SnackBar(
                     backgroundColor: Colors.black87,
                     content: Text(
-                      'Something went wrong!\nThe set might be private, try making a copy.',
+                      'Something went wrong! Are you connected to the internet?',
                       style: TextStyle(
                         color: Colors.white,
                       ),
@@ -107,21 +123,22 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                 );
               }
             }
-            else {
+            catch (err) {
               mess.showSnackBar(
                 const SnackBar(
                   backgroundColor: Colors.black87,
                   content: Text(
-                    'Something went wrong! Are you connected to the internet?',
+                    'Something went wrong! That\'s not a real link!',
                     style: TextStyle(
                       color: Colors.white,
                     ),
                   ),
-                  duration: Duration(milliseconds: 2000),
+                  duration: Duration(milliseconds: 5000),
                 ),
               );
             }
             value = 0.0;
+            setState(() {});
           },
           backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.green[400] : Colors.green[700],
           child: const Icon(Icons.check_rounded),
