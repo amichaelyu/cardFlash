@@ -11,7 +11,7 @@ class AddNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const BetterAppBar(Constants.title, null, null, null),
+      appBar: BetterAppBar(Constants.title, null, null, null),
       body: Center(
         child: _AddPage(),
       ),
