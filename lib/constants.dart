@@ -1,4 +1,9 @@
 class Constants {
-  static const title = "cardFlash";
-  static const version = "1.1.0";
+  static late final String title;
+  static late final String version;
+
+  static void setConstants(title, version) {
+    Constants.title = title;
+    Constants.version = version;
+  }
 }

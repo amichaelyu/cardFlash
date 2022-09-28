@@ -5,6 +5,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'constants.dart';
 import 'navBarPages/addSubpages/QRImportPage1.dart';
@@ -18,8 +19,17 @@ import 'setPage/modes/flashcardPage.dart';
 import 'navBarPages/addPage.dart';
 import 'navBarPages/homePage.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+  String appName = packageInfo.appName;
+  String version = packageInfo.version;
+  String buildNumber = packageInfo.buildNumber;
+
+  Constants.setConstants(appName, "$version+$buildNumber");
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(

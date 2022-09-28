@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
-import '../database.dart';
 import '../widgets.dart';
 import 'addPage.dart';
 import 'homePage.dart';
@@ -15,7 +14,7 @@ class SettingsNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const BetterAppBar(Constants.title, null, null, null),
+      appBar: BetterAppBar(Constants.title, null, null, null),
       body: const Center(
         child: _SettingsPage(),
       ),
@@ -95,6 +94,7 @@ class _SettingsPageState extends State<_SettingsPage> {
   final Uri _featureRequest = Uri.parse('https://itsmichaelyu.github.io/cardFlashFeature/');
   final Uri _betaTester = Uri.parse('https://itsmichaelyu.github.io/cardFlashBeta');
   late bool adaptiveInstant = true;
+  late String version;
 
   _readPrefs() async {
     var prefs = await SharedPreferences.getInstance();
@@ -149,7 +149,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                   const Padding(
                     padding: EdgeInsets.only(top: 10),
                   ),
-                  const BetterCardSettings("Version: ${Constants.version}", null, null),
+                  BetterCardSettings("Version: ${Constants.version}", null, null),
                   BetterCardSettings("Developer: Michael Yu",
                           () async {
                         if (!await launchUrl(_developer)) {
