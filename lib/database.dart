@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Database {
-  static late final database;
+  static late var database;
 
   static Future<void> initializeDB() async {
     WidgetsFlutterBinding.ensureInitialized();

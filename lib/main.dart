@@ -4,6 +4,7 @@ import 'package:card_flash/splashScreen.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'constants.dart';
 import 'navBarPages/addSubpages/QRImportPage1.dart';
@@ -22,7 +23,8 @@ void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(
-        MaterialApp(
+      Phoenix(
+        child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: Constants.title,
           theme: FlexThemeData.light(
@@ -55,6 +57,8 @@ void main() {
             '/ADD/QUIZLET': (context) => const QuizletImportPage(),
             '/SETTINGS': (context) => const SettingsNavigator(),
           },
-        ));
+        ),
+      )
+    );
   });
 }

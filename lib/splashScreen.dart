@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'database.dart';
+import 'package:sqflite/sqflite.dart';
+import 'database.dart' as db;
 import 'navBarPages/homePage.dart';
 
 class SplashPage extends StatefulWidget {
@@ -13,8 +14,15 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   _readDB() async {
     final navigator = Navigator.of(context);
-    await Database.initializeDB();
     var prefs = await SharedPreferences.getInstance();
+    bool rebirth = prefs.getBool('rebirth') ?? false;
+    if (rebirth) {
+      await prefs.clear();
+      await databaseFactory.deleteDatabase('sets.db');
+    }
+    if (prefs.getInt("currentTitleID") == null) {
+      await prefs.setInt("currentTitleID", -1);
+    }
     if (prefs.getInt("currentTitleID") == null) {
       await prefs.setInt("currentTitleID", -1);
     }
@@ -27,16 +35,16 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getBool("adaptiveInstant") == null) {
       prefs.setBool("adaptiveInstant", true);
     }
-
+    await db.Database.initializeDB();
     // await Future.delayed(const Duration(seconds: 10));
 
-      navigator.push(
-        PageRouteBuilder(
-          pageBuilder: (c, a1, a2) => const HomeNavigator(),
-          settings: const RouteSettings(name: "/HOME"),
-          transitionDuration: Duration.zero,
-        )
-      );
+    navigator.push(
+      PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => const HomeNavigator(),
+        settings: const RouteSettings(name: "/HOME"),
+        transitionDuration: Duration.zero,
+      )
+    );
   }
 
   @override
