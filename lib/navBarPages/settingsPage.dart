@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -208,11 +209,9 @@ class _SettingsPageState extends State<_SettingsPage> {
                             ),
                             TextButton(
                               onPressed: () async {
-                                Navigator.pop(context);
-                                await Database.clearTables();
-                                adaptiveInstant = true;
-                                await (await SharedPreferences.getInstance()).setBool('adaptiveInstant', adaptiveInstant);
-                                setState(() {});
+                                await (await SharedPreferences.getInstance()).setBool("rebirth", true);
+                                if (!mounted) return;
+                                Phoenix.rebirth(context);
                               },
                               child: const Text(
                                 'Confirm',
