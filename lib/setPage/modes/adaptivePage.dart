@@ -44,6 +44,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
   }
 
   _initialAsync() async {
+    showAnswer = false;
     var set = await Database.getSet();
     writingController.clear();
     mcNum = set[0]['multipleChoiceQuestions'] * (set[0]['multipleChoiceEnabled'] == 1 ? (set[0]['adaptiveTermDef'] > 0 ? 1 : 2) : 0);
@@ -200,6 +201,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: GestureDetector(
                         onTap: () async {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           await Navigator.pushNamed(context, "/HOME/SET/ADAPTIVE/SETTINGS");
                           _initializeCardColor();
                           _initialAsync();
@@ -427,7 +429,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       if (nullCounter != 0 || writingVal.object.toLowerCase() != answer.toLowerCase()) {
                         writingController.clear();
                         var set = await Database.getSet();
-                        int incorrect = set[shuffledList[counter]-1]['incorrectTotal'];
+                        int incorrect = set[shuffledList[counter]]['incorrectTotal'];
                         var correctInARow = answers.last == 1 ? set[shuffledList[counter]]['correctInARowDef'] : set[shuffledList[counter]]['correctInARowTerm'];
                         valueSetter = -1 * correctInARow;
                         await Database.updateCorrectIncorrect(shuffledList[counter]-1, -1);
