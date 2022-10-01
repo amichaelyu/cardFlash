@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../widgets.dart';
 
-class QRImportPage1 extends StatelessWidget {
+class QRImportPage2 extends StatelessWidget {
 
-  const QRImportPage1({super.key});
+  const QRImportPage2({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +13,14 @@ class QRImportPage1 extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/ADD');
+                Navigator.pushNamed(context, '/ADD/QR1');
               },
               child: const Icon(
                 Icons.arrow_back_ios_new_rounded,
               ),
             )
         ),null),
-        body: const Text("")
+        body: const Text("", semanticsLabel: "",)
     );
   }
 }

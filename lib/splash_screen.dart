@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'database.dart' as db;
-import 'navBarPages/homePage.dart';
+import 'navBarPages/home_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -35,7 +35,7 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getBool("adaptiveInstant") == null) {
       prefs.setBool("adaptiveInstant", true);
     }
-    await db.Database.initializeDB();
+    await db.LocalDatabase.initializeDB();
     // await Future.delayed(const Duration(seconds: 10));
 
     navigator.push(
@@ -68,6 +68,6 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text('');
+    return const Text('', semanticsLabel: '',);
   }
 }

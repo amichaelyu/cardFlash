@@ -21,10 +21,10 @@ class _CustomAddPageState extends State<CustomAddPage> {
   int cardNum = 1;
   Set<int> ignoreList = {};
   IconData? _icon = Icons.quiz_rounded;
-  Object? title = Object(null);
-  Object? desc = Object(null);
-  Object? terms = Object({});
-  Object? defs = Object({});
+  Wrapper? title = Wrapper(null);
+  Wrapper? desc = Wrapper(null);
+  Wrapper? terms = Wrapper({});
+  Wrapper? defs = Wrapper({});
   var termCont = [];
   var defCont = [];
 
@@ -79,7 +79,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
                     }
                   }
                   if (_formKey.currentState!.validate()) {
-                    await (await SharedPreferences.getInstance()).setInt("currentTitleID", await Database.insertSet(CardSet(await Database.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
+                    await (await SharedPreferences.getInstance()).setInt("currentTitleID", await LocalDatabase.insertSet(CardSet(await LocalDatabase.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
                     navigator.popUntil((route) => route.settings.name == "/");
                     navigator.pushNamed("/HOME");
                     navigator.pushNamed("/HOME/SET");
@@ -132,12 +132,12 @@ class _CustomAddPageState extends State<CustomAddPage> {
                               leading: Icon(_icon),
                               title: Text(
                                 "Pick an icon",
+                                semanticsLabel: "Pick an icon",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: MediaQuery.of(context).size.height * 0.024,
                                 ),
                               ),
-                              // subtitle: Text(desc),
                             ),
                           ],
                         ),
