@@ -1,6 +1,6 @@
-import 'package:card_flash/setPage/modes/adaptivePageSettings.dart';
-import 'package:card_flash/setPage/setPage.dart';
-import 'package:card_flash/splashScreen.dart';
+import 'package:card_flash/setPage/modes/adaptive_page_settings.dart';
+import 'package:card_flash/setPage/set_page.dart';
+import 'package:card_flash/splash_screen.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,16 +8,16 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'constants.dart';
-import 'navBarPages/addSubpages/QRImportPage1.dart';
-import 'navBarPages/addSubpages/QRImportPage2.dart';
-import 'navBarPages/addSubpages/customAddPage.dart';
-import 'navBarPages/addSubpages/quizletImportPage.dart';
-import 'navBarPages/settingsPage.dart';
-import 'setPage/editPage.dart';
-import 'setPage/modes/adaptivePage.dart';
-import 'setPage/modes/flashcardPage.dart';
-import 'navBarPages/addPage.dart';
-import 'navBarPages/homePage.dart';
+import 'navBarPages/addSubpages/qr_import_page_1.dart';
+import 'navBarPages/addSubpages/qr_import_page_2.dart';
+import 'navBarPages/addSubpages/custom_add_page.dart';
+import 'navBarPages/addSubpages/quizlet_import_page.dart';
+import 'navBarPages/settings_page.dart';
+import 'setPage/edit_page.dart';
+import 'setPage/modes/adaptive_page.dart';
+import 'setPage/modes/flashcard_page.dart';
+import 'navBarPages/add_page.dart';
+import 'navBarPages/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -6,8 +6,8 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
-class Database {
-  static late var database;
+class LocalDatabase {
+  static late Future<Database> database;
 
   static Future<void> initializeDB() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -170,16 +170,16 @@ class Database {
     final prefs = await SharedPreferences.getInstance();
 
     if (correctIncorrect > 0) {
-      final num = (await db.rawQuery('SELECT correctTotal FROM cards WHERE cardTitle = ? AND position = ?', [prefs.getInt('currentTitleID'), position]))[0]['correctTotal'];
+      final Object? num = (await db.rawQuery('SELECT correctTotal FROM cards WHERE cardTitle = ? AND position = ?', [prefs.getInt('currentTitleID'), position]))[0]['correctTotal'];
       await db.rawQuery(
           'UPDATE cards SET correctTotal = ? WHERE cardTitle = ? AND position = ?',
-          [num + correctIncorrect, prefs.getInt('currentTitleID'), position]);
+          [int.parse(num!.toString()) + correctIncorrect, prefs.getInt('currentTitleID'), position]);
     }
     if (correctIncorrect < 0) {
       final num = (await db.rawQuery('SELECT incorrectTotal FROM cards WHERE cardTitle = ? AND position = ?', [prefs.getInt('currentTitleID'), position]))[0]['incorrectTotal'];
       await db.rawQuery(
           'UPDATE cards SET incorrectTotal = ? WHERE cardTitle = ? AND position = ?',
-          [num + correctIncorrect.abs(), prefs.getInt('currentTitleID'), position]);
+          [int.parse(num!.toString()) + correctIncorrect.abs(), prefs.getInt('currentTitleID'), position]);
     }
   }
 
@@ -240,7 +240,7 @@ class Database {
           [prefs.getInt('currentTitleID'), position]))[0]['correctInARowTerm'];
       await db.rawQuery(
           'UPDATE cards SET correctInARowTerm = ? WHERE cardTitle = ? AND position = ?',
-          [correct + 1, prefs.getInt('currentTitleID'), position]);
+          [int.parse(correct!.toString()) + 1, prefs.getInt('currentTitleID'), position]);
     }
     else if (termDef == 1) {
       final correct = (await db.rawQuery(
@@ -248,7 +248,7 @@ class Database {
           [prefs.getInt('currentTitleID'), position]))[0]['correctInARowDef'];
       await db.rawQuery(
           'UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ? AND position = ?',
-          [correct + 1, prefs.getInt('currentTitleID'), position]);
+          [int.parse(correct!.toString()) + 1, prefs.getInt('currentTitleID'), position]);
     }
   }
 

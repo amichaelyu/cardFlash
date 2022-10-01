@@ -21,10 +21,10 @@ class _EditPageState extends State<EditPage> {
   int cardMinus = 0;
   Set<int> ignoreList = {};
   late IconData? _icon;
-  late Object title;
-  late Object desc;
-  Object? terms = Object({});
-  Object? defs = Object({});
+  late Wrapper title;
+  late Wrapper desc;
+  Wrapper? terms = Wrapper({});
+  Wrapper? defs = Wrapper({});
   var termCont = [];
   var defCont = [];
 
@@ -42,10 +42,10 @@ class _EditPageState extends State<EditPage> {
   }
 
   void _grabSomeData() async {
-    var data = await Database.getSet();
+    var data = await LocalDatabase.getSet();
     _icon = IconData(data[0]['iconCP'], fontFamily: data[0]['iconFF'], fontPackage: data[0]['iconFP']);
-    title = Object(data[0]['title']);
-    desc = Object(data[0]['desc']);
+    title = Wrapper(data[0]['title']);
+    desc = Wrapper(data[0]['desc']);
     cardNum = data.length - 1;
     _setUpControllers();
     for (int i = 0; i < cardNum; i++) {
@@ -76,7 +76,7 @@ class _EditPageState extends State<EditPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Database.getSet(),
+        future: LocalDatabase.getSet(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -89,21 +89,23 @@ class _EditPageState extends State<EditPage> {
                           showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                              title: const Text('Are you sure you want to delete this set?'),
-                              content: const Text('This process is currently irreversible!'),
+                              title: const Text('Are you sure you want to delete this set?', semanticsLabel: "Are you sure you want to delete this set?"),
+                              content: const Text('This process is currently irreversible!', semanticsLabel: "This process is currently irreversible!"),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: const Text('Cancel'),
+                                  child: const Text('Cancel', semanticsLabel: "Cancel"),
                                 ),
                                 TextButton(
                                   onPressed: () async {
+                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
                                     Navigator.popUntil(context, (route) => route.settings.name == "/HOME");
                                     await Future.delayed(const Duration(milliseconds: 50));
-                                    await Database.deleteSet((await SharedPreferences.getInstance()).getInt('currentTitleID'));
+                                    await LocalDatabase.deleteSet((await SharedPreferences.getInstance()).getInt('currentTitleID'));
                                   },
                                   child: const Text(
                                     'Confirm',
+                                    semanticsLabel: "Confirm",
                                     style: TextStyle(color: Colors.red),
                                   ),
                                 ),
@@ -122,6 +124,7 @@ class _EditPageState extends State<EditPage> {
                     padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                     child: GestureDetector(
                       onTap: () async {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         var termDefChanged = false;
                         if (snapshot.data.length - 1 == cardNum + cardMinus) {
                           for (int i = 0; i < cardNum; i++) {
@@ -137,12 +140,12 @@ class _EditPageState extends State<EditPage> {
                           showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                              title: const Text('Are you sure you want to exit?'),
-                              content: const Text('This set has not been saved yet!'),
+                              title: const Text('Are you sure you want to exit?', semanticsLabel: "Are you sure you want to exit?"),
+                              content: const Text('This set has not been saved yet!', semanticsLabel: "This set has not been saved yet!",),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: const Text('Cancel'),
+                                  child: const Text('Cancel', semanticsLabel: "Cancel"),
                                 ),
                                 TextButton(
                                   onPressed: () async {
@@ -150,6 +153,7 @@ class _EditPageState extends State<EditPage> {
                                   },
                                   child: const Text(
                                     'Exit',
+                                    semanticsLabel: "Exit",
                                     style: TextStyle(color: Colors.red),
                                   ),
                                 ),
@@ -167,10 +171,10 @@ class _EditPageState extends State<EditPage> {
                     )
                 ),
                   PreferredSize(
-                  preferredSize: const Size(double.infinity, 1.0),
-                  child: LinearProgressIndicator(
-                    value: value,
-                    semanticsLabel: "Checks form and then submits it into the database",
+                    preferredSize: const Size(double.infinity, 1.0),
+                    child: LinearProgressIndicator(
+                      value: value,
+                      semanticsLabel: "Checks form and then submits it into the database",
                     ),
                   ),
                 ),
@@ -197,12 +201,12 @@ class _EditPageState extends State<EditPage> {
                                           leading: Icon(_icon),
                                           title: Text(
                                             "Pick an icon",
+                                            semanticsLabel: "Pick an icon",
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: MediaQuery.of(context).size.height * 0.024,
                                             ),
                                           ),
-                                          // subtitle: Text(desc),
                                         ),
                                       ],
                                     ),
@@ -291,13 +295,14 @@ class _EditPageState extends State<EditPage> {
                       }
                     }
                     if (_formKey.currentState!.validate()) {
-                      await Database.updateSet(CardSet(snapshot.data[0]['position'], title.object, desc.object, _icon!, termsList, defsList));
-                      await Database.resetAdaptive();
+                      await LocalDatabase.updateSet(CardSet(snapshot.data[0]['position'], title.object, desc.object, _icon!, termsList, defsList));
+                      await LocalDatabase.resetAdaptive();
                       mess.showSnackBar(
                         const SnackBar(
                           backgroundColor: Colors.black87,
                           content: Text(
                             'Saved!',
+                            semanticsLabel: "Saved!",
                             style: TextStyle(
                               color: Colors.white,
                             ),
@@ -315,7 +320,7 @@ class _EditPageState extends State<EditPage> {
             );
           }
           else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-            return const Text('');
+            return const Text('', semanticsLabel: '');
           }
           else {
             return Scaffold(
@@ -335,6 +340,7 @@ class _EditPageState extends State<EditPage> {
                   Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",
+                        semanticsLabel: "Something went wrong",
                         style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)
                 ])
             );

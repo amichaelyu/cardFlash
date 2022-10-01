@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,10 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'database.dart';
 
 class BetterAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final title;
-  final actions;
-  final leading;
-  final bottom;
+  final String title;
+  final List<Widget>? actions;
+  final Widget? leading;
+  final PreferredSizeWidget? bottom;
 
   const BetterAppBar(this.title, this.actions, this.leading, this.bottom, {super.key});
 
@@ -31,6 +32,7 @@ class BetterAppBar extends StatelessWidget implements PreferredSizeWidget {
         iconTheme: IconThemeData(color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black),
         title: Text(
           title,
+          semanticsLabel: title,
         ),
         actions: actions,
         bottom: bottom,
@@ -43,12 +45,12 @@ class BetterAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 // homepage
 class BetterCardHome extends StatelessWidget {
-  final title;
-  final desc;
-  final icon;
-  final nav;
-  final navCustom;
-  final titleID;
+  final String title;
+  final String desc;
+  final IconData? icon;
+  final String nav;
+  final String navCustom;
+  final int titleID;
 
   const BetterCardHome(this.title, this.desc, this.icon, this.titleID, this.nav, this.navCustom, {super.key});
 
@@ -69,14 +71,14 @@ class BetterCardHome extends StatelessWidget {
               children: <Widget>[
                 ListTile(
                   leading: Icon(icon),
-                  title: Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 5), child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
-                  subtitle: Text(desc),
+                  title: Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 5), child: Text(title, semanticsLabel: title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                  subtitle: Text(desc, semanticsLabel: desc,),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     TextButton(
-                      child: const Text('STUDY'),
+                      child: const Text('STUDY', semanticsLabel: 'STUDY',),
                       onPressed: () async {
                         final navigator = Navigator.of(context);
                         (await SharedPreferences.getInstance()).setInt("currentTitleID", titleID);
@@ -97,9 +99,9 @@ class BetterCardHome extends StatelessWidget {
 
 // set page
 class BetterCardSet extends StatelessWidget {
-  final title;
-  final icon;
-  final nav;
+  final String title;
+  final IconData? icon;
+  final String nav;
 
   const BetterCardSet(this.title, this.icon, this.nav, {super.key});
 
@@ -122,12 +124,12 @@ class BetterCardSet extends StatelessWidget {
                   leading: Icon(icon),
                   title: Text(
                       title,
+                      semanticsLabel: title,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: MediaQuery.of(context).size.height * 0.026,
                       ),
                   ),
-                  // subtitle: Text(desc),
                 ),
               ],
             ),
@@ -140,10 +142,10 @@ class BetterCardSet extends StatelessWidget {
 
 // flashcards
 class BetterCardFlash extends StatelessWidget {
-final title;
-final desc;
-final icon;
-final nav;
+final String title;
+final String desc;
+final IconData icon;
+final String nav;
 
 const BetterCardFlash(this.title, this.desc, this.icon, this.nav, {super.key});
 
@@ -167,12 +169,12 @@ Widget build(BuildContext context) {
                 leading: Icon(icon),
                 title: Text(
                   title,
+                  semanticsLabel: title,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.height * 0.024,
                   ),
                 ),
-                // subtitle: Text(desc),
               ),
             ],
           ),
@@ -185,10 +187,10 @@ Widget build(BuildContext context) {
 
 // add set page
 class BetterCardAdd extends StatelessWidget {
-  final title;
-  final desc;
-  final icon;
-  final nav;
+  final String title;
+  final String desc;
+  final Widget icon;
+  final String nav;
 
   const BetterCardAdd(this.title, this.desc, this.icon, this.nav, {super.key});
 
@@ -212,12 +214,13 @@ class BetterCardAdd extends StatelessWidget {
                   leading: icon,
                   title: Text(
                     title,
+                    semanticsLabel: title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.height * 0.024,
                     ),
                   ),
-                  subtitle: Text(desc),
+                  subtitle: Text(desc, semanticsLabel: desc,),
                 ),
               ],
             ),
@@ -230,9 +233,9 @@ class BetterCardAdd extends StatelessWidget {
 
 // settings buttons
 class BetterCardSettings extends StatelessWidget {
-  final title;
-  final action;
-  final color;
+  final String title;
+  final Function()? action;
+  final Color? color;
 
   const BetterCardSettings(this.title, this.action, this.color, {super.key});
 
@@ -249,7 +252,7 @@ class BetterCardSettings extends StatelessWidget {
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.77,
             height: MediaQuery.of(context).size.height * 0.071,
-            child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+            child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text(title, semanticsLabel: title, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
               ),
             ),
           ),
@@ -258,16 +261,16 @@ class BetterCardSettings extends StatelessWidget {
 }
 
 class BetterTextFormField extends StatelessWidget {
-  final title;
-  final helper;
-  final required;
-  final validationText;
-  final submission;
-  final inital;
-  final controller;
-  final big;
+  final String title;
+  final String? helper;
+  final bool? required;
+  final String? validationText;
+  final Wrapper? submission;
+  final String? initial;
+  final TextEditingController? controller;
+  final bool? big;
 
-  const BetterTextFormField(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, this.controller, {super.key, this.big});
+  const BetterTextFormField(this.title, this.helper, this.required, this.validationText, this.submission, this.initial, this.controller, {super.key, this.big});
 
   @override
   Widget build(BuildContext context) {
@@ -276,11 +279,11 @@ class BetterTextFormField extends StatelessWidget {
         controller: controller,
         autocorrect: false,
         enableSuggestions: false,
-        initialValue: inital,
+        initialValue: initial,
         maxLines: null,
-        onChanged: (val) => submission.object = val,
+        onChanged: (val) => submission?.object = val,
         validator: (value) {
-          if (required && (value == null || value.isEmpty)) {
+          if ((required ?? false) && (value == null || value.isEmpty)) {
             return validationText;
           }
           return null;
@@ -289,9 +292,17 @@ class BetterTextFormField extends StatelessWidget {
           filled: false,
           helperText: helper,
           helperStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.014),
-          contentPadding: big != null && big ? const EdgeInsets.only(bottom: 10) : EdgeInsets.zero,
-          labelText: title,
-          labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * (big != null && big ? 0.04 : 0.021)),
+          contentPadding: (big ?? false) ? const EdgeInsets.only(bottom: 10) : EdgeInsets.zero,
+          // labelText: title,
+          label: AutoSizeText(
+            title,
+            semanticsLabel: title,
+            maxLines: 10,
+            minFontSize: 10,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: MediaQuery.of(context).size.height * ((big ?? false) ? 0.04 : 0.021)),
+          ),
+          // labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.height * (big != null && big ? 0.04 : 0.021)),
         ),
         cursorColor: MediaQuery
             .of(context)
@@ -310,16 +321,16 @@ class BetterTextFormField extends StatelessWidget {
 }
 
 class BetterTextFormFieldNumbersOnly extends StatelessWidget {
-  final title;
-  final helper;
-  final required;
-  final validationText;
-  final submission;
-  final inital;
-  final controller;
-  final onChanged;
+  final String title;
+  final String? helper;
+  final bool? required;
+  final String? validationText;
+  final Wrapper submission;
+  final String initial;
+  final TextEditingController? controller;
+  final int onChanged;
 
-  const BetterTextFormFieldNumbersOnly(this.title, this.helper, this.required, this.validationText, this.submission, this.inital, this.controller, this.onChanged, {super.key});
+  const BetterTextFormFieldNumbersOnly(this.title, this.helper, this.required, this.validationText, this.submission, this.initial, this.controller, this.onChanged, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -329,14 +340,14 @@ class BetterTextFormFieldNumbersOnly extends StatelessWidget {
         controller: controller,
         autocorrect: false,
         enableSuggestions: false,
-        initialValue: inital,
+        initialValue: initial,
         maxLines: null,
         onChanged: (val) async {
           submission.object = val;
-          await Database.updateAdaptiveSettings(onChanged, int.parse(val));
+          await LocalDatabase.updateAdaptiveSettings(onChanged, int.parse(val));
         },
         validator: (value) {
-          if (required && (value == null || value.isEmpty)) {
+          if ((required ?? false) && (value == null || value.isEmpty)) {
             return validationText;
           }
           return null;
@@ -366,26 +377,26 @@ class BetterTextFormFieldNumbersOnly extends StatelessWidget {
 }
 
 class BetterTextFormFieldCard extends StatelessWidget {
-  final title;
-  final helper;
-  final required;
-  final validationText;
-  final submission;
-  final pos;
-  final inital;
-  final controller;
+  final String title;
+  final String? helper;
+  final bool required;
+  final String? validationText;
+  final Wrapper? submission;
+  final int pos;
+  final String? initial;
+  final TextEditingController controller;
 
-  const BetterTextFormFieldCard(this.title, this.helper, this.required, this.validationText, this.submission, this.pos, this.inital, this.controller, {super.key});
+  const BetterTextFormFieldCard(this.title, this.helper, this.required, this.validationText, this.submission, this.pos, this.initial, this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: TextFormField(
         controller: controller,
-        initialValue: inital,
+        initialValue: initial,
         autocorrect: false,
         enableSuggestions: false,
-        onChanged: (val) => submission.object[pos] = val,
+        onChanged: (val) => submission?.object[pos] = val,
         maxLines: null,
         validator: (value) {
         if (required && (value == null || value.isEmpty)) {
@@ -419,18 +430,18 @@ class BetterTextFormFieldCard extends StatelessWidget {
 
 // textform cards
 class BetterCardTextForm extends StatelessWidget {
-  final term;
-  final def;
-  final position;
-  final termStorage;
-  final defStorage;
-  final shown;
-  final initalTerm;
-  final initalDef;
-  final controllerTerm;
-  final controllerDef;
+  final String term;
+  final String def;
+  final int position;
+  final Wrapper? termStorage;
+  final Wrapper? defStorage;
+  final bool shown;
+  final String? initialTerm;
+  final String? initialDef;
+  final TextEditingController controllerTerm;
+  final TextEditingController controllerDef;
 
-  const BetterCardTextForm(this.term, this.def, this.position, this.termStorage, this.defStorage, this.shown, this.initalTerm, this.initalDef, this.controllerTerm, this.controllerDef, {super.key});
+  const BetterCardTextForm(this.term, this.def, this.position, this.termStorage, this.defStorage, this.shown, this.initialTerm, this.initialDef, this.controllerTerm, this.controllerDef, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -446,8 +457,8 @@ class BetterCardTextForm extends StatelessWidget {
           child: Column(
             children: <Widget>[
               ListTile(
-                title: shown ? BetterTextFormFieldCard(term, null, false, null, termStorage, position, initalTerm, controllerTerm) : null,
-                subtitle: shown ? BetterTextFormFieldCard(def, null, false, null, defStorage, position, initalDef, controllerDef) : null,
+                title: shown ? BetterTextFormFieldCard(term, null, false, null, termStorage, position, initialTerm, controllerTerm) : null,
+                subtitle: shown ? BetterTextFormFieldCard(def, null, false, null, defStorage, position, initialDef, controllerDef) : null,
               ),
             ],
           ),
@@ -493,7 +504,7 @@ class CardSet {
   }
 }
 
-class Object {
+class Wrapper {
   dynamic object;
-  Object(this.object);
+  Wrapper(this.object);
 }

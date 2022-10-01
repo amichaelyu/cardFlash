@@ -5,8 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
 import '../widgets.dart';
-import 'addPage.dart';
-import 'homePage.dart';
+import 'add_page.dart';
+import 'home_page.dart';
 
 class SettingsNavigator extends StatelessWidget {
   const SettingsNavigator({super.key});
@@ -118,7 +118,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                   const Padding(
                     padding: EdgeInsets.only(top: 20),
                   ),
-                  const Text("Settings", textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  const Text("Settings", semanticsLabel: "Settings", textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   const Padding(
                     padding: EdgeInsets.only(top: 10),
                   ),
@@ -137,7 +137,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.77,
                           height: MediaQuery.of(context).size.height * 0.071,
-                          child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Adaptive Instant ${adaptiveInstant ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                          child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Adaptive Instant ${adaptiveInstant ? "Enabled" : "Disabled"}", semanticsLabel: "Adaptive Instant ${adaptiveInstant ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                         ),
                       ),
                     ),
@@ -145,7 +145,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                   const Padding(
                     padding: EdgeInsets.only(top: 15),
                   ),
-                  const Text("About", textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  const Text("About", semanticsLabel: "About", textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   const Padding(
                     padding: EdgeInsets.only(top: 10),
                   ),
@@ -176,7 +176,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                   const Padding(
                     padding: EdgeInsets.only(top: 15),
                   ),
-                  const Text("Legal", textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  const Text("Legal", semanticsLabel: "Legal", textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   const Padding(
                     padding: EdgeInsets.only(top: 10),
                   ),
@@ -192,7 +192,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                   const Padding(
                     padding: EdgeInsets.only(top: 15),
                   ),
-                  const Text("Reset", textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  const Text("Reset", semanticsLabel: "Reset", textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                   const Padding(
                     padding: EdgeInsets.only(top: 10),
                   ),
@@ -200,12 +200,12 @@ class _SettingsPageState extends State<_SettingsPage> {
                           () {showDialog<String>(
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
-                          title: const Text('Are you sure you want to reset the app?'),
-                          content: const Text('This process is irreversible!'),
+                          title: const Text('Are you sure you want to reset the app?', semanticsLabel: "Are you sure you want to reset the app?"),
+                          content: const Text('This process is irreversible!', semanticsLabel: "This process is irreversible!"),
                           actions: <Widget>[
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('Cancel'),
+                              child: const Text('Cancel', semanticsLabel: "Cancel"),
                             ),
                             TextButton(
                               onPressed: () async {
@@ -215,6 +215,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                               },
                               child: const Text(
                                 'Confirm',
+                                semanticsLabel: "Confirm",
                                 style: TextStyle(color: Colors.red),
                               ),
                             ),
@@ -228,7 +229,7 @@ class _SettingsPageState extends State<_SettingsPage> {
             );
           }
           else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-            return const Text('');
+            return const Text('', semanticsLabel: '');
           }
           else {
             return Scaffold(
@@ -247,6 +248,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                   Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",
+                        semanticsLabel: "Something went wrong",
                         style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)
                 ])
             );

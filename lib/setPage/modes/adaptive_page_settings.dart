@@ -13,21 +13,21 @@ class AdaptiveSettingsPage extends StatefulWidget {
 
 class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
   var value = 0.0;
-  late var dropdownPosition;
-  late var multipleChoiceEnabled;
-  late var writingEnabled;
-  late var multipleChoiceQuestions;
-  late var writingQuestions;
-  late var repeatQuestions;
+  late int dropdownPosition;
+  late bool multipleChoiceEnabled;
+  late bool writingEnabled;
+  late Wrapper multipleChoiceQuestions;
+  late Wrapper writingQuestions;
+  late Wrapper repeatQuestions;
 
   _readDB() async {
-    var db = await Database.getSet();
+    var db = await LocalDatabase.getSet();
     dropdownPosition = db[0]['adaptiveTermDef'];
     multipleChoiceEnabled = db[0]['multipleChoiceEnabled'] == 1;
     writingEnabled = db[0]['writingEnabled'] == 1;
-    multipleChoiceQuestions = Object(db[0]['multipleChoiceQuestions'].toString());
-    writingQuestions = Object(db[0]['writingQuestions'].toString());
-    repeatQuestions = Object(db[0]['adaptiveRepeat'].toString());
+    multipleChoiceQuestions = Wrapper(db[0]['multipleChoiceQuestions'].toString());
+    writingQuestions = Wrapper(db[0]['writingQuestions'].toString());
+    repeatQuestions = Wrapper(db[0]['adaptiveRepeat'].toString());
   }
 
   @override
@@ -39,7 +39,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Database.getSet(),
+        future: LocalDatabase.getSet(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -47,6 +47,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                         padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                         child: GestureDetector(
                           onTap: () {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             Navigator.of(context).pop();
                           },
                           child: const Icon(
@@ -67,10 +68,10 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                         padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
                         child: Column(
                               children: [
-                                const Text("What to study?", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                                const Text("What to study?", semanticsLabel: "What to study?", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                                 Padding(
                                     padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-                                    child: DropdownButton(value: ["Terms & Definitions", "Terms", "Definitions"][dropdownPosition], items: ["Terms & Definitions", "Terms", "Definitions"].map<DropdownMenuItem<String>>((String value) {return DropdownMenuItem<String>(value: value,child: Text(value),);}).toList(), onChanged: (value) async {setState(() {
+                                    child: DropdownButton(value: ["Terms & Definitions", "Terms", "Definitions"][dropdownPosition], items: ["Terms & Definitions", "Terms", "Definitions"].map<DropdownMenuItem<String>>((String value) {return DropdownMenuItem<String>(value: value, child: Text(value, semanticsLabel: value),);}).toList(), onChanged: (value) async {setState(() {
                                       switch (value) {
                                         case "Terms & Definitions":
                                           dropdownPosition = 0;
@@ -86,7 +87,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                                       }
                                     }
                                     );
-                                    await Database.updateAdaptiveSettings(1, dropdownPosition);
+                                    await LocalDatabase.updateAdaptiveSettings(1, dropdownPosition);
                                 }, isExpanded: true, style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.02, color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.white),),),
                         ]),
                       ),
@@ -100,12 +101,12 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                           onTap: () async {
                             multipleChoiceEnabled = !multipleChoiceEnabled;
                             setState(() {});
-                            await Database.updateAdaptiveSettings(2, multipleChoiceEnabled ? 1 : 0);
+                            await LocalDatabase.updateAdaptiveSettings(2, multipleChoiceEnabled ? 1 : 0);
                           },
                           child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.77,
                           height: MediaQuery.of(context).size.height * 0.071,
-                          child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Multiple Choice ${multipleChoiceEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                          child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Multiple Choice ${multipleChoiceEnabled ? "Enabled" : "Disabled"}", semanticsLabel: "Multiple Choice ${multipleChoiceEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                           ),
                           ),
                           ),
@@ -123,12 +124,12 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                             onTap: () async {
                               writingEnabled = !writingEnabled;
                               setState(() {});
-                              await Database.updateAdaptiveSettings(3, writingEnabled ? 1 : 0);
+                              await LocalDatabase.updateAdaptiveSettings(3, writingEnabled ? 1 : 0);
                             },
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.77,
                               height: MediaQuery.of(context).size.height * 0.071,
-                              child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Writing ${writingEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                              child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Writing ${writingEnabled ? "Enabled" : "Disabled"}", semanticsLabel: "Writing ${writingEnabled ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                             ),
                           ),
                         ),
@@ -152,20 +153,21 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                               () { showDialog<String>(
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
-                        title: const Text('Are you sure you want to reset?'),
-                        content: const Text('This will reset all of your current progress!'),
+                        title: const Text('Are you sure you want to reset?', semanticsLabel: "Are you sure you want to reset?",),
+                        content: const Text('This will reset all of your current progress!', semanticsLabel: "This will reset all of your current progress!",),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text('Cancel'),
+                            child: const Text('Cancel', semanticsLabel: "Cancel",),
                           ),
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
-                              Database.resetAdaptive();
+                              LocalDatabase.resetAdaptive();
                             },
                             child: const Text(
                               'Confirm',
+                              semanticsLabel: "Confirm",
                               style: TextStyle(color: Colors.red),
                           ),
                           ),
@@ -180,7 +182,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
             );
           }
           else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-            return const Text('');
+            return const Text('', semanticsLabel: '',);
           }
           else {
             return Scaffold(
@@ -199,6 +201,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                   Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",
+                        semanticsLabel: "Something went wrong",
                         style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)
                 ])
             );

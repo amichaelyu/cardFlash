@@ -41,7 +41,7 @@ class _SetPageState extends State<SetPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Database.getSet(),
+        future: LocalDatabase.getSet(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -80,6 +80,7 @@ class _SetPageState extends State<SetPage> {
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(snapshot.data.first['desc'],
+                            semanticsLabel: snapshot.data.first['desc'],
                             style: TextStyle(
                               fontSize: MediaQuery.of(context).size.height * 0.028,
                             ),
@@ -115,6 +116,7 @@ class _SetPageState extends State<SetPage> {
                                               15),
                                           child: AutoSizeText(
                                             snapshot.data[i + 1]['term'],
+                                            semanticsLabel: snapshot.data[i+1]['term'],
                                             maxLines: 7,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
@@ -126,6 +128,7 @@ class _SetPageState extends State<SetPage> {
                                               .fromLTRB(10, 0, 10, 0),
                                           child: AutoSizeText(
                                             snapshot.data[i + 1]['def'],
+                                            semanticsLabel: snapshot.data[i+1]['def'],
                                             maxLines: 13,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
@@ -149,7 +152,7 @@ class _SetPageState extends State<SetPage> {
             );
           }
           else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-            return const Text('');
+            return const Text('', semanticsLabel: '');
           }
           else {
             return Scaffold(
@@ -169,6 +172,7 @@ class _SetPageState extends State<SetPage> {
               Padding(padding: const EdgeInsets.only(top: 20),
                 child: Align(alignment: Alignment.center,
                   child: Text("Something went wrong :(",
+                    semanticsLabel: "Something went wrong",
                     style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)
             ])
             );

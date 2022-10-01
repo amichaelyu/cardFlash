@@ -13,7 +13,7 @@ class QuizletImportPage extends StatefulWidget {
 }
 
 class _QuizletImportPageState extends State<QuizletImportPage> {
-  final link = Object(null);
+  final link = Wrapper(null);
   double? value = 0.0;
 
   @override
@@ -55,7 +55,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
             final navigator = Navigator.of(context);
             var mess = ScaffoldMessenger.of(context);
             final webScraper = WebScraper(null);
-            var title, desc;
+            String title, desc;
             var terms = [];
             var defs = [];
             final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -86,8 +86,8 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                           webScraper.getElement('span.TermText', [])[i]['title']);
                     }
                   }
-                  await prefs.setInt("currentTitleID", await Database.insertSet(
-                      CardSet(await Database.getNextPosition(), title, desc,
+                  await prefs.setInt("currentTitleID", await LocalDatabase.insertSet(
+                      CardSet(await LocalDatabase.getNextPosition(), title, desc,
                           Icons.quiz_rounded, terms, defs)));
                   navigator.popUntil((route) => route.settings.name == "/");
                   navigator.pushNamed('/HOME');
@@ -101,6 +101,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                       backgroundColor: Colors.black87,
                       content: Text(
                         'Something went wrong!\nThe set might be private, try making a copy.',
+                        semanticsLabel: 'Something went wrong! The set might be private, try making a copy.',
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -116,6 +117,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                     backgroundColor: Colors.black87,
                     content: Text(
                       'Something went wrong! Are you connected to the internet?',
+                      semanticsLabel: "Something went wrong! Are you connected to the internet?",
                       style: TextStyle(
                         color: Colors.white,
                       ),
@@ -131,6 +133,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                   backgroundColor: Colors.black87,
                   content: Text(
                     'Something went wrong! That\'s not a real link!',
+                    semanticsLabel: "Something went wrong That's not a real link!",
                     style: TextStyle(
                       color: Colors.white,
                     ),

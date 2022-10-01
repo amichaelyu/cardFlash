@@ -25,13 +25,13 @@ class _FlashcardPageState extends State<FlashcardPage> {
   late int colorDark;
 
   _loadDB() async {
-    var set = await Database.getSet();
+    var set = await LocalDatabase.getSet();
     shuffle = set[0]['flashcardShuffle'] == 1;
     termDef = set[0]['flashcardTermDef'] == 0 ? ['term', 'def'] : ['def', 'term'];
   }
 
   _loadTerms() async {
-    var set = await Database.getSet();
+    var set = await LocalDatabase.getSet();
     text.clear();
     shuffleList.clear();
     for (int i = 1; i < set.length; i++) {
@@ -68,7 +68,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Database.getSet(),
+        future: LocalDatabase.getSet(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -84,14 +84,14 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         case Menu.shuffle:
                           shuffle = !shuffle;
                           _loadTerms();
-                          Database.updateFlashcardShuffle(shuffle ? 1 : 0);
+                          LocalDatabase.updateFlashcardShuffle(shuffle ? 1 : 0);
                           break;
                         case Menu.termFront:
                           var temp = termDef[1];
                           termDef[1] = termDef[0];
                           termDef[0] = temp;
                           _loadTerms();
-                          Database.updateFlashcardTermDef(termDef[0] == 'term' ? 0 : 1);
+                          LocalDatabase.updateFlashcardTermDef(termDef[0] == 'term' ? 0 : 1);
                           break;
                         case Menu.reset:
                           controller.animateToPage(0, duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
@@ -106,18 +106,18 @@ class _FlashcardPageState extends State<FlashcardPage> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('Shuffle '),
+                            const Text('Shuffle ', semanticsLabel: "Shuffle",),
                             shuffle ? const Icon(Icons.check_rounded) : const Text(''),
                           ],
                         ),
                       ),
                       PopupMenuItem<Menu>(
                         value: Menu.termFront,
-                        child: termDef[0] == 'term' ? const Text('Term Front') : const Text('Def Front'),
+                        child: termDef[0] == 'term' ? const Text('Term Front', semanticsLabel: 'Term Front',) : const Text('Def Front', semanticsLabel: "Def Front",),
                       ),
                       const PopupMenuItem<Menu>(
                         value: Menu.reset,
-                        child: Text('Reset'),
+                        child: Text('Reset', semanticsLabel: 'Reset',),
                       ),
                     ]),
                 ],
@@ -177,6 +177,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                                     .all(10),
                                                 child: Text(
                                                   text[i],
+                                                  semanticsLabel: text[i],
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                       fontSize: MediaQuery.of(context).size.height * 0.036),
@@ -208,7 +209,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
             );
           }
           else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-            return const Text('');
+            return const Text('', semanticsLabel: '',);
           }
           else {
             return Scaffold(
@@ -227,6 +228,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                   Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",
+                        semanticsLabel: "Something went wrong",
                         style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.024,),),),)
                 ])
             );
