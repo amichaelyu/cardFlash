@@ -81,7 +81,7 @@ class _AddPage extends StatelessWidget {
         children: [
           const BetterCardAdd("Create a Custom Set", "Make your own set from scratch", Icon(Icons.color_lens_rounded), "/ADD/CUSTOM"),
           BetterCardAdd("Import a Set from Quizlet", "You can only import public sets", Text("Q", semanticsLabel: "Q", style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.030,),), "/ADD/QUIZLET"),
-          // BetterCardAdd("Import a Set using QR", "You can only import other cardFlash sets", Icons.qr_code, "/ADD/QR1"),
+          const BetterCardAdd("Import a Set using QR", "You can only import other cardFlash sets", Icon(Icons.qr_code_2_rounded), "/ADD/QR"),
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: Align(
