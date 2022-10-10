@@ -1,28 +1,29 @@
 # cardFlash
 
-## update icons: 
-flutter pub run flutter_launcher_icons:main
+<p align="center">
+    <a href="https://apps.apple.com/app/id6443405970">
+        <img src="./assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" width="180" alt="Download cardFlash on the Apple App Store"/>
+    </a>
+</p>
+<p align="center">
+    <a href="https://play.google.com/store/apps/details?id=com.michaelyu.cardFlash">
+        <img src="./assets/google-play-badge.png" width="200" height="80" alt="Download cardFlash on the Google Play Store"/>
+    </a>
+</p>
 
-## android:
-flutter build appbundle --no-tree-shake-icons --obfuscate --split-debug-info=build/app/outputs/symbols
+<!---
+## Become a [Beta Tester](itsmichaelyu.github.io/cardFlashBeta)
+--->
+## Features
+- Import from Quizlet
+- Creation of your own sets
+- Flashcard Mode
+- Adaptive Mode (Similar to Quizlet Learn)
 
-## ios:
-flutter build ipa --no-tree-shake-icons --obfuscate --split-debug-info=build/app/outputs/symbols
+## Issues and Features
 
-## android symbols:
-Reproduce next steps and this warning will disappear
+Issues or new features can be reported via the [issue tracker](https://github.com/itsmichaelyu/cardFlash/issues). Please make sure your issue or feature has not yet been reported by anyone else before submitting a new one.
 
-    Go to [YOUR_PROJECT]\build\app\intermediates\merged_native_libs\release\out\lib
+## Privacy
 
-note that 3 folders exist inside
-
-    arm64-v8a
-    armeabi-v7a
-    x86_64
-
-    Select this 3 folder and create a .zip file. Name doesn't matter.
-
-[PLEASE NOTE THAT I HAVEN'T COMPRESSED THE ./lib FOLDER]
-
-    Upload this new *.zip file as Symbol File.
-~
+cardFlash does not collect personally identifiable information in any way. Please refer to the [privacy policy](https://github.com/itsmichaelyu/cardFlash/blob/master/PRIVACY.md) for information.
