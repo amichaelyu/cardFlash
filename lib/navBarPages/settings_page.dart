@@ -8,6 +8,7 @@ import '../widgets.dart';
 import 'add_page.dart';
 import 'home_page.dart';
 
+// TODO: UPDATE to use new bug and privacy page
 class SettingsNavigator extends StatelessWidget {
   const SettingsNavigator({super.key});
 
