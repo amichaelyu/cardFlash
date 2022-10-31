@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
+import '../navBarPages/home_page.dart';
 import '../widgets.dart';
 
 class EditPage extends StatefulWidget {
@@ -98,8 +99,15 @@ class _EditPageState extends State<EditPage> {
                                 ),
                                 TextButton(
                                   onPressed: () async {
+                                    final navigator = Navigator.of(context);
                                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                    Navigator.popUntil(context, (route) => route.settings.name == "/HOME");
+                                    navigator.push(
+                                        PageRouteBuilder(
+                                          pageBuilder: (c, a1, a2) => const HomeNavigator(),
+                                          settings: const RouteSettings(name: "/HOME"),
+                                          transitionDuration: Duration.zero,
+                                        )
+                                    );
                                     await Future.delayed(const Duration(milliseconds: 50));
                                     await LocalDatabase.deleteSet((await SharedPreferences.getInstance()).getInt('currentTitleID'));
                                   },

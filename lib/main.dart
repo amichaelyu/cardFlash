@@ -63,7 +63,7 @@ void main() async {
             '/HOME/SET/QR': (context) => const QRPage(),
             '/ADD': (context) => const AddNavigator(),
             '/ADD/CUSTOM': (context) => const CustomAddPage(),
-            '/ADD/QR': (context) => const QRImportPage1(),
+            '/ADD/QR': (context) => const QRImportPage(),
             '/ADD/QUIZLET': (context) => const QuizletImportPage(),
             '/SETTINGS': (context) => const SettingsNavigator(),
           },

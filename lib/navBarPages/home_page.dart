@@ -91,9 +91,8 @@ class _HomePageState extends State<_HomePage> {
     final navigator = Navigator.of(context);
     (await SharedPreferences.getInstance()).setInt("currentTitleID", titleID);
     await navigator.pushNamed("/HOME/SET");
-    await Future.delayed(const Duration(milliseconds: 50));
-    setState(() {
-    });
+    await Future.delayed(const Duration(milliseconds: 100));
+    setState(() {});
   }
 
   @override

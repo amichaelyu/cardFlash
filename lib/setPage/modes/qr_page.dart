@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
 import '../../database.dart';
 import '../../widgets.dart';
 
-class QRPage extends StatelessWidget {
+class QRPage extends StatefulWidget {
   const QRPage({super.key});
+
+  @override
+  State<QRPage> createState() => _QRPageState();
+}
+
+class _QRPageState extends State<QRPage> {
+  final controller = PageController(viewportFraction: 0.8);
+  int _index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _index = 0;
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: LocalDatabase.getSet(),
+        future: LocalDatabase.getString(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -28,19 +41,51 @@ class QRPage extends StatelessWidget {
                           ),
                         )
                     ), null),
-                body: Center(
+                body:
+                Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      QrImage(
-                        data: snapshot.data.toString(),
-                        version: QrVersions.auto,
-                        size: 400.0,
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                      ),
-                      const Padding(padding: EdgeInsets.only(bottom: 100))
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          child: PageView.builder(
+                            itemCount: snapshot.data.length,
+                            controller: controller,
+                            onPageChanged: (int index) => setState(() => _index = index),
+                            itemBuilder: (_, i) {
+                              return
+                                Transform.scale(
+                                scale: i == _index ? 1.35 : 0.90,
+                                child:
+                                  Center(
+                                    child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(10),
+                                  child: QrImage(
+                                    data: snapshot.data[i],
+                                    version: QrVersions.auto,
+                                    // size: MediaQuery.of(context).size.width,
+                                    errorCorrectionLevel: QrErrorCorrectLevel.L,
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.black,
+                                  ),
+                                  ),
+                                  ])),
+                              );
+                            },
+                          ),
+                        ),
+                      Text("${_index+1}/${snapshot.data.length}",
+                          style: TextStyle(
+                          color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black,
+                          fontSize: MediaQuery.of(context).size.height * 0.036,
+                          fontWeight: FontWeight.bold
+                      )),
+                      Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1))
                     ]
                   ),
                 ),
