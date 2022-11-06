@@ -44,7 +44,7 @@ class _EditPageState extends State<EditPage> {
 
   void _grabSomeData() async {
     var data = await LocalDatabase.getSet();
-    _icon = IconData(data[0]['iconCP'], fontFamily: data[0]['iconFF'], fontPackage: data[0]['iconFP']);
+    _icon = IconData(data[0]['iconCP'], fontFamily: data[0]['iconFF'] == "" ? null : data[0]['iconFF'], fontPackage: data[0]['iconFP'] == "" ? null : data[0]['iconFP']);
     title = Wrapper(data[0]['title']);
     desc = Wrapper(data[0]['desc']);
     cardNum = data.length - 1;

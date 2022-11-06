@@ -1,10 +1,11 @@
 import 'package:card_flash/database.dart';
-import 'package:card_flash/setPage/edit_page.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:lzstring/lzstring.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../constants.dart';
 import '../../widgets.dart';
 import '../home_page.dart';
 
@@ -101,19 +102,21 @@ class QRImportPageState extends State<QRImportPage> {
   }
 
   void process() async {
-    var text = result?.code?.split("§§");
     final navigator = Navigator.of(context);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final terms = <String>[];
     final defs = <String>[];
-    if (text?.length != 3) {
-      display = "That isn't a cardFlash QR Code!";
-    }
-    else if (int.parse(text![0]) != counter) {
-      display = "That is the wrong number QR Code!\nYou should be on QR $counter";
-    }
-    else if (int.parse(text[0]) == int.parse(text[1])) {
-      data += text[2];
+
+    var id = result?.code;
+    var dio = Dio();
+    var response = await dio.get(
+      "https://api.paste.ee/v1/pastes/${id!}",
+      queryParameters: {
+        'key': Constants.pasteAPIKey,
+      },
+    );
+    if (response.data['success']) {
+      data = response.data['paste']["sections"][0]["contents"];
       final uncompressed = LZString.decompressFromUTF16Sync(data);
       final list = uncompressed?.split("§¶");
       if (list?.last == "") {
@@ -135,11 +138,6 @@ class QRImportPageState extends State<QRImportPage> {
       );
       navigator.pushNamed('/HOME/SET');
       navigator.pushNamed('/HOME/SET/EDIT');
-    }
-    else {
-      display = "Swipe right and scan the next QR code!\nYou are on $counter/${int.parse(text[1])}";
-      data += text[2];
-      counter++;
     }
   }
 

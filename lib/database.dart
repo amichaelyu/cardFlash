@@ -10,7 +10,7 @@ import 'package:sqflite/sqflite.dart';
 class LocalDatabase {
   static late Future<Database> database;
   static int lastSet = -1;
-  static List<dynamic> cachedList = [];
+  // static List<dynamic> cachedList = [];
 
   static Future<void> initializeDB() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -99,9 +99,9 @@ class LocalDatabase {
 
   static Future<dynamic> getString() async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getInt("currentTitleID")! == lastSet && cachedList.isNotEmpty) {
-      return cachedList;
-    }
+    // if (prefs.getInt("currentTitleID")! == lastSet && cachedList.isNotEmpty) {
+    //   return cachedList;
+    // }
     lastSet = prefs.getInt("currentTitleID")!;
 
     final db = await database;
@@ -117,22 +117,23 @@ class LocalDatabase {
       }
     }
     final betterString = LZString.compressToUTF16Sync(data);
-    List<String> splitStringByLength(String str, int length) =>
-        [str.substring(0, length), str.substring(length)];
-    var list = splitStringByLength(betterString!, betterString.length > 1000 ? 1000 : betterString.length);
-    while (list.last.length > 1000) {
-      var temp = splitStringByLength(list.last, 1000);
-      list[list.length-1] = temp[0];
-      list.add(temp[1]);
-    }
-    if (list.last == "") {
-      list.removeLast();
-    }
-    for (int i = 1; i <= list.length; i++) {
-      list[i-1] = "$i§§${list.length}§§${list[i-1]}";
-    }
-    cachedList = list;
-    return list;
+    // List<String> splitStringByLength(String str, int length) =>
+    //     [str.substring(0, length), str.substring(length)];
+    // var list = splitStringByLength(betterString!, betterString.length > 1000 ? 1000 : betterString.length);
+    // while (list.last.length > 1000) {
+    //   var temp = splitStringByLength(list.last, 1000);
+    //   list[list.length-1] = temp[0];
+    //   list.add(temp[1]);
+    // }
+    // if (list.last == "") {
+    //   list.removeLast();
+    // }
+    // for (int i = 1; i <= list.length; i++) {
+    //   list[i-1] = "$i§§${list.length}§§${list[i-1]}";
+    // }
+    // cachedList = list;
+    // return list;
+    return betterString;
   }
 
   static Future<void> updateSet(CardSet set) async {
@@ -146,7 +147,7 @@ class LocalDatabase {
     int time = DateTime.now().millisecondsSinceEpoch;
     await db.rawQuery(
         'UPDATE titles SET timestamp = ?, position = ?, title = ?, desc = ?, iconCP = ?, iconFF = ?, iconFP = ? WHERE titleID = ?',
-        [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, prefs.getInt('currentTitleID')]);
+        [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily ?? "", set.icon.fontPackage ?? "", prefs.getInt('currentTitleID')]);
     int firstCount = min(set.terms.length , oldTermCount!);
     for (int i = 0; i < firstCount; i++) {
       time = DateTime

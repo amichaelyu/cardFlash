@@ -165,7 +165,7 @@ class _HomePageState extends State<_HomePage> {
                               child: Column(
                                 children: <Widget>[
                                   ListTile(
-                                    leading: Icon(IconData(snapshot.data[index]['iconCP'], fontFamily: snapshot.data[index]['iconFF'], fontPackage: snapshot.data[index]['iconFP'])),
+                                    leading: Icon(IconData(snapshot.data[index]['iconCP'], fontFamily: snapshot.data[0]['iconFF'] == "" ? null : snapshot.data[0]['iconFF'], fontPackage: snapshot.data[0]['iconFP'] == "" ? null : snapshot.data[0]['iconFP'])),
                                     title: Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 5), child: Text(snapshot.data[index]['title'], semanticsLabel: snapshot.data[index]['title'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                                     subtitle: Text(snapshot.data[index]['desc'], semanticsLabel: snapshot.data[index]['desc'],),
                                   ),

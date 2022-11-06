@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -14,18 +15,29 @@ class QRPage extends StatefulWidget {
 
 class _QRPageState extends State<QRPage> {
   final controller = PageController(viewportFraction: 0.8);
-  int _index = 0;
 
   @override
   void initState() {
     super.initState();
-    _index = 0;
+  }
+
+  Future<dynamic> paste() async {
+    var data = await LocalDatabase.getString();
+    var dio = Dio();
+    var response = await dio.post(
+      "https://api.paste.ee/v1/pastes",
+      data: {
+        'key': Constants.pasteAPIKey,
+        'sections':[{"contents": data}]
+      },
+    );
+    return response.data['success'] == "true" ? null : response.data['id'];
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: LocalDatabase.getString(),
+        future: paste(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.data != null) {
             return Scaffold(
@@ -47,44 +59,25 @@ class _QRPageState extends State<QRPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          child: PageView.builder(
-                            itemCount: snapshot.data.length,
-                            controller: controller,
-                            onPageChanged: (int index) => setState(() => _index = index),
-                            itemBuilder: (_, i) {
-                              return
-                                Transform.scale(
-                                scale: i == _index ? 1.35 : 0.90,
-                                child:
-                                  Center(
-                                    child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10),
+                      Center(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
                                   child: QrImage(
-                                    data: snapshot.data[i],
+                                    data: snapshot.data,
                                     version: QrVersions.auto,
                                     // size: MediaQuery.of(context).size.width,
                                     errorCorrectionLevel: QrErrorCorrectLevel.L,
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
-                                  ),
-                                  ),
-                                  ])),
-                              );
-                            },
-                          ),
-                        ),
-                      Text("${_index+1}/${snapshot.data.length}",
-                          style: TextStyle(
-                          color: MediaQuery.of(context).platformBrightness != Brightness.light ? Colors.white : Colors.black,
-                          fontSize: MediaQuery.of(context).size.height * 0.036,
-                          fontWeight: FontWeight.bold
-                      )),
+                                ),
+                                ),
+                              ]
+                          )
+                      ),
                       Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1))
                     ]
                   ),
