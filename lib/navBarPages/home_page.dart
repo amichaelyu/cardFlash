@@ -91,9 +91,8 @@ class _HomePageState extends State<_HomePage> {
     final navigator = Navigator.of(context);
     (await SharedPreferences.getInstance()).setInt("currentTitleID", titleID);
     await navigator.pushNamed("/HOME/SET");
-    await Future.delayed(const Duration(milliseconds: 50));
-    setState(() {
-    });
+    await Future.delayed(const Duration(milliseconds: 100));
+    setState(() {});
   }
 
   @override
@@ -158,6 +157,7 @@ class _HomePageState extends State<_HomePage> {
                             splashColor: Colors.blue.withAlpha(30),
                             onTap: () {
                               // setState(() {
+                                print(snapshot.data[0]['iconFP']);
                                 nav(snapshot.data[index]['titleID']);
                               // });
                             },
@@ -166,7 +166,7 @@ class _HomePageState extends State<_HomePage> {
                               child: Column(
                                 children: <Widget>[
                                   ListTile(
-                                    leading: Icon(IconData(snapshot.data[index]['iconCP'], fontFamily: snapshot.data[index]['iconFF'], fontPackage: snapshot.data[index]['iconFP'])),
+                                    leading: Icon(IconData(snapshot.data[index]['iconCP'], fontFamily: snapshot.data[index]['iconFF'] == "" ? null : snapshot.data[index]['iconFF'], fontPackage: snapshot.data[index]['iconFP'] == "" ? null : snapshot.data[index]['iconFP'])),
                                     title: Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 5), child: Text(snapshot.data[index]['title'], semanticsLabel: snapshot.data[index]['title'], style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                                     subtitle: Text(snapshot.data[index]['desc'], semanticsLabel: snapshot.data[index]['desc'],),
                                   ),

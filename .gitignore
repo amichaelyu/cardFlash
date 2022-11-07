@@ -48,3 +48,4 @@ app.*.map.json
 
 /assets/icon/cardFlashProject.psd
 upload-keystore.jks
+/lib/constants.dart

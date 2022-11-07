@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
+import '../navBarPages/home_page.dart';
 import '../widgets.dart';
 
 class EditPage extends StatefulWidget {
@@ -43,7 +44,7 @@ class _EditPageState extends State<EditPage> {
 
   void _grabSomeData() async {
     var data = await LocalDatabase.getSet();
-    _icon = IconData(data[0]['iconCP'], fontFamily: data[0]['iconFF'], fontPackage: data[0]['iconFP']);
+    _icon = IconData(data[0]['iconCP'], fontFamily: data[0]['iconFF'] == "" ? null : data[0]['iconFF'], fontPackage: data[0]['iconFP'] == "" ? null : data[0]['iconFP']);
     title = Wrapper(data[0]['title']);
     desc = Wrapper(data[0]['desc']);
     cardNum = data.length - 1;
@@ -98,8 +99,15 @@ class _EditPageState extends State<EditPage> {
                                 ),
                                 TextButton(
                                   onPressed: () async {
+                                    final navigator = Navigator.of(context);
                                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                    Navigator.popUntil(context, (route) => route.settings.name == "/HOME");
+                                    navigator.push(
+                                        PageRouteBuilder(
+                                          pageBuilder: (c, a1, a2) => const HomeNavigator(),
+                                          settings: const RouteSettings(name: "/HOME"),
+                                          transitionDuration: Duration.zero,
+                                        )
+                                    );
                                     await Future.delayed(const Duration(milliseconds: 50));
                                     await LocalDatabase.deleteSet((await SharedPreferences.getInstance()).getInt('currentTitleID'));
                                   },
@@ -310,7 +318,6 @@ class _EditPageState extends State<EditPage> {
                           duration: Duration(milliseconds: 1000),
                         ),
                       );
-                      setState(() {});
                     }
                     value = 0.0;
                   },

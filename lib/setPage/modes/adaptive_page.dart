@@ -241,25 +241,20 @@ class _AdaptivePageState extends State<AdaptivePage> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.95,
                             height: MediaQuery.of(context).size.height * 0.28,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets
-                                  .fromLTRB(10, 0, 10, 0),
-                                  child: AutoSizeText(
-                                    prompt,
-                                    semanticsLabel: prompt,
-                                    maxLines: 8,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.height * 0.04),
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets
+                                    .fromLTRB(10, 20, 10, 20),
+                                    child: AutoSizeText(
+                                      prompt,
+                                      semanticsLabel: prompt,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: MediaQuery.of(context).size.height * 0.04),
+                                      ),
                                   ),
                                 ),
-                              ]
-                              ),
-                          ),
+                            ),
                         // multiple choice
                         if (shuffledList.isNotEmpty && ((snapshot.data[shuffledList[counter]]['correctInARowTerm'] + snapshot.data[shuffledList[counter]]['correctInARowDef']) < mcNum || maintainMC) && !maintainW)
                           for (int i = 0; i < min<num>(4, (snapshot.data.length-1)); i++)

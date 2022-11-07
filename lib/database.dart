@@ -2,12 +2,16 @@ import 'dart:math';
 
 import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:lzstring/lzstring.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LocalDatabase {
   static late Future<Database> database;
+
+  static int lastSet = -1;
+  // static List<dynamic> cachedList = [];
 
   static Future<void> initializeDB() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -94,6 +98,45 @@ class LocalDatabase {
     return (await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]));
   }
 
+  static Future<dynamic> getString() async {
+    final prefs = await SharedPreferences.getInstance();
+    // if (prefs.getInt("currentTitleID")! == lastSet && cachedList.isNotEmpty) {
+    //   return cachedList;
+    // }
+    lastSet = prefs.getInt("currentTitleID")!;
+
+    final db = await database;
+
+    if ((Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]))!) == 0) {
+      return null;
+    }
+    final set = (await db.rawQuery('SELECT title, desc, iconCP, iconFF, iconFP FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT term, def FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]));
+    String data = "";
+    for (int i = 0; i < set.length; i++) {
+      for (var value in set[i].values) {
+        data += "$value§¶";
+      }
+    }
+    final betterString = LZString.compressToUTF16Sync(data);
+    // List<String> splitStringByLength(String str, int length) =>
+    //     [str.substring(0, length), str.substring(length)];
+    // var list = splitStringByLength(betterString!, betterString.length > 1000 ? 1000 : betterString.length);
+    // while (list.last.length > 1000) {
+    //   var temp = splitStringByLength(list.last, 1000);
+    //   list[list.length-1] = temp[0];
+    //   list.add(temp[1]);
+    // }
+    // if (list.last == "") {
+    //   list.removeLast();
+    // }
+    // for (int i = 1; i <= list.length; i++) {
+    //   list[i-1] = "$i§§${list.length}§§${list[i-1]}";
+    // }
+    // cachedList = list;
+    // return list;
+    return betterString;
+  }
+
   static Future<void> updateSet(CardSet set) async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
@@ -105,7 +148,7 @@ class LocalDatabase {
     int time = DateTime.now().millisecondsSinceEpoch;
     await db.rawQuery(
         'UPDATE titles SET timestamp = ?, position = ?, title = ?, desc = ?, iconCP = ?, iconFF = ?, iconFP = ? WHERE titleID = ?',
-        [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily, set.icon.fontPackage, prefs.getInt('currentTitleID')]);
+        [time, set.position, set.title, set.desc, set.icon.codePoint, set.icon.fontFamily ?? "", set.icon.fontPackage ?? "", prefs.getInt('currentTitleID')]);
     int firstCount = min(set.terms.length , oldTermCount!);
     for (int i = 0; i < firstCount; i++) {
       time = DateTime

@@ -89,7 +89,7 @@ class _SettingsPageState extends State<_SettingsPage> {
 
 // class _SettingsPageState extends State<_SettingsPage> {
   final Uri _developer = Uri.parse('https://github.com/itsmichaelyu');
-  final Uri _privacyPolicy = Uri.parse('https://github.com/itsmichaelyu/cardFlashBugs/blob/master/PRIVACY.md');
+  final Uri _privacyPolicy = Uri.parse('https://github.com/itsmichaelyu/cardFlash/blob/master/PRIVACY.md');
   final Uri _bugReport = Uri.parse('https://itsmichaelyu.github.io/cardFlashBug/');
   final Uri _featureRequest = Uri.parse('https://itsmichaelyu.github.io/cardFlashFeature/');
   final Uri _betaTester = Uri.parse('https://itsmichaelyu.github.io/cardFlashBeta');
@@ -167,12 +167,12 @@ class _SettingsPageState extends State<_SettingsPage> {
                           throw 'Could not launch $_featureRequest';
                         }
                       }, MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.grey.shade400 : Colors.grey.shade800),
-                  BetterCardSettings("Become a Beta Tester",
-                          () async {
-                        if (!await launchUrl(_betaTester)) {
-                          throw 'Could not launch $_betaTester';
-                        }
-                      }, MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.grey.shade400 : Colors.grey.shade800),
+                  // BetterCardSettings("Become a Beta Tester",
+                  //         () async {
+                  //       if (!await launchUrl(_betaTester)) {
+                  //         throw 'Could not launch $_betaTester';
+                  //       }
+                  //     }, MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.grey.shade400 : Colors.grey.shade800),
                   const Padding(
                     padding: EdgeInsets.only(top: 15),
                   ),

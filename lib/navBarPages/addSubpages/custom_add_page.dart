@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../widgets.dart';
+import '../home_page.dart';
 
 class CustomAddPage extends StatefulWidget {
   const CustomAddPage({super.key});
@@ -80,9 +81,15 @@ class _CustomAddPageState extends State<CustomAddPage> {
                   }
                   if (_formKey.currentState!.validate()) {
                     await (await SharedPreferences.getInstance()).setInt("currentTitleID", await LocalDatabase.insertSet(CardSet(await LocalDatabase.getNextPosition(), ((title?.object == null) ? "" : title?.object), ((desc?.object == null) ? "" : desc?.object), _icon!, termsList, defsList)));
-                    navigator.popUntil((route) => route.settings.name == "/");
-                    navigator.pushNamed("/HOME");
-                    navigator.pushNamed("/HOME/SET");
+                    navigator.push(
+                        PageRouteBuilder(
+                          pageBuilder: (c, a1, a2) => const HomeNavigator(),
+                          settings: const RouteSettings(name: "/HOME"),
+                          transitionDuration: Duration.zero,
+                        )
+                    );
+                    navigator.pushNamed('/HOME/SET');
+                    navigator.pushNamed('/HOME/SET/EDIT');
                   }
                   value = 0.0;
                 },

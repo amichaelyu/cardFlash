@@ -29,6 +29,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
             padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
             child: GestureDetector(
               onTap: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 Navigator.pop(context);
               },
               child: const Icon(
@@ -74,9 +75,8 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                   else {
                     desc = '';
                   }
-                  for (int i = 0; i < webScraper
-                      .getElement('span.TermText', [])
-                      .length; i++) {
+                  webScraper.loadFromString(webScraper.getPageContent().replaceAll('<br>', '\n'));
+                  for (int i = 0; i < webScraper.getElement('span.TermText', []).length; i++) {
                     if (i % 2 == 0) {
                       terms.add(
                           webScraper.getElement('span.TermText', [])[i]['title']);

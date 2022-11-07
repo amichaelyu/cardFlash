@@ -1,4 +1,5 @@
 import 'package:card_flash/setPage/modes/adaptive_page_settings.dart';
+import 'package:card_flash/setPage/modes/qr_page.dart';
 import 'package:card_flash/setPage/set_page.dart';
 import 'package:card_flash/splash_screen.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
@@ -8,8 +9,7 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'constants.dart';
-import 'navBarPages/addSubpages/qr_import_page_1.dart';
-import 'navBarPages/addSubpages/qr_import_page_2.dart';
+import 'navBarPages/addSubpages/qr_import_page.dart';
 import 'navBarPages/addSubpages/custom_add_page.dart';
 import 'navBarPages/addSubpages/quizlet_import_page.dart';
 import 'navBarPages/settings_page.dart';
@@ -60,10 +60,10 @@ void main() async {
             '/HOME/SET/ADAPTIVE': (context) => const AdaptivePage(),
             '/HOME/SET/ADAPTIVE/SETTINGS': (context) => const AdaptiveSettingsPage(),
             '/HOME/SET/EDIT': (context) => const EditPage(),
+            '/HOME/SET/QR': (context) => const QRPage(),
             '/ADD': (context) => const AddNavigator(),
             '/ADD/CUSTOM': (context) => const CustomAddPage(),
-            '/ADD/QR1': (context) => const QRImportPage1(),
-            '/ADD/QR1/QR2': (context) => const QRImportPage2(),
+            '/ADD/QR': (context) => const QRImportPage(),
             '/ADD/QUIZLET': (context) => const QuizletImportPage(),
             '/SETTINGS': (context) => const SettingsNavigator(),
           },
