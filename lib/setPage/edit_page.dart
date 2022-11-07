@@ -318,7 +318,6 @@ class _EditPageState extends State<EditPage> {
                           duration: Duration(milliseconds: 1000),
                         ),
                       );
-                      setState(() {});
                     }
                     value = 0.0;
                   },
