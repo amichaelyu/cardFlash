@@ -9,6 +9,7 @@ import 'package:sqflite/sqflite.dart';
 
 class LocalDatabase {
   static late Future<Database> database;
+
   static int lastSet = -1;
   // static List<dynamic> cachedList = [];
 
