@@ -156,7 +156,9 @@ class _HomePageState extends State<_HomePage> {
                           child: InkWell(
                             splashColor: Colors.blue.withAlpha(30),
                             onTap: () {
+                              setState(() {
                                 nav(snapshot.data[index]['titleID']);
+                              });
                             },
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.95,
