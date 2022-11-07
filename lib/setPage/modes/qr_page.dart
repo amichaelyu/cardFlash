@@ -28,6 +28,7 @@ class _QRPageState extends State<QRPage> {
       "https://api.paste.ee/v1/pastes",
       data: {
         'key': Constants.pasteAPIKey,
+        "expiration": 86400,
         'sections':[{"contents": data}]
       },
     );
