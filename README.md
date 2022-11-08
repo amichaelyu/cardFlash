@@ -1,4 +1,4 @@
-# cardFlash
+# cardFlash: Quizlet but Better!
 
 <p align="center">
     <a href="https://apps.apple.com/app/id6443405970">
