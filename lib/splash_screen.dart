@@ -23,9 +23,6 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getInt("currentTitleID") == null) {
       await prefs.setInt("currentTitleID", -1);
     }
-    if (prefs.getInt("currentTitleID") == null) {
-      await prefs.setInt("currentTitleID", -1);
-    }
     if (prefs.getInt("cardColorLight") == null) {
       await prefs.setInt("cardColorLight", Colors.blue.shade200.value);
     }

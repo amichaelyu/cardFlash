@@ -47,7 +47,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                         padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                         child: GestureDetector(
                           onTap: () {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).clearSnackBars();
                             Navigator.of(context).pop();
                           },
                           child: const Icon(

@@ -29,7 +29,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
             padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
             child: GestureDetector(
               onTap: () {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).clearSnackBars();
                 Navigator.pop(context);
               },
               child: const Icon(
@@ -61,7 +61,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
             var defs = [];
             final SharedPreferences prefs = await SharedPreferences.getInstance();
             try {
-              mess.hideCurrentSnackBar();
+              mess.clearSnackBars();
               if (await webScraper.loadFullURL(link.object)) {
                 if (webScraper.getElement('div.SetPage-titleWrapper', []).isNotEmpty) {
                   title = webScraper.getElement(
@@ -95,7 +95,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                   navigator.pushNamed('/HOME/SET/EDIT');
                 }
                 else {
-                  mess.hideCurrentSnackBar();
+                  mess.clearSnackBars();
                   mess.showSnackBar(
                     const SnackBar(
                       backgroundColor: Colors.black87,

@@ -100,7 +100,7 @@ class _EditPageState extends State<EditPage> {
                                 TextButton(
                                   onPressed: () async {
                                     final navigator = Navigator.of(context);
-                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).clearSnackBars();
                                     navigator.push(
                                         PageRouteBuilder(
                                           pageBuilder: (c, a1, a2) => const HomeNavigator(),
@@ -132,7 +132,7 @@ class _EditPageState extends State<EditPage> {
                     padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                     child: GestureDetector(
                       onTap: () async {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).clearSnackBars();
                         var termDefChanged = false;
                         if (snapshot.data.length - 1 == cardNum + cardMinus) {
                           for (int i = 0; i < cardNum; i++) {

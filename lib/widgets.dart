@@ -115,6 +115,7 @@ class BetterCardSet extends StatelessWidget {
           splashColor: Colors.blue.withAlpha(30),
           onTap: () {
             Navigator.pushNamed(context, nav);
+            ScaffoldMessenger.of(context).clearSnackBars();
           },
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.95,

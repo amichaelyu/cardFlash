@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
@@ -22,6 +23,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
   var shuffledList = []; // contains the positions of the initial list
   late int colorLight;
   late int colorDark;
+  late bool haptics;
   int counter = 0;
   var answers = [];
   var colorList = [];
@@ -38,9 +40,11 @@ class _AdaptivePageState extends State<AdaptivePage> {
   int nullCounter = 0;
   final writingController = TextEditingController();
 
-  _initializeCardColor() async {
-    colorLight = (await SharedPreferences.getInstance()).getInt("cardColorLight")!;
-    colorDark = (await SharedPreferences.getInstance()).getInt("cardColorDark")!;
+  _loadPrefs() async {
+    var prefs = await SharedPreferences.getInstance();
+    colorLight = prefs.getInt("cardColorLight")!;
+    colorDark = prefs.getInt("cardColorDark")!;
+    haptics = prefs.getBool("haptics")!;
   }
 
   _initialAsync() async {
@@ -183,7 +187,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
   @override
   void initState() {
     super.initState();
-    _initializeCardColor();
+    _loadPrefs();
     _initialAsync();
     _generateSet(0);
   }
@@ -201,9 +205,9 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: GestureDetector(
                         onTap: () async {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).clearSnackBars();
                           await Navigator.pushNamed(context, "/HOME/SET/ADAPTIVE/SETTINGS");
-                          _initializeCardColor();
+                          _loadPrefs();
                           _initialAsync();
                           _generateSet(0);
                           setState(() {});
@@ -218,7 +222,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                         child: GestureDetector(
                           onTap: () {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).clearSnackBars();
                             Navigator.pop(context);
                           },
                           child: const Icon(
@@ -282,6 +286,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                         if (showAnswer != true) {
                                           maintainMC = true;
                                           if (colorList[i] != Colors.green) {
+                                            if (haptics) HapticFeedback.heavyImpact();
                                             var db = await LocalDatabase.getSet();
                                             valueSetter = -1 * db[shuffledList[counter]][answers.last == 1 ? 'correctInARowDef' : 'correctInARowTerm'];
                                             colorList[i] = Colors.red;
@@ -302,6 +307,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                             );
                                           }
                                           else {
+                                            if (haptics) HapticFeedback.lightImpact();
                                             valueSetter = 1;
                                             LocalDatabase.increaseCorrectInARow(shuffledList[counter] - 1, answers.last);
                                             LocalDatabase.updateCorrectIncorrect(shuffledList[counter] - 1, 1);
@@ -323,14 +329,15 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                           if ((await SharedPreferences.getInstance()).getBool("adaptiveInstant")! && valueSetter > 0) {
                                             maintainMC = false;
                                             showAnswer = false;
-                                            mess.hideCurrentSnackBar();
+                                            mess.clearSnackBars();
                                             _updateCounter(valueSetter.toInt());
                                           }
                                         }
                                         else {
+                                          if (haptics) HapticFeedback.mediumImpact();
                                           maintainMC = false;
                                           showAnswer = false;
-                                          mess.hideCurrentSnackBar();
+                                          mess.clearSnackBars();
                                           _updateCounter(valueSetter.toInt());
                                         }
                                         setState(() {});
@@ -409,6 +416,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                   onPressed: () async {
                     var mess = ScaffoldMessenger.of(context);
                     if ((writingVal.object == null || writingVal.object.trim() == "") && nullCounter == 0) {
+                      if (haptics) HapticFeedback.lightImpact();
                       nullCounter++;
                       mess.showSnackBar(
                         const SnackBar(
@@ -425,11 +433,12 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       );
                     }
                     else if (showAnswer != true) {
-                      mess.hideCurrentSnackBar();
+                      mess.clearSnackBars();
                       var correct = (writingVal.object ?? "").toLowerCase().trim() == answer.toLowerCase().trim();
                       maintainW = true;
                       maintainMC = false;
                       if (nullCounter != 0 || !correct) {
+                        if (haptics) HapticFeedback.heavyImpact();
                         writingController.clear();
                         var set = await LocalDatabase.getSet();
                         int incorrect = set[shuffledList[counter]]['incorrectTotal'];
@@ -442,13 +451,14 @@ class _AdaptivePageState extends State<AdaptivePage> {
                             action: SnackBarAction(
                               label: 'Override',
                               onPressed: () async {
+                                if (haptics) HapticFeedback.heavyImpact();
                                 await LocalDatabase.setCorrectInARow(shuffledList[counter]-1, correctInARow + 1, answers.last);
                                 await LocalDatabase.setCorrectIncorrect(shuffledList[counter]-1, -1 * incorrect);
                                 await LocalDatabase.updateCorrectIncorrect(shuffledList[counter]-1, 1);
                                 maintainW = false;
                                 showAnswer = false;
                                 writingController.clear();
-                                mess.hideCurrentSnackBar();
+                                mess.clearSnackBars();
                                 _updateCounter(1);
                                 setState(() {});
                               },
@@ -466,6 +476,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         );
                       }
                       else {
+                        if (haptics) HapticFeedback.lightImpact();
                         valueSetter = 1;
                         LocalDatabase.increaseCorrectInARow(shuffledList[counter] - 1, answers.last);
                         LocalDatabase.updateCorrectIncorrect(shuffledList[counter]-1, 1);
@@ -489,16 +500,17 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         maintainW = false;
                         showAnswer = false;
                         writingController.clear();
-                        mess.hideCurrentSnackBar();
+                        mess.clearSnackBars();
                         _updateCounter(valueSetter.toInt());
                       }
                     }
                     else {
+                      if (haptics) HapticFeedback.lightImpact();
                       nullCounter = 0;
                       maintainW = false;
                       showAnswer = false;
                       writingController.clear();
-                      mess.hideCurrentSnackBar();
+                      mess.clearSnackBars();
                       _updateCounter(valueSetter.toInt());
                     }
                     setState(() {});

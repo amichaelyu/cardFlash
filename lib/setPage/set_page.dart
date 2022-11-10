@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:card_flash/better_scroll_physics.dart';
 import 'package:card_flash/constants.dart';
 import 'package:card_flash/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../database.dart';
@@ -17,6 +19,7 @@ class _SetPageState extends State<SetPage> {
   int _index = 0;
   late int colorLight;
   late int colorDark;
+  late bool haptics;
   var controller = PageController(viewportFraction: 0.8);
 
   nav() async {
@@ -26,15 +29,17 @@ class _SetPageState extends State<SetPage> {
     });
   }
 
-  _initializeColor() async {
-    colorLight = (await SharedPreferences.getInstance()).getInt("cardColorLight")!;
-    colorDark = (await SharedPreferences.getInstance()).getInt("cardColorDark")!;
+  _loadPrefs() async {
+    var prefs = await SharedPreferences.getInstance();
+    colorLight = prefs.getInt("cardColorLight")!;
+    colorDark = prefs.getInt("cardColorDark")!;
+    haptics = prefs.getBool("haptics")!;
   }
 
   @override
   void initState() {
     super.initState();
-    _initializeColor();
+    _loadPrefs();
     _index = 0;
   }
 
@@ -52,6 +57,7 @@ class _SetPageState extends State<SetPage> {
                           child: GestureDetector(
                             onTap: () {
                               nav();
+                              ScaffoldMessenger.of(context).clearSnackBars();
                             },
                             child: Icon(
                               Icons.edit_rounded,
@@ -94,7 +100,11 @@ class _SetPageState extends State<SetPage> {
                           child: PageView.builder(
                             itemCount: snapshot.data.length - 1,
                             controller: controller,
-                            onPageChanged: (int index) => setState(() => _index = index),
+                            physics: const BetterBouncingScrollPhysics(),
+                            onPageChanged: (int index) => setState(() {
+                              _index = index;
+                              if (haptics) HapticFeedback.selectionClick();
+                            }),
                             itemBuilder: (_, i) {
                               return Transform.scale(
                                 scale: i == _index ? 1 : 0.9,
