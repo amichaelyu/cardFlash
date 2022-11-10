@@ -35,6 +35,9 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getBool("adaptiveInstant") == null) {
       prefs.setBool("adaptiveInstant", true);
     }
+    if (prefs.getBool("haptics") == null) {
+      prefs.setBool("haptics", true);
+    }
     await db.LocalDatabase.initializeDB();
     // await Future.delayed(const Duration(seconds: 10));
 
