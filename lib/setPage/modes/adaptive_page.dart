@@ -367,7 +367,6 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         if (shuffledList.isNotEmpty && (((snapshot.data[shuffledList[counter]]['correctInARowTerm'] + snapshot.data[shuffledList[counter]]['correctInARowDef']) >= mcNum && (snapshot.data[shuffledList[counter]]['correctInARowTerm'] + snapshot.data[shuffledList[counter]]['correctInARowDef']) < writingNum + mcNum) || maintainW) && !maintainMC)
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: DismissKeyboard(
                               child: BetterTextFormField(
                                 showAnswer ? answer : "Write the answer",
                                 null,
@@ -377,7 +376,6 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                 null,
                                 writingController,
                                 big: showAnswer
-                              ),
                             ),
                           ),
                         // finished
@@ -521,11 +519,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
             );
           }
           else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-            return const Text('', semanticsLabel: '');
-          }
-          else {
             return Scaffold(
-                appBar: BetterAppBar(Constants.title, null, Padding(
+                appBar: BetterAppBar("Adaptive", null, Padding(
                     padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                     child: GestureDetector(
                       onTap: () {
@@ -536,7 +531,22 @@ class _AdaptivePageState extends State<AdaptivePage> {
                       ),
                     )
                 ),null),
-                body: ListView(children: [
+                body: const Text('', semanticsLabel: ''));
+          }
+          else {
+            return Scaffold(
+                appBar: BetterAppBar("Adaptive", null, Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                      ),
+                    )
+                ),null),
+                body: Column(children: [
                   Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",

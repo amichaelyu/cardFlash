@@ -44,10 +44,10 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
             semanticsLabel: "Checks form and then submits it into the database",
           ),
         ),),
-        body: DismissKeyboard(
-            child: Padding(
+        body:
+            Padding(
                 padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                child: BetterTextFormField("Enter your quizlet link", null, null, null, link, null, null))
+                child: BetterTextFormField("Enter your quizlet link", null, null, null, link, null, null)
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {

@@ -11,7 +11,7 @@ class LocalDatabase {
   static late Future<Database> database;
 
   static int lastSet = -1;
-  // static List<dynamic> cachedList = [];
+  static dynamic cachedSet;
 
   static Future<void> initializeDB() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -91,19 +91,21 @@ class LocalDatabase {
   static Future<dynamic> getSet() async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
+    if (lastSet == prefs.getInt("currentTitleID")!) {
+      return cachedSet;
+    }
+    lastSet = prefs.getInt("currentTitleID")!;
 
     if ((Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]))!) == 0) {
         return null;
     }
-    return (await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]));
+    cachedSet = (await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]));
+    return cachedSet;
   }
 
+  // return a string with set data compressed in to UTF16
   static Future<dynamic> getString() async {
     final prefs = await SharedPreferences.getInstance();
-    // if (prefs.getInt("currentTitleID")! == lastSet && cachedList.isNotEmpty) {
-    //   return cachedList;
-    // }
-    lastSet = prefs.getInt("currentTitleID")!;
 
     final db = await database;
 
@@ -118,22 +120,6 @@ class LocalDatabase {
       }
     }
     final betterString = LZString.compressToUTF16Sync(data);
-    // List<String> splitStringByLength(String str, int length) =>
-    //     [str.substring(0, length), str.substring(length)];
-    // var list = splitStringByLength(betterString!, betterString.length > 1000 ? 1000 : betterString.length);
-    // while (list.last.length > 1000) {
-    //   var temp = splitStringByLength(list.last, 1000);
-    //   list[list.length-1] = temp[0];
-    //   list.add(temp[1]);
-    // }
-    // if (list.last == "") {
-    //   list.removeLast();
-    // }
-    // for (int i = 1; i <= list.length; i++) {
-    //   list[i-1] = "$i§§${list.length}§§${list[i-1]}";
-    // }
-    // cachedList = list;
-    // return list;
     return betterString;
   }
 

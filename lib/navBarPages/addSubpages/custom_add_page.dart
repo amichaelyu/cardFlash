@@ -116,8 +116,7 @@ class _CustomAddPageState extends State<CustomAddPage> {
             semanticsLabel: "Checks form and then submits it into the database",
           ),
         ),),
-        body: DismissKeyboard(
-          child: Form(
+        body: Form(
             key: _formKey,
             child: ListView(
               children: [
@@ -220,7 +219,6 @@ class _CustomAddPageState extends State<CustomAddPage> {
               ]
             ),
           )
-        )
     );
   }
 }
