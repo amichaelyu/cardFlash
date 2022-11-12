@@ -134,6 +134,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)),
                           child: InkWell(
+                            borderRadius: BorderRadius.circular(15),
                             splashColor: Colors.blue.withAlpha(30),
                             onTap: () async {
                               multipleChoiceEnabled = !multipleChoiceEnabled;
@@ -177,6 +178,7 @@ class _AdaptiveSettingsPageState extends State<AdaptiveSettingsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)),
                           child: InkWell(
+                            borderRadius: BorderRadius.circular(15),
                             splashColor: Colors.blue.withAlpha(30),
                             onTap: () async {
                               writingEnabled = !writingEnabled;

@@ -163,6 +163,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
                                   borderRadius: BorderRadius.circular(
                                       20)),
                               child: InkWell(
+                                borderRadius: BorderRadius.circular(20),
                                 splashColor: Colors.blue.withAlpha(30),
                                 onTap: () {
                                   text[i] = (text[i] == snapshot.data[shuffleList[i]][termDef[0]]) ? snapshot.data[shuffleList[i]][termDef[1]] : snapshot.data[shuffleList[i]][termDef[0]];

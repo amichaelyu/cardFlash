@@ -249,6 +249,7 @@ class _EditPageState extends State<EditPage> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15)),
                             child: InkWell(
+                              borderRadius: BorderRadius.circular(15),
                               splashColor: Colors.blue.withAlpha(30),
                               onTap: () {
                                 _pickIcon();

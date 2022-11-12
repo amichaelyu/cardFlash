@@ -86,6 +86,10 @@ class _AdaptivePageState extends State<AdaptivePage> {
     colorList.clear();
     if (shuffledList.isNotEmpty) {
       switch (set[0]['adaptiveTermDef']) {
+      // adaptiveTermDef:
+      // 0 = def and term
+      // 1 = term only
+      // 2 = def only
         case 0:
           bool flip = set[shuffledList[pos]]['correctInARowTerm'] >
                   set[shuffledList[pos]]['correctInARowDef']
@@ -108,7 +112,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
             }
             answers.shuffle();
             answers.add(1);
-          } else {
+          }
+          else {
             prompt = set[shuffledList[pos]]['term'];
             answer = set[shuffledList[pos]]['def'];
             answers.add(answer);
@@ -191,7 +196,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
       }
       shuffledList.shuffle();
       counter = 0;
-    } else if (counter < (shuffledList.length - 1)) {
+    }
+    else if (counter < (shuffledList.length - 1)) {
       counter++;
     }
     _generateSet(counter);
@@ -262,13 +268,13 @@ class _AdaptivePageState extends State<AdaptivePage> {
                     child: Column(children: [
                       //  prompt
                       if (shuffledList.isNotEmpty)
-                        SizedBox(
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                        child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.95,
                           height: MediaQuery.of(context).size.height * 0.28,
                           child: Center(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(10, 20, 10, 20),
                               child: AutoSizeText(
                                 prompt,
                                 semanticsLabel: prompt,
@@ -283,16 +289,8 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         ),
                       // multiple choice
                       if (shuffledList.isNotEmpty &&
-                          ((snapshot.data[shuffledList[counter]]
-                                          ['correctInARowTerm'] +
-                                      snapshot.data[shuffledList[counter]]
-                                          ['correctInARowDef']) <
-                                  mcNum ||
-                              maintainMC) &&
-                          !maintainW)
-                        for (int i = 0;
-                            i < min<num>(4, (snapshot.data.length - 1));
-                            i++)
+                          ((snapshot.data[shuffledList[counter]]['correctInARowTerm'] + snapshot.data[shuffledList[counter]]['correctInARowDef']) < mcNum || maintainMC) && !maintainW)
+                        for (int i = 0; i < min<num>(4, (snapshot.data.length - 1)); i++)
                           SizedBox(
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.height * 0.13,
@@ -308,6 +306,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15)),
                               child: InkWell(
+                                borderRadius: BorderRadius.circular(15),
                                 onTap: () async {
                                   var mess = ScaffoldMessenger.of(context);
                                   if (showAnswer != true) {
@@ -403,7 +402,14 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                       minFontSize: 10,
                                       semanticsLabel: answers.elementAt(i),
                                       textAlign: TextAlign.center,
-                                    )),
+                                      overflow: TextOverflow.fade,
+                                      style: answers.elementAt(i).length < 90 ? TextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.028) : null,
+                                    ),
+                                    ),
                                   ),
                                 ),
                               ),

@@ -61,6 +61,7 @@ class BetterCardHome extends StatelessWidget {
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: InkWell(
+          borderRadius: BorderRadius.circular(15),
           splashColor: Colors.blue.withAlpha(30),
           onTap: () {
             nav;
@@ -112,10 +113,13 @@ class BetterCardSet extends StatelessWidget {
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: InkWell(
+          borderRadius: BorderRadius.circular(15),
           splashColor: Colors.blue.withAlpha(30),
-          onTap: () {
-            Navigator.pushNamed(context, nav);
-            ScaffoldMessenger.of(context).clearSnackBars();
+          onTap: () async {
+            var scaf = ScaffoldMessenger.of(context);
+            await Navigator.pushNamed(context, nav);
+            scaf.clearSnackBars();
+            FocusManager.instance.primaryFocus?.unfocus();
           },
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.95,
@@ -157,6 +161,7 @@ Widget build(BuildContext context) {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: InkWell(
+        borderRadius: BorderRadius.circular(15),
         splashColor: Colors.blue.withAlpha(30),
         onTap: () {
           Navigator.pushNamed(context, nav);
@@ -202,6 +207,7 @@ class BetterCardAdd extends StatelessWidget {
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: InkWell(
+          borderRadius: BorderRadius.circular(15),
           splashColor: Colors.blue.withAlpha(30),
           onTap: () {
             Navigator.pushNamed(context, nav);
@@ -248,6 +254,7 @@ class BetterCardSettings extends StatelessWidget {
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: InkWell(
+          borderRadius: BorderRadius.circular(15),
           splashColor: Colors.blue.withAlpha(30),
           onTap: action,
           child: SizedBox(

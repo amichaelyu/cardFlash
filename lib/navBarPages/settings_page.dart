@@ -131,6 +131,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                       elevation: 4,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       child: InkWell(
+                        borderRadius: BorderRadius.circular(15),
                         splashColor: Colors.blue.withAlpha(30),
                         onTap: () async {
                           adaptiveInstant = !adaptiveInstant;
@@ -154,6 +155,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                       elevation: 4,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       child: InkWell(
+                        borderRadius: BorderRadius.circular(15),
                         splashColor: Colors.blue.withAlpha(30),
                         onTap: () async {
                           haptics = !haptics;

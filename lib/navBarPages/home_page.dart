@@ -155,6 +155,7 @@ class _HomePageState extends State<_HomePage> {
                           elevation: 4,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                           child: InkWell(
+                            borderRadius: BorderRadius.circular(15),
                             splashColor: Colors.blue.withAlpha(30),
                             onTap: () {
                               setState(() {
@@ -191,10 +192,9 @@ class _HomePageState extends State<_HomePage> {
                         ),
                       )
                     );
-                  },
+                },
                   itemCount: snapshot.data.length,
-              ),
-            );
+              ),);
           }
           else if ((snapshot.connectionState == ConnectionState.none) || (snapshot.connectionState == ConnectionState.waiting)) {
             return const Text("", semanticsLabel: "");
