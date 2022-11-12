@@ -115,6 +115,7 @@ class BetterCardSet extends StatelessWidget {
           splashColor: Colors.blue.withAlpha(30),
           onTap: () {
             Navigator.pushNamed(context, nav);
+            ScaffoldMessenger.of(context).clearSnackBars();
           },
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.95,
@@ -399,11 +400,11 @@ class BetterTextFormFieldCard extends StatelessWidget {
         onChanged: (val) => submission?.object[pos] = val,
         maxLines: null,
         validator: (value) {
-        if (required && (value == null || value.isEmpty)) {
-        return validationText;
-        }
-        return null;
-        },
+          if (required && (value == null || value.isEmpty)) {
+            return validationText;
+          }
+          return null;
+          },
         decoration: InputDecoration(
         filled: false,
         helperText: helper,
@@ -464,26 +465,6 @@ class BetterCardTextForm extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class DismissKeyboard extends StatelessWidget {
-  final Widget child;
-
-  const DismissKeyboard({Key? key, required this.child}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus &&
-            currentFocus.focusedChild != null) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        }
-      },
-      child: child,
     );
   }
 }

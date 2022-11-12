@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -93,12 +94,14 @@ class _SettingsPageState extends State<_SettingsPage> {
   final Uri _bugReport = Uri.parse('https://itsmichaelyu.github.io/cardFlashBug/');
   final Uri _featureRequest = Uri.parse('https://itsmichaelyu.github.io/cardFlashFeature/');
   final Uri _betaTester = Uri.parse('https://itsmichaelyu.github.io/cardFlashBeta');
-  late bool adaptiveInstant = true;
+  late bool adaptiveInstant;
+  late bool haptics;
   late String version;
 
   _readPrefs() async {
     var prefs = await SharedPreferences.getInstance();
     adaptiveInstant = prefs.getBool("adaptiveInstant")!;
+    haptics = prefs.getBool("haptics")!;
   }
 
   @override
@@ -138,6 +141,30 @@ class _SettingsPageState extends State<_SettingsPage> {
                           width: MediaQuery.of(context).size.width * 0.77,
                           height: MediaQuery.of(context).size.height * 0.071,
                           child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Adaptive Instant ${adaptiveInstant ? "Enabled" : "Disabled"}", semanticsLabel: "Adaptive Instant ${adaptiveInstant ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                  ),
+                  Center(
+                    child: Card(
+                      color: haptics ? Colors.green : Colors.red,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      child: InkWell(
+                        splashColor: Colors.blue.withAlpha(30),
+                        onTap: () async {
+                          haptics = !haptics;
+                          if (haptics) HapticFeedback.heavyImpact();
+                          await (await SharedPreferences.getInstance()).setBool("haptics", haptics);
+                          setState(() {});
+                        },
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.77,
+                          height: MediaQuery.of(context).size.height * 0.071,
+                          child: Padding(padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.020, 0, 0), child: Text("Haptics ${haptics ? "Enabled" : "Disabled"}", semanticsLabel: "Haptics ${haptics ? "Enabled" : "Disabled"}", textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.024))),
                         ),
                       ),
                     ),
@@ -229,7 +256,19 @@ class _SettingsPageState extends State<_SettingsPage> {
             );
           }
           else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-            return const Text('', semanticsLabel: '');
+            return Scaffold(
+                appBar: BetterAppBar(Constants.title, null, Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                      ),
+                    )
+                ),null),
+                body: const Text('', semanticsLabel: ''));
           }
           else {
             return Scaffold(
@@ -244,7 +283,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                       ),
                     )
                 ),null),
-                body: ListView(children: [
+                body: Column(children: [
                   Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",

@@ -1,7 +1,8 @@
+import 'package:card_flash/better_scroll_physics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../constants.dart';
 import '../../database.dart';
 import '../../widgets.dart';
 
@@ -23,6 +24,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
   late List<String> termDef;
   late int colorLight;
   late int colorDark;
+  late bool haptics;
 
   _loadDB() async {
     var set = await LocalDatabase.getSet();
@@ -51,9 +53,11 @@ class _FlashcardPageState extends State<FlashcardPage> {
 
   }
 
-  _initializeColor() async {
-    colorLight = (await SharedPreferences.getInstance()).getInt("cardColorLight")!;
-    colorDark = (await SharedPreferences.getInstance()).getInt("cardColorDark")!;
+  _loadPrefs() async {
+    var prefs = await SharedPreferences.getInstance();
+    colorLight = prefs.getInt("cardColorLight")!;
+    colorDark = prefs.getInt("cardColorDark")!;
+    haptics = prefs.getBool("haptics")!;
   }
 
   @override
@@ -61,7 +65,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
     super.initState();
     _loadDB();
     _loadTerms();
-    _initializeColor();
+    _loadPrefs();
     setState(() {});
   }
 
@@ -132,88 +136,71 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     ),
                   )
                 ), null),
-                body: ListView(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.77, // card height
-                          child: PageView.builder(
-                            itemCount: snapshot.data.length - 1,
-                            controller: controller,
-                            onPageChanged: (int index) => setState(() => _index = index),
-                            itemBuilder: (_, i) {
-                              return Transform.scale(
-                                scale: i == _index ? 1 : 0.9,
-                                child: Card(
-                                  elevation: 6,
-                                  color: MediaQuery
-                                      .of(context)
-                                      .platformBrightness ==
-                                      Brightness.light
-                                      ? Color(colorLight)
-                                      : Color(colorDark),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          20)),
-                                  child: InkWell(
-                                    splashColor: Colors.blue.withAlpha(30),
-                                    onTap: () {
-                                      if (text[i] == snapshot.data[shuffleList[i]][termDef[0]]) {
-                                        text[i] = snapshot.data[shuffleList[i]][termDef[1]];
-                                      }
-                                      else {
-                                        text[i] = snapshot.data[shuffleList[i]][termDef[0]];
-                                      }
-                                      setState(() {});
-                                    },
-                                    child: SizedBox(
-                                      child: Center(
-                                        child: ListView(
-                                          shrinkWrap: true,
-                                          children: [
-                                              Padding(
-                                                padding: const EdgeInsets
-                                                    .all(10),
-                                                child: Text(
-                                                  text[i],
-                                                  semanticsLabel: text[i],
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: MediaQuery.of(context).size.height * 0.036),
-                                                ),
-                                              )
-                                            ],
-                                          ),
+                body: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.77, // card height
+                      child: PageView.builder(
+                        physics: const BetterBouncingScrollPhysics(),
+                        itemCount: snapshot.data.length - 1,
+                        controller: controller,
+                        onPageChanged: (int index) => setState(() {
+                          _index = index;
+                          if (haptics) HapticFeedback.selectionClick();
+                        }),
+                        itemBuilder: (_, i) {
+                          return Transform.scale(
+                            scale: i == _index ? 1 : 0.9,
+                            child: Card(
+                              elevation: 6,
+                              color: MediaQuery
+                                  .of(context)
+                                  .platformBrightness ==
+                                  Brightness.light
+                                  ? Color(colorLight)
+                                  : Color(colorDark),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20)),
+                              child: InkWell(
+                                splashColor: Colors.blue.withAlpha(30),
+                                onTap: () {
+                                  text[i] = (text[i] == snapshot.data[shuffleList[i]][termDef[0]]) ? snapshot.data[shuffleList[i]][termDef[1]] : snapshot.data[shuffleList[i]][termDef[0]];
+                                  if (haptics) HapticFeedback.mediumImpact();
+                                  setState(() {});
+                                },
+                                child: SizedBox(
+                                  child: Center(
+                                    child: ListView(
+                                      shrinkWrap: true,
+                                      children: [
+                                          Padding(
+                                            padding: const EdgeInsets
+                                                .all(10),
+                                            child: Text(
+                                              text[i],
+                                              semanticsLabel: text[i],
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: MediaQuery.of(context).size.height * 0.036),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                    ),
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                      // Row(
-                      //   children: const [
-                      //     BetterCardFlash(
-                      //         "Flashcards", "", Icons.style_rounded,
-                      //         "/SET/FLASHCARDS"),
-                      //     BetterCardFlash(
-                      //         "Adaptive", "", Icons.memory_rounded,
-                      //         "/SET/ADAPTIVE"),
-                      //   ],
-                      // )
-                    ]
-                )
+                    ),
+                  ),
             );
           }
           else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.none) {
-            return const Text('', semanticsLabel: '',);
-          }
-          else {
             return Scaffold(
-                appBar: BetterAppBar(Constants.title, null, Padding(
+                appBar: BetterAppBar("Flashcards", null, Padding(
                     padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
                     child: GestureDetector(
                       onTap: () {
@@ -224,7 +211,22 @@ class _FlashcardPageState extends State<FlashcardPage> {
                       ),
                     )
                 ),null),
-                body: ListView(children:  [
+                body: const Text('', semanticsLabel: '',));
+          }
+          else {
+            return Scaffold(
+                appBar: BetterAppBar("Flashcards", null, Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                      ),
+                    )
+                ),null),
+                body: Column(children:  [
                   Padding(padding: const EdgeInsets.only(top: 20),
                     child: Align(alignment: Alignment.center,
                       child: Text("Something went wrong :(",

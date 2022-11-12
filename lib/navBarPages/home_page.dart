@@ -92,6 +92,7 @@ class _HomePageState extends State<_HomePage> {
     (await SharedPreferences.getInstance()).setInt("currentTitleID", titleID);
     await navigator.pushNamed("/HOME/SET");
     await Future.delayed(const Duration(milliseconds: 100));
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {});
   }
 
@@ -199,7 +200,7 @@ class _HomePageState extends State<_HomePage> {
             return const Text("", semanticsLabel: "");
           }
           else {
-            return ListView(children: [Padding(padding: const EdgeInsets.only(top: 20), child: Align(alignment: Alignment.center, child: Text("No sets", semanticsLabel: "No sets", style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.026,),),),)]);
+            return Column(children: [Padding(padding: const EdgeInsets.only(top: 20), child: Align(alignment: Alignment.center, child: Text("No sets", semanticsLabel: "No sets", style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.026,),),),)]);
           }
         }
     );

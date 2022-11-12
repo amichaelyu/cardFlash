@@ -23,9 +23,6 @@ class _SplashPageState extends State<SplashPage> {
     if (prefs.getInt("currentTitleID") == null) {
       await prefs.setInt("currentTitleID", -1);
     }
-    if (prefs.getInt("currentTitleID") == null) {
-      await prefs.setInt("currentTitleID", -1);
-    }
     if (prefs.getInt("cardColorLight") == null) {
       await prefs.setInt("cardColorLight", Colors.blue.shade200.value);
     }
@@ -34,6 +31,12 @@ class _SplashPageState extends State<SplashPage> {
     }
     if (prefs.getBool("adaptiveInstant") == null) {
       prefs.setBool("adaptiveInstant", true);
+    }
+    if (prefs.getBool("haptics") == null) {
+      prefs.setBool("haptics", true);
+    }
+    if (prefs.getStringList("pasteee") == null) {
+      prefs.setStringList("pasteee", []);
     }
     await db.LocalDatabase.initializeDB();
     // await Future.delayed(const Duration(seconds: 10));

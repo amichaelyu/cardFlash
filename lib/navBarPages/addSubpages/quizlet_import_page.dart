@@ -23,13 +23,15 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
         appBar: BetterAppBar(
           "Quizlet Import", null, Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
             child: GestureDetector(
               onTap: () {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).clearSnackBars();
                 Navigator.pop(context);
               },
               child: const Icon(
@@ -44,10 +46,10 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
             semanticsLabel: "Checks form and then submits it into the database",
           ),
         ),),
-        body: DismissKeyboard(
-            child: Padding(
+        body:
+            Padding(
                 padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                child: BetterTextFormField("Enter your quizlet link", null, null, null, link, null, null))
+                child: BetterTextFormField("Enter your quizlet link", null, null, null, link, null, null)
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
@@ -61,7 +63,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
             var defs = [];
             final SharedPreferences prefs = await SharedPreferences.getInstance();
             try {
-              mess.hideCurrentSnackBar();
+              mess.clearSnackBars();
               if (await webScraper.loadFullURL(link.object)) {
                 if (webScraper.getElement('div.SetPage-titleWrapper', []).isNotEmpty) {
                   title = webScraper.getElement(
@@ -95,7 +97,7 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
                   navigator.pushNamed('/HOME/SET/EDIT');
                 }
                 else {
-                  mess.hideCurrentSnackBar();
+                  mess.clearSnackBars();
                   mess.showSnackBar(
                     const SnackBar(
                       backgroundColor: Colors.black87,
@@ -148,6 +150,6 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
           backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.green[400] : Colors.green[700],
           child: const Icon(Icons.check_rounded),
       ),
-    );
+    ));
   }
 }

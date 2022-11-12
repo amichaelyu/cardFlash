@@ -77,7 +77,7 @@ class _AddPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 5),
-      child: ListView(
+      child: Column(
         children: [
           const BetterCardAdd("Create a Custom Set", "Make your own set from scratch", Icon(Icons.color_lens_rounded), "/ADD/CUSTOM"),
           BetterCardAdd("Import a Set from Quizlet", "You can only import public sets", Text("Q", semanticsLabel: "Q", style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.030,),), "/ADD/QUIZLET"),

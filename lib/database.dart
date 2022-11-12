@@ -11,7 +11,7 @@ class LocalDatabase {
   static late Future<Database> database;
 
   static int lastSet = -1;
-  // static List<dynamic> cachedList = [];
+  static dynamic cachedSet;
 
   static Future<void> initializeDB() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -91,19 +91,21 @@ class LocalDatabase {
   static Future<dynamic> getSet() async {
     final db = await database;
     final prefs = await SharedPreferences.getInstance();
+    if (lastSet == prefs.getInt("currentTitleID")!) {
+      return cachedSet;
+    }
 
     if ((Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]))!) == 0) {
         return null;
     }
-    return (await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]));
+    cachedSet = (await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]));
+    lastSet = prefs.getInt("currentTitleID")!;
+    return cachedSet;
   }
 
+  // return a string with set data compressed in to UTF16
   static Future<dynamic> getString() async {
     final prefs = await SharedPreferences.getInstance();
-    // if (prefs.getInt("currentTitleID")! == lastSet && cachedList.isNotEmpty) {
-    //   return cachedList;
-    // }
-    lastSet = prefs.getInt("currentTitleID")!;
 
     final db = await database;
 
@@ -118,22 +120,6 @@ class LocalDatabase {
       }
     }
     final betterString = LZString.compressToUTF16Sync(data);
-    // List<String> splitStringByLength(String str, int length) =>
-    //     [str.substring(0, length), str.substring(length)];
-    // var list = splitStringByLength(betterString!, betterString.length > 1000 ? 1000 : betterString.length);
-    // while (list.last.length > 1000) {
-    //   var temp = splitStringByLength(list.last, 1000);
-    //   list[list.length-1] = temp[0];
-    //   list.add(temp[1]);
-    // }
-    // if (list.last == "") {
-    //   list.removeLast();
-    // }
-    // for (int i = 1; i <= list.length; i++) {
-    //   list[i-1] = "$i§§${list.length}§§${list[i-1]}";
-    // }
-    // cachedList = list;
-    // return list;
     return betterString;
   }
 
@@ -174,6 +160,7 @@ class LocalDatabase {
         );
       }
     }
+    lastSet = -1;
   }
 
   static Future<void> updatePosition(int oldPosition, int newPosition, int titleID) async {
@@ -204,6 +191,7 @@ class LocalDatabase {
             [time, i - 1, oldTitles[i]['titleID']]);
       }
     }
+    lastSet = -1;
   }
 
   /// positive for correct
@@ -224,6 +212,7 @@ class LocalDatabase {
           'UPDATE cards SET incorrectTotal = ? WHERE cardTitle = ? AND position = ?',
           [int.parse(num!.toString()) + correctIncorrect.abs(), prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   static Future<void> setCorrectIncorrect(int position, int correctIncorrect) async {
@@ -240,6 +229,7 @@ class LocalDatabase {
           'UPDATE cards SET incorrectTotal = ? WHERE cardTitle = ? AND position = ?',
           [correctIncorrect.abs(), prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   static Future<void> resetCorrectIncorrect(int position) async {
@@ -252,6 +242,7 @@ class LocalDatabase {
     await db.rawQuery(
         'UPDATE cards SET incorrectTotal = ? WHERE cardTitle = ? AND position = ?',
         [0, prefs.getInt('currentTitleID'), position]);
+    lastSet = -1;
   }
 
   static Future<void> setCorrectInARow(int position, int correctInARow, int termDef) async {
@@ -268,6 +259,7 @@ class LocalDatabase {
           'UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ? AND position = ?',
           [correctInARow, prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   /// Increments the correctInARow by 1
@@ -293,6 +285,7 @@ class LocalDatabase {
           'UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ? AND position = ?',
           [int.parse(correct!.toString()) + 1, prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   static Future<void> resetCorrectInARow(int position, int termDef) async {
@@ -309,6 +302,7 @@ class LocalDatabase {
           'UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ? AND position = ?',
           [0, prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   static Future<void> resetAdaptive() async {
@@ -317,6 +311,7 @@ class LocalDatabase {
 
     await db.rawQuery('UPDATE cards SET correctInARowTerm = ? WHERE cardTitle = ?', [0, prefs.getInt('currentTitleID')]);
     await db.rawQuery('UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ?', [0, prefs.getInt('currentTitleID')]);
+    lastSet = -1;
   }
 
   static Future<void> updateAdaptiveSettings(int selection, int data) async {
@@ -342,8 +337,8 @@ class LocalDatabase {
       case 6:
         await db.rawQuery('UPDATE titles SET adaptiveRepeat = ? WHERE titleID = ?', [data, prefs.getInt('currentTitleID')]);
         break;
-
     }
+    lastSet = -1;
   }
 
   static Future<void> updateFlashcardShuffle(int shuffle) async {
@@ -351,6 +346,7 @@ class LocalDatabase {
     final prefs = await SharedPreferences.getInstance();
 
     await db.rawQuery('UPDATE titles SET flashcardShuffle = ? WHERE titleID = ?', [shuffle, prefs.getInt('currentTitleID')]);
+    lastSet = -1;
   }
 
   static Future<void> updateFlashcardTermDef(int termDef) async {
@@ -358,6 +354,7 @@ class LocalDatabase {
     final prefs = await SharedPreferences.getInstance();
 
     await db.rawQuery('UPDATE titles SET flashcardTermDef = ? WHERE titleID = ?', [termDef, prefs.getInt('currentTitleID')]);
+    lastSet = -1;
   }
 
   static Future<void> deleteSet(titleID) async {
@@ -369,6 +366,7 @@ class LocalDatabase {
     // [time, i, set.terms[i], set.defs[i], 0, titleID]
     await db.rawQuery('DELETE FROM titles WHERE titleID = ?', [titleID]);
     await db.rawQuery('DELETE FROM cards WHERE cardTitle = ?', [titleID]);
+    lastSet = -1;
   }
 
   static Future<void> clearTables() async {
@@ -377,5 +375,6 @@ class LocalDatabase {
     await db.rawQuery('DELETE FROM cards');
     await db.rawQuery('DELETE FROM titles');
     await db.rawQuery('VACUUM');
+    lastSet = -1;
   }
 }
