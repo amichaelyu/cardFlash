@@ -153,6 +153,7 @@ class _EditPageState extends State<EditPage> {
                     child: GestureDetector(
                       onTap: () async {
                         ScaffoldMessenger.of(context).clearSnackBars();
+                        var nav = Navigator.of(context);
                         var data = await LocalDatabase.getSet();
                         var termDefChanged = false;
                         if (data.length - 1 == cardNum + cardMinus) {
@@ -214,8 +215,7 @@ class _EditPageState extends State<EditPage> {
                             ),
                           );
                         } else {
-                          Navigator.popUntil(context,
-                              (route) => route.settings.name == "/HOME/SET");
+                          nav.popUntil((route) => route.settings.name == "/HOME/SET");
                         }
                       },
                       child: const Icon(

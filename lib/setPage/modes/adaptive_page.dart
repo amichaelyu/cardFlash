@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../constants.dart';
 import '../../database.dart';
 import '../../widgets.dart';
 
@@ -186,8 +185,9 @@ class _AdaptivePageState extends State<AdaptivePage> {
         }
       }
       for (int i = shuffledList.length; i < len; i++) {
-        if (!shuffledList.contains(randomList[i]))
+        if (!shuffledList.contains(randomList[i])) {
           shuffledList.add(randomList[i]);
+        }
       }
       shuffledList.shuffle();
       counter = 0;
@@ -293,123 +293,117 @@ class _AdaptivePageState extends State<AdaptivePage> {
                         for (int i = 0;
                             i < min<num>(4, (snapshot.data.length - 1));
                             i++)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.95,
-                              height: MediaQuery.of(context).size.height * 0.13,
-                              child: Transform.scale(
-                                scale: 0.98,
-                                child: Card(
-                                  elevation: 6,
-                                  color: !showAnswer
-                                      ? (MediaQuery.of(context)
-                                                  .platformBrightness ==
-                                              Brightness.light
-                                          ? Color(colorLight)
-                                          : Color(colorDark))
-                                      : colorList[i],
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15)),
-                                  child: InkWell(
-                                    onTap: () async {
-                                      var mess = ScaffoldMessenger.of(context);
-                                      if (showAnswer != true) {
-                                        maintainMC = true;
-                                        if (colorList[i] != Colors.green) {
-                                          if (haptics)
-                                            HapticFeedback.heavyImpact();
-                                          var db = await LocalDatabase.getSet();
-                                          valueSetter = -1 *
-                                              db[shuffledList[counter]][
-                                                  answers.last == 1
-                                                      ? 'correctInARowDef'
-                                                      : 'correctInARowTerm'];
-                                          colorList[i] = Colors.red;
-                                          LocalDatabase.updateCorrectIncorrect(
-                                              shuffledList[counter] - 1, -1);
-                                          LocalDatabase.resetCorrectInARow(
-                                              shuffledList[counter] - 1,
-                                              answers.last);
-                                          mess.showSnackBar(
-                                            const SnackBar(
-                                              backgroundColor: Colors.black87,
-                                              content: Text(
-                                                'Incorrect! Click any answer to move on!',
-                                                semanticsLabel:
-                                                    "Incorrect! Click any answer to move on!",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              duration:
-                                                  Duration(milliseconds: 10000),
-                                            ),
-                                          );
-                                        } else {
-                                          if (haptics)
-                                            HapticFeedback.lightImpact();
-                                          valueSetter = 1;
-                                          LocalDatabase.increaseCorrectInARow(
-                                              shuffledList[counter] - 1,
-                                              answers.last);
-                                          LocalDatabase.updateCorrectIncorrect(
-                                              shuffledList[counter] - 1, 1);
-                                          mess.showSnackBar(
-                                            const SnackBar(
-                                              backgroundColor: Colors.black87,
-                                              content: Text(
-                                                'Correct! Click any answer to move on!',
-                                                semanticsLabel:
-                                                    "Correct! Click any answer to move on!",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              duration:
-                                                  Duration(milliseconds: 3000),
-                                            ),
-                                          );
-                                        }
-                                        showAnswer = true;
-                                        if ((await SharedPreferences
-                                                    .getInstance())
-                                                .getBool("adaptiveInstant")! &&
-                                            valueSetter > 0) {
-                                          maintainMC = false;
-                                          showAnswer = false;
-                                          mess.clearSnackBars();
-                                          _updateCounter(valueSetter.toInt());
-                                        }
-                                      } else {
-                                        if (haptics)
-                                          HapticFeedback.mediumImpact();
-                                        maintainMC = false;
-                                        showAnswer = false;
-                                        mess.clearSnackBars();
-                                        _updateCounter(valueSetter.toInt());
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * 0.13,
+                            child: Card(
+                              elevation: 6,
+                              color: !showAnswer
+                                  ? (MediaQuery.of(context)
+                                              .platformBrightness ==
+                                          Brightness.light
+                                      ? Color(colorLight)
+                                      : Color(colorDark))
+                                  : colorList[i],
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: InkWell(
+                                onTap: () async {
+                                  var mess = ScaffoldMessenger.of(context);
+                                  if (showAnswer != true) {
+                                    maintainMC = true;
+                                    if (colorList[i] != Colors.green) {
+                                      if (haptics) {
+                                        HapticFeedback.heavyImpact();
                                       }
-                                      setState(() {});
-                                    },
-                                    splashColor: Colors.blue.withAlpha(30),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            15, 5, 15, 5),
-                                        child: AutoSizeText(
-                                          answers.elementAt(i),
-                                          maxLines: 10,
-                                          minFontSize: 10,
-                                          semanticsLabel: answers.elementAt(i),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.028),
+                                      var db = await LocalDatabase.getSet();
+                                      valueSetter = -1 *
+                                          db[shuffledList[counter]][
+                                              answers.last == 1
+                                                  ? 'correctInARowDef'
+                                                  : 'correctInARowTerm'];
+                                      colorList[i] = Colors.red;
+                                      LocalDatabase.updateCorrectIncorrect(
+                                          shuffledList[counter] - 1, -1);
+                                      LocalDatabase.resetCorrectInARow(
+                                          shuffledList[counter] - 1,
+                                          answers.last);
+                                      mess.showSnackBar(
+                                        const SnackBar(
+                                          backgroundColor: Colors.black87,
+                                          content: Text(
+                                            'Incorrect! Click any answer to move on!',
+                                            semanticsLabel:
+                                                "Incorrect! Click any answer to move on!",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          duration:
+                                              Duration(milliseconds: 10000),
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    } else {
+                                      if (haptics) {
+                                        HapticFeedback.lightImpact();
+                                      }
+                                      valueSetter = 1;
+                                      LocalDatabase.increaseCorrectInARow(
+                                          shuffledList[counter] - 1,
+                                          answers.last);
+                                      LocalDatabase.updateCorrectIncorrect(
+                                          shuffledList[counter] - 1, 1);
+                                      mess.showSnackBar(
+                                        const SnackBar(
+                                          backgroundColor: Colors.black87,
+                                          content: Text(
+                                            'Correct! Click any answer to move on!',
+                                            semanticsLabel:
+                                                "Correct! Click any answer to move on!",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          duration:
+                                              Duration(milliseconds: 3000),
+                                        ),
+                                      );
+                                    }
+                                    showAnswer = true;
+                                    if ((await SharedPreferences.getInstance())
+                                            .getBool("adaptiveInstant")! &&
+                                        valueSetter > 0) {
+                                      maintainMC = false;
+                                      showAnswer = false;
+                                      mess.clearSnackBars();
+                                      _updateCounter(valueSetter.toInt());
+                                    }
+                                  } else {
+                                    if (haptics) {
+                                      HapticFeedback.mediumImpact();
+                                    }
+                                    maintainMC = false;
+                                    showAnswer = false;
+                                    mess.clearSnackBars();
+                                    _updateCounter(valueSetter.toInt());
+                                  }
+                                  setState(() {});
+                                },
+                                splashColor: Colors.blue.withAlpha(30),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.92,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.11,
+                                    child: Center(
+                                        child: AutoSizeText(
+                                      answers.elementAt(i),
+                                      minFontSize: 10,
+                                      semanticsLabel: answers.elementAt(i),
+                                      textAlign: TextAlign.center,
+                                    )),
                                   ),
                                 ),
                               ),
@@ -417,10 +411,15 @@ class _AdaptivePageState extends State<AdaptivePage> {
                           ),
                       // writing thing
                       if (shuffledList.isNotEmpty &&
-                          (((snapshot.data[shuffledList[counter]]['correctInARowTerm'] +
-                                          snapshot.data[shuffledList[counter]]['correctInARowDef']) >= mcNum &&
-                                  (snapshot.data[shuffledList[counter]]['correctInARowTerm'] +
-                                          snapshot.data[shuffledList[counter]]['correctInARowDef']) <
+                          (((snapshot.data[shuffledList[counter]]
+                                              ['correctInARowTerm'] +
+                                          snapshot.data[shuffledList[counter]]
+                                              ['correctInARowDef']) >=
+                                      mcNum &&
+                                  (snapshot.data[shuffledList[counter]]
+                                              ['correctInARowTerm'] +
+                                          snapshot.data[shuffledList[counter]]
+                                              ['correctInARowDef']) <
                                       writingNum + mcNum) ||
                               maintainW) &&
                           !maintainMC)
@@ -550,8 +549,9 @@ class _AdaptivePageState extends State<AdaptivePage> {
                                     action: SnackBarAction(
                                       label: 'Override',
                                       onPressed: () async {
-                                        if (haptics)
+                                        if (haptics) {
                                           HapticFeedback.heavyImpact();
+                                        }
                                         await LocalDatabase.setCorrectInARow(
                                             shuffledList[counter] - 1,
                                             correctInARow + 1,
