@@ -94,12 +94,12 @@ class LocalDatabase {
     if (lastSet == prefs.getInt("currentTitleID")!) {
       return cachedSet;
     }
-    lastSet = prefs.getInt("currentTitleID")!;
 
     if ((Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM cards WHERE cardTitle = ?', [prefs.getInt("currentTitleID")]))! + Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")]))!) == 0) {
         return null;
     }
     cachedSet = (await db.rawQuery('SELECT * FROM titles WHERE titleID = ?', [prefs.getInt("currentTitleID")])) + (await db.rawQuery('SELECT * FROM cards WHERE cardTitle = ? ORDER BY position', [prefs.getInt("currentTitleID")]));
+    lastSet = prefs.getInt("currentTitleID")!;
     return cachedSet;
   }
 
@@ -160,6 +160,7 @@ class LocalDatabase {
         );
       }
     }
+    lastSet = -1;
   }
 
   static Future<void> updatePosition(int oldPosition, int newPosition, int titleID) async {
@@ -190,6 +191,7 @@ class LocalDatabase {
             [time, i - 1, oldTitles[i]['titleID']]);
       }
     }
+    lastSet = -1;
   }
 
   /// positive for correct
@@ -210,6 +212,7 @@ class LocalDatabase {
           'UPDATE cards SET incorrectTotal = ? WHERE cardTitle = ? AND position = ?',
           [int.parse(num!.toString()) + correctIncorrect.abs(), prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   static Future<void> setCorrectIncorrect(int position, int correctIncorrect) async {
@@ -226,6 +229,7 @@ class LocalDatabase {
           'UPDATE cards SET incorrectTotal = ? WHERE cardTitle = ? AND position = ?',
           [correctIncorrect.abs(), prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   static Future<void> resetCorrectIncorrect(int position) async {
@@ -238,6 +242,7 @@ class LocalDatabase {
     await db.rawQuery(
         'UPDATE cards SET incorrectTotal = ? WHERE cardTitle = ? AND position = ?',
         [0, prefs.getInt('currentTitleID'), position]);
+    lastSet = -1;
   }
 
   static Future<void> setCorrectInARow(int position, int correctInARow, int termDef) async {
@@ -254,6 +259,7 @@ class LocalDatabase {
           'UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ? AND position = ?',
           [correctInARow, prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   /// Increments the correctInARow by 1
@@ -279,6 +285,7 @@ class LocalDatabase {
           'UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ? AND position = ?',
           [int.parse(correct!.toString()) + 1, prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   static Future<void> resetCorrectInARow(int position, int termDef) async {
@@ -295,6 +302,7 @@ class LocalDatabase {
           'UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ? AND position = ?',
           [0, prefs.getInt('currentTitleID'), position]);
     }
+    lastSet = -1;
   }
 
   static Future<void> resetAdaptive() async {
@@ -303,6 +311,7 @@ class LocalDatabase {
 
     await db.rawQuery('UPDATE cards SET correctInARowTerm = ? WHERE cardTitle = ?', [0, prefs.getInt('currentTitleID')]);
     await db.rawQuery('UPDATE cards SET correctInARowDef = ? WHERE cardTitle = ?', [0, prefs.getInt('currentTitleID')]);
+    lastSet = -1;
   }
 
   static Future<void> updateAdaptiveSettings(int selection, int data) async {
@@ -328,8 +337,8 @@ class LocalDatabase {
       case 6:
         await db.rawQuery('UPDATE titles SET adaptiveRepeat = ? WHERE titleID = ?', [data, prefs.getInt('currentTitleID')]);
         break;
-
     }
+    lastSet = -1;
   }
 
   static Future<void> updateFlashcardShuffle(int shuffle) async {
@@ -337,6 +346,7 @@ class LocalDatabase {
     final prefs = await SharedPreferences.getInstance();
 
     await db.rawQuery('UPDATE titles SET flashcardShuffle = ? WHERE titleID = ?', [shuffle, prefs.getInt('currentTitleID')]);
+    lastSet = -1;
   }
 
   static Future<void> updateFlashcardTermDef(int termDef) async {
@@ -344,6 +354,7 @@ class LocalDatabase {
     final prefs = await SharedPreferences.getInstance();
 
     await db.rawQuery('UPDATE titles SET flashcardTermDef = ? WHERE titleID = ?', [termDef, prefs.getInt('currentTitleID')]);
+    lastSet = -1;
   }
 
   static Future<void> deleteSet(titleID) async {
@@ -355,6 +366,7 @@ class LocalDatabase {
     // [time, i, set.terms[i], set.defs[i], 0, titleID]
     await db.rawQuery('DELETE FROM titles WHERE titleID = ?', [titleID]);
     await db.rawQuery('DELETE FROM cards WHERE cardTitle = ?', [titleID]);
+    lastSet = -1;
   }
 
   static Future<void> clearTables() async {
@@ -363,5 +375,6 @@ class LocalDatabase {
     await db.rawQuery('DELETE FROM cards');
     await db.rawQuery('DELETE FROM titles');
     await db.rawQuery('VACUUM');
+    lastSet = -1;
   }
 }

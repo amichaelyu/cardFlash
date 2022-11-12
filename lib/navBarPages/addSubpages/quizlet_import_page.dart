@@ -23,7 +23,9 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
         appBar: BetterAppBar(
           "Quizlet Import", null, Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 15, 0),
@@ -148,6 +150,6 @@ class _QuizletImportPageState extends State<QuizletImportPage> {
           backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.green[400] : Colors.green[700],
           child: const Icon(Icons.check_rounded),
       ),
-    );
+    ));
   }
 }

@@ -23,11 +23,13 @@ class _SetPageState extends State<SetPage> {
   var controller = PageController(viewportFraction: 0.8);
 
   nav() async {
+    var scaf = ScaffoldMessenger.of(context);
     await Navigator.pushNamed(context, "/HOME/SET/EDIT");
     setState(() {
       controller.animateToPage(0,
           duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
     });
+    scaf.clearSnackBars();
   }
 
   _loadPrefs() async {
