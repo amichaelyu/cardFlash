@@ -92,6 +92,7 @@ class _HomePageState extends State<_HomePage> {
     (await SharedPreferences.getInstance()).setInt("currentTitleID", titleID);
     await navigator.pushNamed("/HOME/SET");
     await Future.delayed(const Duration(milliseconds: 100));
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {});
   }
 

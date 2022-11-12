@@ -32,6 +32,7 @@ class _EditPageState extends State<EditPage> {
   @override
   void initState() {
     super.initState();
+    FocusManager.instance.primaryFocus?.unfocus();
     _grabSomeData();
   }
 

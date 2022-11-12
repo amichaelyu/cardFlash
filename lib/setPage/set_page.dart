@@ -30,6 +30,7 @@ class _SetPageState extends State<SetPage> {
           duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
     });
     scaf.clearSnackBars();
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   _loadPrefs() async {

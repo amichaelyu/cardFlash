@@ -228,6 +228,7 @@ class _AdaptivePageState extends State<AdaptivePage> {
                               await Navigator.pushNamed(
                                   context, "/HOME/SET/ADAPTIVE/SETTINGS");
                               _loadPrefs();
+                              FocusManager.instance.primaryFocus?.unfocus();
                               _initialAsync();
                               _generateSet(0);
                               setState(() {});
@@ -416,15 +417,10 @@ class _AdaptivePageState extends State<AdaptivePage> {
                           ),
                       // writing thing
                       if (shuffledList.isNotEmpty &&
-                          (((snapshot.data[shuffledList[counter]]
-                                              ['correctInARowTerm'] +
-                                          snapshot.data[shuffledList[counter]]
-                                              ['correctInARowDef']) >=
-                                      mcNum &&
-                                  (snapshot.data[shuffledList[counter]]
-                                              ['correctInARowTerm'] +
-                                          snapshot.data[shuffledList[counter]]
-                                              ['correctInARowDef']) <
+                          (((snapshot.data[shuffledList[counter]]['correctInARowTerm'] +
+                                          snapshot.data[shuffledList[counter]]['correctInARowDef']) >= mcNum &&
+                                  (snapshot.data[shuffledList[counter]]['correctInARowTerm'] +
+                                          snapshot.data[shuffledList[counter]]['correctInARowDef']) <
                                       writingNum + mcNum) ||
                               maintainW) &&
                           !maintainMC)
