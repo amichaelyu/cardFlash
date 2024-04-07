@@ -12,7 +12,7 @@
 </p>
 
 <!---
-## Become a [Beta Tester](itsmichaelyu.github.io/cardFlashBeta)
+## Become a [Beta Tester](amichaelyu.github.io/cardFlashBeta)
 --->
 ## Features
 - Import from Quizlet
