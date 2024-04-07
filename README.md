@@ -24,8 +24,8 @@
 
 ## Issues and Features
 
-Issues or new features can be reported via the [issue tracker](https://github.com/itsmichaelyu/cardFlash/issues). Please make sure your issue or feature has not yet been reported by anyone else before submitting a new one.
+Issues or new features can be reported via the [issue tracker](https://github.com/amichaelyu/cardFlash/issues). Please make sure your issue or feature has not yet been reported by anyone else before submitting a new one.
 
 ## Privacy
 
-cardFlash does not collect personally identifiable information in any way. Please refer to the [privacy policy](https://github.com/itsmichaelyu/cardFlash/blob/master/PRIVACY.md) for information.
+cardFlash does not collect personally identifiable information in any way. Please refer to the [privacy policy](https://github.com/amichaelyu/cardFlash/blob/master/PRIVACY.md) for information.
