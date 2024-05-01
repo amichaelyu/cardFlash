@@ -1,4 +1,4 @@
-# cardFlash: Quizlet but Better!
+# cardFlash: Super simple flashcard studying!
 
 <p align="center">
     <img src="./assets/cardFlash.png" width="150" height="150">
