@@ -1,15 +1,20 @@
 # cardFlash: Super simple flashcard studying!
 
-<p align="center">
+<div align="center">
     <img src="./assets/cardFlash.png" width="150" height="150">
     <img src="./assets/banner.png">
+</div>
+<br />
+<div align="center">
     <a href="https://apps.apple.com/app/id6443405970">
         <img src="./assets/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" width="180" alt="Download cardFlash on the Apple App Store"/>
     </a>
+</div>
+<div align="center">
     <a href="https://play.google.com/store/apps/details?id=com.michaelyu.cardFlash">
         <img src="./assets/google-play-badge.png" width="200" height="80" alt="Download cardFlash on the Google Play Store"/>
     </a>
-</p>
+</div>
 
 <!---
 ## Become a [Beta Tester](amichaelyu.github.io/cardFlashBeta)
